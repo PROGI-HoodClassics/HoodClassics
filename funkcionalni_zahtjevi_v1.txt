@@ -1,0 +1,27 @@
+Aplikacija mora podržavati tri različite korisničke uloge:
+	- lokalac
+	- turist
+	- moderator
+	
+Aplikacija mora omogućiti pristup bez registracije u kojem se slučaju implicitno uzima uloga turista. U toj (i svim drugim ulogama) moguć je pregled ugrađene
+karte na kojoj su prikazani pinovi.
+	
+Pri registraciji, korisnik aplikacije bira mjesto stanovanja. Dok je unutar granica tog mjesta, registrirani korisnik može poprimiti ulogu lokalca.
+
+Aplikacija mora podržavati mogućnost lokalca da na kartu doda pin koji sadrži objavu.
+
+Objava može sadržavati tekst, sliku i tagove.
+
+Aplikacija mora omogućiti filtriranje pinova po tagovima.
+
+Aplikacija mora omogućiti svim registriranim korisnicima da označe objavu sa "sviđa mi se" ili "ne sviđa mi se".
+
+Aplikacija mora omogućiti registriranim korisnicima mogućnost da prijave neprimjeren sadržaj.
+
+Aplikacija mora omogućiti korisnicima u ulozi lokalca da prijave netočne objave.
+
+Moderator može pregledati prijave i ukloniti objave/pin-ove.
+
+Moderator može drugim registriranim korisnicima dodijeliti ulogu moderatora.
+
+Aplikacija mora omogućiti rangiranje pinova u nekom području po broju ljudi koji su ih označili sa "sviđa mi se". 
