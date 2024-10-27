@@ -48,9 +48,7 @@ Aplikacija mora omogućiti rangiranje pinova u nekom području po broju ljudi ko
 
 
 # Tehnologije
-
-#Instalcija
-# Članovi tima 
+Trenutni plan je za backend koristiti Java spring, a za frontend React. 
 > Popis članova tima/linkovi/ glavni doprinos
 >
 
