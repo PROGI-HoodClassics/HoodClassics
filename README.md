@@ -16,7 +16,34 @@ Kratko opisati cilj Vašeg projekta. Vaša motivacija?  (Napomena: odgovor nije 
 > Dobro izrađen opis omogućuje vam da pokažete svoj rad drugim programerima, kao i potencijalnim poslodavcima. Ne samo da prvi dojam na stranici opisa često razlikuje dobar projekt od lošeg projekta već i predstavlja dobru praksu koju morate savladati.
 
 # Funkcijski zahtjevi
-> Navedite ključne zahtjeve Vašeg projekta.
+
+Aplikacija mora podržavati tri različite korisničke uloge:
+	- lokalac
+	- turist
+	- moderator
+	
+Aplikacija mora omogućiti pristup bez registracije u kojem se slučaju implicitno uzima uloga turista. U toj (i svim drugim ulogama) moguć je pregled ugrađene
+karte na kojoj su prikazani pinovi.
+	
+Pri registraciji, korisnik aplikacije bira mjesto stanovanja. Dok je unutar granica tog mjesta, registrirani korisnik može poprimiti ulogu lokalca.
+
+Aplikacija mora podržavati mogućnost lokalca da na kartu doda pin koji sadrži objavu.
+
+Objava može sadržavati tekst, sliku i tagove.
+
+Aplikacija mora omogućiti filtriranje pinova po tagovima.
+
+Aplikacija mora omogućiti svim registriranim korisnicima da označe objavu sa "sviđa mi se" ili "ne sviđa mi se".
+
+Aplikacija mora omogućiti registriranim korisnicima mogućnost da prijave neprimjeren sadržaj.
+
+Aplikacija mora omogućiti korisnicima u ulozi lokalca da prijave netočne objave.
+
+Moderator može pregledati prijave i ukloniti objave/pin-ove.
+
+Moderator može drugim registriranim korisnicima dodijeliti ulogu moderatora.
+
+Aplikacija mora omogućiti rangiranje pinova u nekom području po broju ljudi koji su ih označili sa "sviđa mi se". 
 
 
 # Tehnologije
