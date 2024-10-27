@@ -49,11 +49,15 @@ Aplikacija mora omogućiti rangiranje pinova u nekom području po broju ljudi ko
 
 # Tehnologije
 Trenutni plan je za backend koristiti Java spring, a za frontend React. 
-> Popis članova tima/linkovi/ glavni doprinos
->
+> Popis članova tima:
+> Hrvoje Radoš
+> Mateo Piskač
+> Ivan Bevanda
+> Dora Strmečki
+> Duje Ćubelić
+> Jakov Borić
 
 # Kontribucije
->Pravila ovise o organizaciji tima i su često izdvojena u CONTRIBUTING.md
 
 
 
