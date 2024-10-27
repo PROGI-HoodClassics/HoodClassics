@@ -17,13 +17,13 @@ Kratko opisati cilj Vašeg projekta. Vaša motivacija?  (Napomena: odgovor nije 
 
 # Funkcijski zahtjevi
 
-> Aplikacija mora podržavati tri različite korisničke uloge:
-	- lokalac
-	- turist
-	- moderator
+ Aplikacija mora podržavati tri različite korisničke uloge:
+	>* lokalac
+	>* turist
+	>* moderator
 	
->Aplikacija mora omogućiti pristup bez registracije u kojem se slučaju implicitno uzima uloga turista. U toj (i svim drugim ulogama) moguć je pregled ugrađene
->karte na kojoj su prikazani pinovi.
+Aplikacija mora omogućiti pristup bez registracije u kojem se slučaju implicitno uzima uloga turista. U toj (i svim drugim ulogama) moguć je pregled ugrađene
+karte na kojoj su prikazani pinovi.
 	
 Pri registraciji, korisnik aplikacije bira mjesto stanovanja. Dok je unutar granica tog mjesta, registrirani korisnik može poprimiti ulogu lokalca.
 
