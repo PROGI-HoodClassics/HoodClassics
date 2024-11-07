@@ -27,6 +27,18 @@ const HomePage = () => {
         width: "100%",
       }}
     >
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.45)",
+          zIndex: 0,
+        }}
+      />
+
       <Header />
       <Typography
         variant="h3"
@@ -34,15 +46,19 @@ const HomePage = () => {
           fontWeight: "bold",
           marginBottom: "1rem",
           textShadow: "2px 2px 4px rgba(0, 0, 0, 0.7)",
+          zIndex: 1,
         }}
       >
         Welcome to HoodClassics
       </Typography>
       <Typography
-        variant="h6"
+        variant="h5"
         sx={{
+          color: "white",
+          fontWeight: "bold",
           marginBottom: "2rem",
-          textShadow: "1px 1px 3px rgba(0, 0, 0, 0.5)",
+          textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)",
+          zIndex: 1,
         }}
       >
         Discover unknown stories from local places. Please register or login to
@@ -55,6 +71,7 @@ const HomePage = () => {
           gap: "1.5rem",
           flexDirection: "row",
           justifyContent: "center",
+          zIndex: 1,
         }}
       >
         <Button
@@ -63,17 +80,21 @@ const HomePage = () => {
           variant="outlined"
           sx={{
             padding: "1rem 2rem",
-            fontSize: "1.1rem",
+            fontSize: "1.5rem",
             textTransform: "none",
-            borderColor: "#9c27b0",
-            color: "#fff",
-            backgroundColor: "rgba(156, 39, 176, 0.2)",
-            boxShadow: "0px 4px 15px rgba(156, 39, 176, 0.6)",
+            color: "white",
+            backgroundColor: "rgba(212, 111, 38, 0.9)",
+            boxShadow: "0 4px 6px rgba(1, 0, 0, 0.2)",
+            borderColor: "#B75A1E",
+            borderRadius: "8px",
             "&:hover": {
-              borderColor: "#7b1fa2",
-              backgroundColor: "#9c27b0",
-              color: "#fff",
-              boxShadow: "0px 8px 25px rgba(156, 39, 176, 0.8)",
+              backgroundColor: "rgba(255, 155, 72, 0.9)",
+              color: "white",
+              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+              transform: "scale(1.05)",
+              transition:
+                "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
+              borderColor: "#9E4E1E",
             },
           }}
         >
@@ -82,21 +103,25 @@ const HomePage = () => {
 
         <Button
           component={Link}
-          to="/login"
+          to="/register"
           variant="outlined"
           sx={{
             padding: "1rem 2rem",
-            fontSize: "1.1rem",
+            fontSize: "1.5rem",
             textTransform: "none",
-            borderColor: "#9c27b0",
-            color: "#fff",
-            backgroundColor: "rgba(156, 39, 176, 0.2)",
-            boxShadow: "0px 4px 15px rgba(156, 39, 176, 0.6)",
+            color: "white",
+            backgroundColor: "rgba(212, 111, 38, 0.9)",
+            boxShadow: "0 4px 6px rgba(1, 0, 0, 0.2)",
+            borderColor: "#B75A1E",
+            borderRadius: "8px",
             "&:hover": {
-              borderColor: "#7b1fa2",
-              backgroundColor: "#9c27b0",
-              color: "#fff",
-              boxShadow: "0px 8px 25px rgba(156, 39, 176, 0.8)",
+              backgroundColor: "rgba(255, 155, 72, 0.9)",
+              color: "white",
+              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+              transform: "scale(1.05)",
+              transition:
+                "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
+              borderColor: "#9E4E1E",
             },
           }}
         >
