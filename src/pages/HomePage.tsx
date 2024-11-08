@@ -61,8 +61,8 @@ const HomePage = () => {
           zIndex: 1,
         }}
       >
-        Discover and post unknown stories from local places. Please register or login to
-        continue.
+        Discover unknown stories from local places. 
+        Please create an account or sign in to continue.
       </Typography>
 
       <Box
@@ -84,26 +84,24 @@ const HomePage = () => {
             textTransform: "none",
             color: "white",
             backgroundColor: "rgba(212, 111, 38, 0.9)",
-            boxShadow: "0 4px 6px rgba(1, 0, 0, 0.2)",
             borderColor: "#B75A1E",
             borderRadius: "8px",
+            transition:
+                "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
             "&:hover": {
               backgroundColor: "rgba(255, 155, 72, 0.9)",
               color: "white",
-              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
               transform: "scale(1.05)",
-              transition:
-                "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
               borderColor: "#9E4E1E",
             },
           }}
         >
-          Register
+          Sign Up
         </Button>
 
         <Button
           component={Link}
-          to="/register"
+          to="/login"
           variant="outlined"
           sx={{
             padding: "1rem 2rem",
@@ -111,21 +109,19 @@ const HomePage = () => {
             textTransform: "none",
             color: "white",
             backgroundColor: "rgba(212, 111, 38, 0.9)",
-            boxShadow: "0 4px 6px rgba(1, 0, 0, 0.2)",
             borderColor: "#B75A1E",
             borderRadius: "8px",
+            transition:
+                "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
             "&:hover": {
               backgroundColor: "rgba(255, 155, 72, 0.9)",
               color: "white",
-              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
               transform: "scale(1.05)",
-              transition:
-                "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
               borderColor: "#9E4E1E",
             },
           }}
         >
-          Login
+          Sign In
         </Button>
       </Box>
       <Typography variant = "h5" 
@@ -137,7 +133,7 @@ const HomePage = () => {
         textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)",
         zIndex: 1,
       }}>
-        Try as tourist without registration.
+        Start exploring as a tourist (no sign-up required).
       </Typography>
 
       <Box sx = {{
@@ -154,21 +150,19 @@ const HomePage = () => {
             fontSize: "1.5rem",
             textTransform: "none",
             color: "white",
-            backgroundColor: "rgba(212, 111, 38, 0.9)",
-            boxShadow: "0 4px 6px rgba(1, 0, 0, 0.2)",
+            backgroundColor: "rgba(255, 165, 60, 0.9)",
             borderColor: "#B75A1E",
             borderRadius: "8px",
-            "&:hover": {
-              backgroundColor: "rgba(255, 155, 72, 0.9)",
-              color: "white",
-              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
-              transform: "scale(1.05)",
-              transition:
+            transition:
                 "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
+            "&:hover": {
+              backgroundColor: "rgba(255, 180, 72, 0.9)",
+              color: "white",
+              transform: "scale(1.05)",
               borderColor: "#9E4E1E",
             },
           }}>
-          Start
+          Try as a tourist
         </Button>
       </Box>
     </Box>
