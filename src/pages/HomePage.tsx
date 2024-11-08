@@ -41,7 +41,7 @@ const HomePage = () => {
 
       <Header />
       <Typography
-        variant="h3"
+        variant="h2"
         sx={{
           fontWeight: "bold",
           marginBottom: "1rem",
@@ -61,7 +61,7 @@ const HomePage = () => {
           zIndex: 1,
         }}
       >
-        Discover unknown stories from local places. Please register or login to
+        Discover and post unknown stories from local places. Please register or login to
         continue.
       </Typography>
 
@@ -126,6 +126,49 @@ const HomePage = () => {
           }}
         >
           Login
+        </Button>
+      </Box>
+      <Typography variant = "h5" 
+        sx = {{
+        color: "white",
+        fontWeight: "bold",
+        marginBottom: "2rem",
+        marginTop: "5rem",
+        textShadow: "2px 2px 5px rgba(0, 0, 0, 0.7)",
+        zIndex: 1,
+      }}>
+        Try as tourist without registration.
+      </Typography>
+
+      <Box sx = {{
+        display: "flex",
+        gap: "1.5rem",
+        justifyContent: "center",
+        zIndex: 1,
+      }}>
+        <Button component={Link}
+          to="/map"
+          variant="outlined"
+          sx={{
+            padding: "1rem 2rem",
+            fontSize: "1.5rem",
+            textTransform: "none",
+            color: "white",
+            backgroundColor: "rgba(212, 111, 38, 0.9)",
+            boxShadow: "0 4px 6px rgba(1, 0, 0, 0.2)",
+            borderColor: "#B75A1E",
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: "rgba(255, 155, 72, 0.9)",
+              color: "white",
+              boxShadow: "0 6px 10px rgba(0, 0, 0, 0.15)",
+              transform: "scale(1.05)",
+              transition:
+                "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
+              borderColor: "#9E4E1E",
+            },
+          }}>
+          Start
         </Button>
       </Box>
     </Box>

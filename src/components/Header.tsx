@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../photos/logo.png";
+import logo from "../photos/logo1.jpg";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 
 const Header = () => {
@@ -14,17 +14,24 @@ const Header = () => {
         }}
       >
         <Box sx={styles.leftSection}>
+          <Box sx = {{
+            transition: "transform 0.3s ease",
+            "&:hover": {
+              transform: "scale(1.08)",
+              textShadow: "2px 2px 8px rgba(255, 155, 72, 0.4)",
+            }
+          }}>
           <img
             src={logo}
-            alt="HoodClassics Logo"
             style={{
               width: "100px",
               height: "auto",
               marginRight: "1rem",
-              marginBottom: "0.4rem",
+              marginBottom: "0.3rem",
               marginTop: "0.4rem",
             }}
           />
+          </Box>
           <Typography variant="h4" sx={styles.title}>
             HoodClassics
           </Typography>
