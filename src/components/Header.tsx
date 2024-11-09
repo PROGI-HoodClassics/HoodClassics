@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../photos/logo1.jpg";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
