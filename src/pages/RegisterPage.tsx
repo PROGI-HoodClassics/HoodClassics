@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import {Box, Button, Container, TextField, Typography} from "@mui/material";
 import muralImage from "../assets/photos/mural.png";
-import GoogleOAuthButton from "../components/GoogleOAuthButton.tsx";
+import StyledGoogleButton from "../components/StyledGoogleButton.tsx";
 
 
 const LoginPage = () => {
@@ -51,7 +51,7 @@ const LoginPage = () => {
                         <Typography align="center" sx={{mt: 2, color: "black", paddingBottom: "1rem"}}>
                             OR
                         </Typography>
-                        <GoogleOAuthButton/>
+                        <StyledGoogleButton/>
                     </Box>
                 </Container>
             </Box>
