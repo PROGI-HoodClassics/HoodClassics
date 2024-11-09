@@ -1,8 +1,14 @@
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import logo from "../photos/logo1.jpg";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 
 const Header = () => {
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    navigate('/');
+  }
+
   return (
     <AppBar position="fixed" sx={styles.header}>
       <Toolbar
@@ -13,7 +19,9 @@ const Header = () => {
         }}
       >
         <Box sx={styles.leftSection}>
-          <Box sx = {{
+          <Box
+              onClick={handleHomeClick}
+              sx = {{
             transition: "transform 0.3s ease",
             "&:hover": {
               transform: "scale(1.08)",
@@ -31,7 +39,8 @@ const Header = () => {
             }}
           />
           </Box>
-          <Typography variant="h4" sx={styles.title}>
+          <Typography variant="h4" sx={styles.title}
+          onClick={handleHomeClick}>
             HoodClassics
           </Typography>
         </Box>
@@ -55,7 +64,7 @@ const Header = () => {
 
 const styles = {
   header: {
-    backgroundColor: "#B34700",
+    backgroundColor: "rgb(197, 105, 54)",
     padding: "0 2rem",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
   },
