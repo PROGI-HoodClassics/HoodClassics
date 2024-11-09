@@ -37,6 +37,8 @@ const LoginPage = () => {
                     height: "auto",
                     paddingBottom: "3rem",
                     backgroundColor: "white",
+                    borderRadius: 4,
+                    overflow: "hidden",
                 }}>
                 <Container maxWidth="xs">
                     <Box sx={{mt: 4}}>
