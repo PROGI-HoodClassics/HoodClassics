@@ -1,5 +1,5 @@
 import {Link, useNavigate} from "react-router-dom";
-import logo from "../photos/logo1.jpg";
+import logo from "../assets/photos/logo1.jpg";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 
 const Header = () => {

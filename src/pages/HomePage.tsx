@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
-import muralImage from "../photos/mural.png";
+import muralImage from "../assets/photos/mural.png";
 
 const HomePage = () => {
   return (

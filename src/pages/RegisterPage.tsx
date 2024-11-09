@@ -1,6 +1,6 @@
 import Header from "../components/Header";
 import {Box, Button, Container, TextField, Typography} from "@mui/material";
-import muralImage from "../photos/mural.png";
+import muralImage from "../assets/photos/mural.png";
 import GoogleOAuthButton from "../components/GoogleOAuthButton.tsx";
 
 
