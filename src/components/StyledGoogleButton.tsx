@@ -1,36 +1,25 @@
 // src/components/StyledGoogleButton.tsx
 
 import React from 'react';
-import axios from 'axios';
 import { Button } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 
 const StyledGoogleButton: React.FC = () => {
-    const handleClick = async () => {
-        try {
-            // Make a GET request to your backend endpoint
-            const response = await axios.get('/users/list');
-            const users = response.data;
-            console.log('User List:', users);
-            alert(`Fetched ${users.length} users from the server.`);
-        } catch (error) {
-            console.error('Error fetching user list:', error);
-            alert('Failed to fetch user list. Please try again later.');
-        }
-    };
-
-    return (
+    //const navigate = useNavigate();
+      return (
         <Button
-            onClick={handleClick}
-            variant="outlined"
-            fullWidth
-            sx={styles.googleButton}
-            startIcon={<GoogleIcon />}
+        component="a"
+        href="http://localhost:8080/users/list" 
+        variant="outlined"
+        fullWidth
+        sx={styles.googleButton}
+        startIcon={<GoogleIcon />}
         >
-            Sign in with Google
+        Sign in with Google
         </Button>
     );
 };
+
 
 const styles = {
     googleButton: {
