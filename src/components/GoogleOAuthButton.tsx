@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import { Button } from '@mui/material';
 import axios from 'axios';
 
 const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
@@ -27,23 +26,18 @@ const GoogleOAuthButton: React.FC = () => {
     };
 
     return (
-        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-        <GoogleLogin
-            onSuccess={handleSuccess}
-    onError={handleFailure}
-    render={(renderProps: { onClick: React.MouseEventHandler<HTMLButtonElement> | undefined; }) => (
-        <Button
-            onClick={renderProps.onClick}
-    variant="contained"
-    color="primary"
-    fullWidth
-    >
-    Sign in with Google
-    </Button>
-        )}
-    />
-    </GoogleOAuthProvider>
-);
+        (
+            <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+                <GoogleLogin
+                    onSuccess={handleSuccess}
+                    onError={handleFailure}
+                    theme="outline"
+                    size="large"
+                    text="signin_with"
+                    shape="rectangular"
+                />
+            </GoogleOAuthProvider>
+        ))
 };
 
 export default GoogleOAuthButton;
