@@ -20,7 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class WebSecurityConfig {
 
 	@Bean
@@ -28,7 +28,7 @@ public class WebSecurityConfig {
 		http
 			.csrf(csrf -> csrf.disable()) // TODO: Naći bolji način za "odzabraniti" (ne vratiti 403) POST requestove
 			.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-					.requestMatchers("/").permitAll()
+					.requestMatchers("/","/index.html","/assets/**").permitAll()
 					.anyRequest().authenticated()
 					)
 			.oauth2Login(config -> config.clientRegistrationRepository(this.clientRegistrationRepository())
