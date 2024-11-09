@@ -1,8 +1,11 @@
 import React from 'react'
+import Header from "../components/Header.tsx";
 
 const MapPage = () => {
   return (
-    <div>MapPage</div>
+      <><Header/>
+        <div>MapPage</div>
+      </>
   )
 }
 
