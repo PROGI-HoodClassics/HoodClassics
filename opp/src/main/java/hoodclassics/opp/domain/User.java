@@ -21,7 +21,22 @@ public class User {
 	private String email;
 	
 	private String username;
-	
+
+	public User(String name, String surname, String email, String username) {
+		this.name = name;
+		this.surname = surname;
+		this.email = email;
+		this.username = username;
+	}
+
+	//Spring ovo treba ali ne znam zašto
+	public User() {
+		this.name = null;
+		this.surname = null;
+		this.email = null;
+		this.username = null;
+	}
+
 	public String getName() {
 		return name;
 	}
