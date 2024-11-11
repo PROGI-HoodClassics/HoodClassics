@@ -25,7 +25,6 @@ const Header = () => {
             transition: "transform 0.3s ease",
             "&:hover": {
               transform: "scale(1.08)",
-              textShadow: "2px 2px 8px rgba(255, 155, 72, 0.4)",
             }
           }}>
           <img
@@ -53,7 +52,10 @@ const Header = () => {
           >
             Register
           </Button>
-          <Button color="inherit" component={Link} to="/login" sx={styles.link}>
+          <Button color="inherit" 
+          component={Link} 
+          to="/login" 
+          sx={styles.link}>
             Login
           </Button>
         </div>
@@ -90,11 +92,10 @@ const styles = {
     alignItems: "center",
   },
   link: {
-    textDecoration: "none",
     marginLeft: "1rem",
     fontSize: "1rem",
     fontWeight: "bold",
-    transition: "transform 0.2s ease, text-shadow 0.2s ease",
+    transition: "transform 0.2s ease, background-color 0.2s ease",
     "&:hover": {
       backgroundColor: "#D46F26",
       color: "white",

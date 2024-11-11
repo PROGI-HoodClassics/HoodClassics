@@ -43,7 +43,8 @@ const HomePage = () => {
         variant="h2"
         sx={{
           fontWeight: "bold",
-          marginBottom: "1rem",
+          marginBottom: "2rem",
+          marginTop: "2rem",
           textShadow: "2px 2px 4px rgba(0, 0, 0, 0.7)",
           zIndex: 1,
         }}
@@ -86,7 +87,7 @@ const HomePage = () => {
             borderColor: "#B75A1E",
             borderRadius: "8px",
             transition:
-                "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
+                "transform 0.2s ease, background-color 0.2s ease",
             "&:hover": {
               backgroundColor: "rgba(255, 155, 72, 0.9)",
               color: "white",
@@ -111,7 +112,7 @@ const HomePage = () => {
             borderColor: "#B75A1E",
             borderRadius: "8px",
             transition:
-                "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
+                "transform 0.2s ease, background-color 0.2s ease",
             "&:hover": {
               backgroundColor: "rgba(255, 155, 72, 0.9)",
               color: "white",
@@ -137,7 +138,6 @@ const HomePage = () => {
 
       <Box sx = {{
         display: "flex",
-        gap: "1.5rem",
         justifyContent: "center",
         zIndex: 1,
       }}>
@@ -153,7 +153,7 @@ const HomePage = () => {
             borderColor: "#B75A1E",
             borderRadius: "8px",
             transition:
-                "transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease",
+                "transform 0.2s ease, background-color 0.2s ease",
             "&:hover": {
               backgroundColor: "rgba(255, 180, 72, 0.9)",
               color: "white",

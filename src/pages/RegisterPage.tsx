@@ -31,8 +31,7 @@ const LoginPage = () => {
             <Box
                 sx={{
                     position: "absolute",
-                    top: "45%",
-                    left: "40%",
+                    top: "30%",
                     width: "auto",
                     height: "auto",
                     paddingBottom: "3rem",
