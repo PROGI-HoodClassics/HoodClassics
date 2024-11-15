@@ -200,6 +200,7 @@ const HomePage = () => {
         >
           Try as a tourist
         </Button>
+
       </Box>
     </Box>
   );

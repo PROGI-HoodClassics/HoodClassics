@@ -1,11 +1,11 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import Header from "../components/Header.tsx";
+import HeaderRegistered from '../components/HeaderRegistered';
 
-const MapPage = () => {
+const MapPageRegistered = () => {
   return (
     <>
-      <Header />
+      <HeaderRegistered />
       <div>MapPage</div>
       <Map />
     </>
@@ -32,4 +32,4 @@ const Map = () => {
   );
 };
 
-export default MapPage;
+export default MapPageRegistered;
