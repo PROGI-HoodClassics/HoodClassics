@@ -9,7 +9,7 @@ Budući da nismo stigli obaviti deployment aplikacije, potrebno je podesiti loka
 
 ### Namještanje CLIENT_ID i CLIENT_SECRET za Google OAuth 2.0
 
-Potrebno je dodati "secrets" mapu u src/main/resources/ kako bi poslužitelj mogao iščitati podatke za pristup Google OAuth konzoli. Kako su ovi podatci API ključevi, nije ih sigurno javno objavljivati na GitHub-u, pa se, molim Vas, javite na ib55199@fer.hr (ili hr54899@fer.hr) kako bi vam poslali direktorij u .zip formatu.
+Potrebno je dodati "secrets" mapu u src/main/resources/ kako bi poslužitelj mogao iščitati podatke za pristup Google OAuth konzoli. Kako su ovi podatci API ključevi, nije ih sigurno javno objavljivati na GitHub-u, pa se, molim Vas, javite na ib55199@fer.hr (ili hr54899@fer.hr) kako bi Vam poslali direktorij u .zip formatu.
 
 ### Pokretanje servera
 
