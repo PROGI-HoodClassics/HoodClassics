@@ -15,5 +15,5 @@ Potrebno je dodati "secrets" mapu u src/main/resources/ kako bi poslužitelj mog
 
 Server se, među ostalim, može pokrenuti tako da se prezume .zip cijele grane, pa se HoodClassics-backend importa kao Maven projekt u IntelliJ/Gradle. Nakon toga se program može samo pokrenuti i server će započeti.
 
-### VAŽNO ZA ISPRAVLJAČE (naknadna promjene)
+### VAŽNO ZA ISPRAVLJAČE (naknadne promjene)
 Profesor Sruk nam je javio 19.11. da bismo naš funkcionalni kod trebali premjestiti na main branch. Naš kod je do sada bio na dev branchu jer je na mainu bio naš kod koji smo pokušali deployat. Iako nismo uspjeli napraviti deployment na tom bivšem main branchu se je moglo vidjeti da smo aktivno radili na deploymentu (vide se docker fileovi itd.). Stoga smo odlučili samo zamijeniti saržaje main i dev brancha. Kod u trenutnom main branchu predstavlja našu trenutnu funkcionalnost aplikacije, a u dev branchu se mogu vidjeti naši pokušaji da deployamo taj kod. Također sam primjetio da smo slučajno u static folderu napravili još jedan static folder, pa sam taj dodatni static folder obrisao (ujedno kako bi ispravljači mogli bez poteškoća pokretati kod). Zato piše na githubu da je "promijenjen" backend, ali nije bilo nikakvih promjena u kodu ili wiki-u nakon isteka roka za predaju.
