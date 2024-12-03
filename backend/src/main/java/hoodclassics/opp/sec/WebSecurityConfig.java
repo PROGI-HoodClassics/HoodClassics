@@ -33,7 +33,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 @Configuration
-@EnableWebSecurity(debug = true)
 public class WebSecurityConfig {
 
 	@Autowired
