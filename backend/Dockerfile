@@ -2,10 +2,11 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-COPY . .
+COPY backend/ .
 
 RUN chmod +x mvnw
-RUN ./mvnw package -DskipTests
+
+RUN ./mvnw clean package -DskipTests
 
 EXPOSE 8080
 
