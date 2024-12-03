@@ -1,0 +1,34 @@
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import Header from "../components/Header.tsx";
+
+const MapPage = () => {
+  return (
+    <>
+      <Header />
+      <div>MapPage</div>
+      <Map />
+    </>
+  );
+};
+
+const Map = () => {
+  const position = [37.7749, -122.4194];
+
+  return (
+    <MapContainer 
+      center={position} 
+      zoom={13} 
+      style={{ width: '100vw', height: '80vh' }}
+    >
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      <Marker position={position}>
+        <Popup>Center of the map</Popup>
+      </Marker>
+    </MapContainer>
+  );
+};
+
+export default MapPage;
