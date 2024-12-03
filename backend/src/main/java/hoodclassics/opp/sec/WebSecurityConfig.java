@@ -121,7 +121,7 @@ public class WebSecurityConfig {
 	private String getClientID(String provider) {
 		List<String> lines = new ArrayList<>();
 		try {
-			lines = Files.readAllLines(Paths.get("/etc/secrets/" + provider + ".txt"));
+			lines = Files.readAllLines(Paths.get("./" + provider + ".txt"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
