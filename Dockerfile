@@ -22,7 +22,7 @@ WORKDIR /app
 
 COPY --from=backend-builder /app/backend/target/opp-0.0.1-SNAPSHOT.jar /app/
 
-COPY --from=frontend-builder /app/frontend/build /app/backend/src/main/resources/static
+COPY --from=frontend-builder /app/frontend/dist /app/backend/src/main/resources/static
 
 EXPOSE 8080
 
