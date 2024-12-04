@@ -5,8 +5,6 @@ import StyledGoogleButton from "../components/StyledGoogleButton.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-//API callovi se trebaju raditi preko enviroment varijabli jer deployana aplikacija ne salje zahtjeve na localHost
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://hoodclassics.onrender.com";
 
 const LoginPage = () => {
     const [email, setEmail] = useState<string>("");
@@ -27,7 +25,7 @@ const LoginPage = () => {
         formData.append("password", password);
   
       try {
-        const response = await fetch(`${API_BASE_URL}/register?username=${email}&password=${password}`, {
+        const response = await fetch(`/register?username=${email}&password=${password}`, {
           method: "POST",
           headers: {
           },

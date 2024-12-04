@@ -1,5 +1,4 @@
 //API callovi se trebaju raditi preko enviroment varijabli jer deployana aplikacija ne salje zahtjeve na localHost
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "https://hoodclassics.onrender.com";
 import React from 'react';
 import { Button } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
@@ -9,7 +8,7 @@ const StyledGoogleButton: React.FC = () => {
       return (
         <Button
         component="a"
-        href={`${API_BASE_URL}/oauth2/authorization/google`}
+        href={`/oauth2/authorization/google`}
         variant="outlined"
         fullWidth
         sx={styles.googleButton}
