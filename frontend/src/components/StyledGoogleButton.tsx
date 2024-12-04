@@ -2,13 +2,14 @@
 import React from 'react';
 import { Button } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const StyledGoogleButton: React.FC = () => {
     //const navigate = useNavigate();
       return (
         <Button
         component="a"
-        href={`/oauth2/authorization/google`}
+        href={`${API_BASE_URL}/oauth2/authorization/google`}
         variant="outlined"
         fullWidth
         sx={styles.googleButton}

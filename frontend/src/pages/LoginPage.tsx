@@ -5,6 +5,7 @@ import StyledGoogleButton from "../components/StyledGoogleButton.tsx";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const LoginPage = () => {
     const [email, setEmail] = useState<string>("");
@@ -25,7 +26,7 @@ const LoginPage = () => {
       formData.append("password", password);
   
       try {
-        const response = await fetch(`/login`, {
+        const response = await fetch(`${API_BASE_URL}/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
