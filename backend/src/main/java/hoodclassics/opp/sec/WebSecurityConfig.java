@@ -113,11 +113,7 @@ public class WebSecurityConfig {
 				.clientName("Google").build();
 	}
 
-	/*
-	 * TODO: Naći bolji način za izvesti ovo. Možda povezati s bazom podataka.
-	 * Trenutno samo čita iz google.txt datoteke (nije na GitHubu).
-	 * Hrvoje: promijenio sam path koji koristi Render (na njega su stavljeni secrets fileovi
-	 */
+
 	private String getClientID(String provider) {
 		List<String> lines = new ArrayList<>();
 		try {
@@ -131,7 +127,7 @@ public class WebSecurityConfig {
 	private String getClientSecret(String provider) {
 		List<String> lines = new ArrayList<>();
 		try {
-			lines = Files.readAllLines(Paths.get("src/main/resources/secrets/" + provider + ".txt"));
+			lines = Files.readAllLines(Paths.get("./" + provider + ".txt"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
