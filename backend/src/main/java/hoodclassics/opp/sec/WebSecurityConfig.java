@@ -115,23 +115,31 @@ public class WebSecurityConfig {
 
 
 	private String getClientID(String provider) {
-		List<String> lines = new ArrayList<>();
+		String ID = "undefinedID"; //nisam baš siguran postoji li bolje rješenje za ovo, ali return mora biti izvan try bloka
 		try {
-			lines = Files.readAllLines(Paths.get("./" + provider + ".txt"));
-		} catch (IOException e) {
+			if (provider.equals("google")) {
+				ID = System.getenv("GOOGLE_ID");
+			} else {
+				throw new Exception("unknown provider");
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return lines.get(0);
+		return ID;
 	}
 
 	private String getClientSecret(String provider) {
-		List<String> lines = new ArrayList<>();
+		String secret = "undefinedClientSecret";
 		try {
-			lines = Files.readAllLines(Paths.get("./" + provider + ".txt"));
-		} catch (IOException e) {
+			if (provider.equals("google")) {
+				secret = System.getenv("GOOGLE_SECRET");
+			} else {
+				throw new Exception("unknown provider");
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return lines.get(1);
+		return secret;
 	}
 
 }
