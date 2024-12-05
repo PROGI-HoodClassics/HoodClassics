@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import hoodclassics.opp.dao.UserRepository;
 import hoodclassics.opp.domain.CustomUser;
@@ -33,6 +34,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 @Configuration
+@EnableWebSecurity(debug = true)
 public class WebSecurityConfig {
 
 	@Autowired
@@ -115,9 +117,9 @@ public class WebSecurityConfig {
 
 
 	private String getClientID(String provider) {
-		String ID = "undefinedID"; //nisam baš siguran postoji li bolje rješenje za ovo, ali return mora biti izvan try bloka
+		String ID = "not found"; //nisam baš siguran postoji li bolje rješenje za ovo, ali return mora biti izvan try bloka
 		try {
-			if (provider.equals("google")) {
+			if (Objects.equals(provider, "google")) {
 				ID = System.getenv("GOOGLE_ID");
 			} else {
 				throw new Exception("unknown provider");
@@ -129,9 +131,9 @@ public class WebSecurityConfig {
 	}
 
 	private String getClientSecret(String provider) {
-		String secret = "undefinedClientSecret";
+		String secret = "not found";
 		try {
-			if (provider.equals("google")) {
+			if (Objects.equals(provider, "google")) {
 				secret = System.getenv("GOOGLE_SECRET");
 			} else {
 				throw new Exception("unknown provider");
