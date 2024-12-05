@@ -5,8 +5,10 @@ import StyledGoogleButton from "../components/StyledGoogleButton.tsx";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
+//iz nekog razloga render ne kuzi da je ovo environment varijabla
+//kad bi sve radilo kak spada umjesto https://hoodclassics.onrender.com/ bi pisalo http://localhost8080
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://hoodclassics.onrender.com/';
 const LoginPage = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
