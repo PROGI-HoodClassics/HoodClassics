@@ -3,6 +3,8 @@ package hoodclassics.opp.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,20 @@ public class UserServiceImpl implements UserService {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		password = encoder.encode(password);
 		userRepo.save(new CustomUser(email, username, password));
+	}
+
+	@Override
+	public ResponseEntity<String> loginUser(String username, String password) {
+		String email = null;
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		password = encoder.encode(password);
+		CustomUser user = new CustomUser(email, username, password);
+		if (!userRepo.findByUsernameAndPassword(username, password).isPresent()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body("User with username " + username + " not found");
+		}
+		// Uspješan login
+		return ResponseEntity.ok("Login successful");
 	}
 
 }
