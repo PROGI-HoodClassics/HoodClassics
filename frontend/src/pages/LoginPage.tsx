@@ -23,18 +23,21 @@ const LoginPage = () => {
         setError("Please enter both username and password.");
         return;
       }
-  
+      
+      /*
       const formData = new URLSearchParams();
       formData.append("username", email);
       formData.append("password", password);
-  
+      */
       try {
-        const response = await fetch(`${API_BASE_URL}/login`, {
+        const response = await fetch(`${API_BASE_URL}/login?username=${email}&password=${password}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          body: formData.toString(),
+          /*
+          body: formData.toString()
+          */
         });
   
         if (response.ok) {
