@@ -4,8 +4,13 @@ import muralImage from "../assets/photos/mural.png";
 import StyledGoogleButton from "../components/StyledGoogleButton.tsx";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { resolveSoa } from "dns";
 
 
+//iz nekog razloga render ne kuzi da je ovo environment varijabla
+//kad bi sve radilo kak spada umjesto https://hoodclassics.onrender.com/ bi pisalo http://localhost8080
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://hoodclassics.onrender.com';
+//onst API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 const LoginPage = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -19,21 +24,23 @@ const LoginPage = () => {
         setError("Please enter both username and password.");
         return;
       }
-  
+      
+      /*
       const formData = new URLSearchParams();
       formData.append("username", email);
       formData.append("password", password);
-  
+      */
       try {
-        const response = await fetch("http://localhost:8080/login", {
+        const response = await fetch(`${API_BASE_URL}/login?username=${email}&password=${password}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          body: formData.toString(),
+          /*
+          body: formData.toString()
+          */
         });
-  
-        if (response.ok) {
+        if (!response.url.includes(`${API_BASE_URL}/login?error`)) {
           console.log("Login successful!");
           navigate("/mapRegistered")
         } else {

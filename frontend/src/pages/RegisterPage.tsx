@@ -5,6 +5,10 @@ import StyledGoogleButton from "../components/StyledGoogleButton.tsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+//iz nekog razloga render ne kuzi da je ovo environment varijabla
+//kad bi sve radilo kak spada umjesto https://hoodclassics.onrender.com/ bi pisalo http://localhost8080
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://hoodclassics.onrender.com';
+//const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
 
 const LoginPage = () => {
     const [email, setEmail] = useState<string>("");
@@ -25,15 +29,13 @@ const LoginPage = () => {
         formData.append("password", password);
   
       try {
-        const response = await fetch(`http://localhost:8080/register?username=${email}&password=${password}`, {
+        const response = await fetch(`${API_BASE_URL}/register?username=${email}&password=${password}`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
           },
           body: formData.toString(),
         });
-  
-        if (response.ok) {
+        if (!response.url.includes(`${API_BASE_URL}/login?error`)) {
           console.log("Registration successful!");
           navigate("/mapRegistered")
         } 
