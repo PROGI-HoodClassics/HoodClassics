@@ -1,11 +1,7 @@
 package hoodclassics.opp.sec;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
 import hoodclassics.opp.dao.UserRepository;
 import hoodclassics.opp.domain.CustomUser;
@@ -114,28 +110,33 @@ public class WebSecurityConfig {
 				.clientName("Google").build();
 	}
 
-	/*
-	 * TODO: Naći bolji način za izvesti ovo. Možda povezati s bazom podataka.
-	 * Trenutno samo čita iz google.txt datoteke (nije na GitHubu).
-	 */
+
 	private String getClientID(String provider) {
-		List<String> lines = new ArrayList<>();
+		String ID = "not found"; //nisam baš siguran postoji li bolje rješenje za ovo, ali return mora biti izvan try bloka
 		try {
-			lines = Files.readAllLines(Paths.get("src/main/resources/secrets/" + provider + ".txt"));
-		} catch (IOException e) {
+			if (Objects.equals(provider, "google")) {
+				ID = System.getenv("GOOGLE_ID");
+			} else {
+				throw new Exception("unknown provider");
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return lines.get(0);
+		return ID;
 	}
 
 	private String getClientSecret(String provider) {
-		List<String> lines = new ArrayList<>();
+		String secret = "not found";
 		try {
-			lines = Files.readAllLines(Paths.get("src/main/resources/secrets/" + provider + ".txt"));
-		} catch (IOException e) {
+			if (Objects.equals(provider, "google")) {
+				secret = System.getenv("GOOGLE_SECRET");
+			} else {
+				throw new Exception("unknown provider");
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return lines.get(1);
+		return secret;
 	}
 
 }
