@@ -2,7 +2,7 @@
 # Link Deploya
 link: https://hoodclassics.onrender.com
 Upute za ispravljača:
-* Ako se hoće vidjeti lista svih registriranih korisnika potrebno je otići na https://hoodclassics.onrender.com
+* Ako se hoće vidjeti lista svih registriranih korisnika potrebno je otići na https://hoodclassics.onrender.com/users/list
 * SAMO REGISTRIRANI korisnici mogu vidjeti sve registrirane korisnike
 * Ovo nije karakteristika aplikacije već služi samo za ocjenjivanje
 # Opis projekta
