@@ -2,9 +2,12 @@ FROM node:16 AS frontend-builder
 
 WORKDIR /app/frontend
 
+ARG VITE_BASE
+ENV VITE_BASE=${VITE_BASE}
+
 COPY frontend/ .
 
-RUN npm install && npm run build
+RUN echo "VITE_BASE=${VITE_BASE}" && npm install && npm run build
 
 FROM openjdk:17-jdk-slim AS backend-builder
 
