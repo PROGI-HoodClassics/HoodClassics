@@ -14,4 +14,12 @@ public class HomeController {
 		return new ModelAndView("forward:index.html");
 	}
 	
+	// For testing purposes
+	/*
+	@GetMapping("/")
+	public String welcome() {
+		return "Welcome!";
+	}
+	*/
+	
 }

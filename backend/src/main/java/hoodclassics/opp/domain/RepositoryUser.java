@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="users")
-public class CustomUser {
+public class RepositoryUser {
 
 	@Id
 	@GeneratedValue
@@ -22,20 +22,20 @@ public class CustomUser {
 	private String username;
 	private String password;
 
-	public CustomUser(String email, String username, String password) {
+	public RepositoryUser(String email, String username, String password) {
 		this.email = email;
 		this.username = username;
 		this.password = password;
 	}
 	
-	public CustomUser(String email, String username) {
+	public RepositoryUser(String email, String username) {
 		this.email = email;
 		this.username = username;
 		this.password = null;
 	}
 
 	//Spring ovo treba ali ne znam zašto
-	public CustomUser() {
+	public RepositoryUser() {
 		this.email = null;
 		this.username = null;
 		this.password = null;

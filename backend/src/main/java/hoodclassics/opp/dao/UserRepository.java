@@ -2,12 +2,12 @@ package hoodclassics.opp.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import hoodclassics.opp.domain.CustomUser;
+import hoodclassics.opp.domain.RepositoryUser;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<CustomUser, Long> {
+public interface UserRepository extends JpaRepository<RepositoryUser, Long> {
 
-    Optional<CustomUser> findByUsername(String username);
-    Optional<CustomUser> findByUsernameAndPassword(String username, String password);
+    Optional<RepositoryUser> findByUsername(String username);
+    Optional<RepositoryUser> findByUsernameAndPassword(String username, String password);
 }

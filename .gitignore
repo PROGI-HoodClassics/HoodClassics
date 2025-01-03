@@ -1,2 +1,3 @@
 /.metadata/
-/opp/src/main/resources/secrets/
+backend/src/main/resources/secrets/
+eclipse_workspace/
