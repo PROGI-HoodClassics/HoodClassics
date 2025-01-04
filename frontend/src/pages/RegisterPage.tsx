@@ -33,7 +33,7 @@ const LoginPage = () => {
           },
           body: formData.toString(),
         });
-        if (!response.url.includes(`${API_BASE_URL}/login?error`)) {
+        if (response.ok) {
           console.log("Registration successful!");
           navigate("/mapRegistered")
         } 
