@@ -1,0 +1,47 @@
+==== VIEW STORY  ====
+Form:
+	GET /api/story/{story_id}
+
+Reponses:
+	- success - 200 OK "OK"
+	- no story_id in database - 404 NOT FOUND "That story doesn't exist"
+
+Response Body:
+               {
+  		           "story_id": "string",
+  		           "text": "string",
+  		           "title": "string",
+  		           "latitude": "number",
+  		           "longitude": "number",
+  		           "likes": "number",
+  		           "dislikes": "number",
+  		           "user_id": "number"
+	             }
+	       
+==== CREATE STORY  ====	
+Form:
+	POST /api/story
+
+Request Body:
+	            {
+      	        "text": "string",
+	              "title": "string", 
+  	            "latitude": "number", 
+  	            "longitude": "number"
+	            }
+	
+Reponses:
+	- success - 200 OK + return to map
+	- user not a local - 401 UNAUTHORIZED "Not a local"
+
+Response Body:
+               {
+  		           "story_id": "string", (generated)
+  		           "text": "string",
+  		           "title": "string",
+  		           "latitude": "number",
+  		           "longitude": "number",
+  		           "likes": "number",
+  		           "dislikes": "number",
+  		           "user_id": "number"
+	             }
