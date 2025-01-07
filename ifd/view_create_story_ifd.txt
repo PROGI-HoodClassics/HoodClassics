@@ -45,3 +45,36 @@ Response Body:
   		           "dislikes": "number",
   		           "user_id": "number"
 	             }
+=== VIEW STORIES === 
+Form:
+	GET /stories/getstories HTTP/1.1
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 28
+
+longitude=1234&latitude=1234&radius=10
+Reponses:
+	- success - 200 OK "OK"
+	- no story_id in database - 404 NOT FOUND "That story doesn't exist"
+
+Response Body:
+		[
+		    {
+		        "story_id": "string",
+		        "longitude": "number",
+		        "latitude": "number",
+		        "likes": "number"
+		    },
+		    {
+		        "story_id": "string",
+		        "longitude": "number",
+		        "latitude": "number",
+		        "likes": "number"
+		    },
+		    {
+		        "story_id": "string",
+		        "longitude": "number",
+		        "latitude": "number",
+		        "likes": "number"
+		    }
+		]
