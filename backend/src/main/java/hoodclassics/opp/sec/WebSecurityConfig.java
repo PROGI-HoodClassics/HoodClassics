@@ -1,56 +1,31 @@
 package hoodclassics.opp.sec;
 
-import java.util.Collections;
-import java.util.Objects;
-
-import hoodclassics.opp.dao.UserRepository;
-import hoodclassics.opp.domain.CustomUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 @Configuration
-@EnableWebSecurity(debug = true)
 public class WebSecurityConfig {
-
-	@Autowired
-	private UserRepository userRepo;
 	
-	@Bean
-	public PasswordEncoder passEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+	private UsernamePasswordService usernamePasswordService;
+	private OAuth2Service oAuth2Service;
+	private PasswordEncoder passwordEncoder;
+	private ClientRegistrationRepository clientRegistrationRepository;
 	
-	// Kad on vrati usera, Spring će sam provjeriti je li password dobar
-	// Vraćam lambda izraz jer je UserDetailsService funkcijsko sucelje
-	@Bean
-	public UserDetailsService userDetailsService() {
-		return username -> {
-			CustomUser user = userRepo.findByUsername(username)
-					.orElseThrow();
-			String password = user.getPassword();
-			
-			return new User(username, password, Collections.emptyList());
-		};
+	// Supposed to be better than @Autowire ?
+	public WebSecurityConfig(UsernamePasswordService usernamePasswordService,
+			OAuth2Service oAuth2Service,
+			PasswordEncoder passwordEncoder,
+			ClientRegistrationRepository clientRegistrationRepository) {
+		this.usernamePasswordService = usernamePasswordService;
+		this.oAuth2Service = oAuth2Service;
+		this.passwordEncoder = passwordEncoder;
+		this.clientRegistrationRepository = clientRegistrationRepository;
 	}
 	
 	@Bean
@@ -59,84 +34,17 @@ public class WebSecurityConfig {
 		.csrf(AbstractHttpConfigurer::disable)
 		.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 				.requestMatchers("/", "/index.html", "/assets/**", "/oauth2/**", "/login/**",
-						"/register/**").permitAll()
+						"/register/**", "/error/**", "/map").permitAll()
 				.anyRequest().authenticated())
-		.oauth2Login(config -> config.clientRegistrationRepository(this.clientRegistrationRepository())
-				.userInfoEndpoint(userInfo -> userInfo.userService(this.oauth2UserService()))
-				.successHandler(new SimpleUrlAuthenticationSuccessHandler("/")))
-		.formLogin(config -> config.defaultSuccessUrl("/", true));                                                                                                                                                                                                                                ;	
+		.oauth2Login(config -> config
+				.clientRegistrationRepository(clientRegistrationRepository)
+				.userInfoEndpoint(userInfo -> userInfo.userService(oAuth2Service))
+				.successHandler(new SimpleUrlAuthenticationSuccessHandler("/mapRegistered")))
+		.formLogin(config -> config
+				.defaultSuccessUrl("/", true)
+				.failureHandler(new LoginAuthenticationFailureHandler()));
 				
 		return http.build();
-	}
-
-	private OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
-		final DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
-		return userRequest -> {
-			OAuth2User retUser = delegate.loadUser(userRequest);
-
-			// stvaramo objekt User koji ćemo spremiti u bazu podataka
-			String name = retUser.getAttribute("given_name");
-			String surname = retUser.getAttribute("family_name");
-			String email = retUser.getAttribute("email");
-			String username = name + surname;
-			CustomUser newUser = new CustomUser(email, username);
-
-			if (!userRepo.findByUsername(username).isPresent()) {
-				userRepo.save(newUser);
-			}
-
-			return retUser;
-		};
-	}
-
-	@Bean
-	public ClientRegistrationRepository clientRegistrationRepository() {
-		return new InMemoryClientRegistrationRepository(this.googleClientRegistration());
-	}
-
-	private ClientRegistration googleClientRegistration() {
-		return ClientRegistration.withRegistrationId("google").clientId(this.getClientID("google"))
-				.clientSecret(this.getClientSecret("google"))
-				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-				.redirectUri("{baseUrl}/login/oauth2/code/{registrationId}").scope("profile", "email") // openid NI POD
-																										// KOJU CIJENU
-																										// ne smije tu
-																										// biti
-				.authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
-				.tokenUri("https://www.googleapis.com/oauth2/v4/token")
-				.userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
-				.userNameAttributeName(IdTokenClaimNames.SUB).jwkSetUri("https://www.googleapis.com/oauth2/v3/certs")
-				.clientName("Google").build();
-	}
-
-
-	private String getClientID(String provider) {
-		String ID = "not found"; //nisam baš siguran postoji li bolje rješenje za ovo, ali return mora biti izvan try bloka
-		try {
-			if (Objects.equals(provider, "google")) {
-				ID = System.getenv("GOOGLE_ID");
-			} else {
-				throw new Exception("unknown provider");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return ID;
-	}
-
-	private String getClientSecret(String provider) {
-		String secret = "not found";
-		try {
-			if (Objects.equals(provider, "google")) {
-				secret = System.getenv("GOOGLE_SECRET");
-			} else {
-				throw new Exception("unknown provider");
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return secret;
 	}
 
 }
