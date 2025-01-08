@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { resolveSoa } from "dns";
 
-
 //API callovi se trebaju raditi preko enviroment varijabli jer deployana aplikacija ne salje zahtjeve na localHost
 const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080';
 
@@ -39,7 +38,7 @@ const LoginPage = () => {
           body: formData.toString()
           */
         });
-        if (!response.url.includes(`${API_BASE_URL}/login?error`)) {
+        if (response.ok) {
           console.log("Login successful!");
           navigate("/mapRegistered")
         } else {

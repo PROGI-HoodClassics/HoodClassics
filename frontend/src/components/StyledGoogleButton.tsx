@@ -1,4 +1,3 @@
-//API callovi se trebaju raditi preko enviroment varijabli jer deployana aplikacija ne salje zahtjeve na localHost
 import React from 'react';
 import { Button } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
