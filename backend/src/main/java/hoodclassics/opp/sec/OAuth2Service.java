@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import hoodclassics.opp.dao.UserRepository;
-import hoodclassics.opp.domain.RepositoryUser;
+import hoodclassics.opp.domain.HoodClassicsUser;
 
 @Service
 public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -26,7 +26,7 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 		String surname = user.getAttribute("family_name");
 		String email = user.getAttribute("email");
 		String username = name + surname;
-		RepositoryUser newUser = new RepositoryUser(email, username);
+		HoodClassicsUser newUser = new HoodClassicsUser(email, username);
 
 		// TODO: Implement user authorities (in the DB) and add them to the created user here
 		if (!userRepo.findByUsername(username).isPresent()) {
