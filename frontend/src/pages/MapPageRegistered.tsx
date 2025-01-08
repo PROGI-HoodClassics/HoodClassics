@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap} from "react-leaflet";
 import HeaderRegistered from "../components/HeaderRegistered";
 import { usePins } from "../context/PinContext";
 import { useState, useEffect } from "react";
@@ -36,6 +36,52 @@ const MapPageRegistered = () => {
             <UserMap />
         </>
     );
+};
+
+const LocationMarker = () => {
+  const [position, setPosition] = useState(null);
+  const map = useMap();
+  const defaultPosition = [37.7749, -122.4194];
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.warn("Geolocation is not supported by your browser");
+      setPosition(defaultPosition); 
+      return;
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setPosition([latitude, longitude]);
+        map.setView([latitude, longitude], 13); 
+      },
+      (err) => {
+        console.error(err);
+        setPosition(defaultPosition);
+      },
+      { enableHighAccuracy: true }
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId); 
+  }, [map]);
+
+
+  const customIcon = new L.Icon({
+    iconUrl: markerIcon,
+    iconRetinaUrl: markerIcon2x,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41], 
+    iconAnchor: [12, 41], 
+    popupAnchor: [1, -34], 
+    shadowSize: [41, 41], 
+  });
+
+  return position ? (
+    <Marker position={position} icon={customIcon}>
+      <Popup>You are here!</Popup>
+    </Marker>
+  ) : null;
 };
 
 const UserMap = () => {
@@ -83,6 +129,7 @@ const UserMap = () => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="&copy; OpenStreetMap contributors"
             />
+            <LocationMarker />
             <ClickHandler onMapClick={handleMapClick} />
             {pins.map((pin, index) => (
                 <Marker key={pin.story_id || index} position={pin.position} icon={customIcon}>

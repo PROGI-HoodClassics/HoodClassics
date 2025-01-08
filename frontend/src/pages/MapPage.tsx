@@ -1,14 +1,13 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { useState, useEffect } from 'react';
 import Header from "../components/Header";
 import { usePins } from "../context/PinContext";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 const MapPage = () => {
   return (
@@ -86,6 +85,7 @@ const UserMap = () => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution="&copy; OpenStreetMap contributors"
         />
+        <LocationMarker />
         {pins.map((pin, index) => (
             <Marker key={pin.story_id || index} position={pin.position} icon={customIcon}>
               <Popup>
