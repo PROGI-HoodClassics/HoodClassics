@@ -4,7 +4,7 @@ import Header from "../components/Header.tsx";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'; //ovo bi trebao bit png koji je lokalno skinut
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
