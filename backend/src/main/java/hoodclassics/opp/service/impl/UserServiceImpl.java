@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import hoodclassics.opp.dao.UserRepository;
-import hoodclassics.opp.domain.RepositoryUser;
+import hoodclassics.opp.domain.HoodClassicsUser;
 import hoodclassics.opp.service.UserService;
 
 @Service
@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepo;
 
 	@Override
-	public List<RepositoryUser> listUsers() {
+	public List<HoodClassicsUser> listUsers() {
 		return userRepo.findAll();
 	}
 

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import hoodclassics.opp.domain.RepositoryUser;
+import hoodclassics.opp.domain.HoodClassicsUser;
 import hoodclassics.opp.service.UserService;
 
 @RestController
@@ -18,7 +18,7 @@ public class UserController {
 	private UserService userService;
 	
 	@GetMapping("/list")
-	public List<RepositoryUser> listAll() {
+	public List<HoodClassicsUser> listAll() {
 		return userService.listUsers();
 	}
 	

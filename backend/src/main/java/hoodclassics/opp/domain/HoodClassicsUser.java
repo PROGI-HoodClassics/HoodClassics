@@ -10,35 +10,49 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="users")
-public class RepositoryUser {
+public class HoodClassicsUser {
 
 	@Id
 	@GeneratedValue
-	private Long id;
+	@Column(name="user_id")
+	private Long userId;
 	
+	@Column(unique=true, name="email")
 	private String email;
-	@Column(unique = true)
+	
+	@Column(unique=true, name="username")
 	@NonNull
 	private String username;
+	
+	@Column(name="password")
 	private String password;
+	
+	@Column(name="is_moderator")
+	private Boolean isModerator;
 
-	public RepositoryUser(String email, String username, String password) {
+	public HoodClassicsUser(String email, String username, String password, boolean isModerator) {
+		super();
 		this.email = email;
 		this.username = username;
 		this.password = password;
+		this.isModerator = false;
 	}
 	
-	public RepositoryUser(String email, String username) {
+	public HoodClassicsUser(String email, String username) {
+		super();
 		this.email = email;
 		this.username = username;
 		this.password = null;
+		this.isModerator = null;
 	}
 
 	//Spring ovo treba ali ne znam zašto
-	public RepositoryUser() {
+	public HoodClassicsUser() {
+		super();
 		this.email = null;
 		this.username = null;
 		this.password = null;
+		this.isModerator = null;
 	}
 
 	
@@ -60,14 +74,19 @@ public class RepositoryUser {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
-	public Long getId() {
-		return id;
+	public Boolean getIsModerator() {
+		return isModerator;
+	}
+	public void setIsModerator(Boolean isModerator) {
+		this.isModerator = isModerator;
+	}
+	public Long getUserId() {
+		return userId;
 	}
 	
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", email=" + email + ", username="
+		return "User [id=" + userId + ", email=" + email + ", username="
 				+ username + "]";
 	}
 	

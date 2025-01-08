@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import hoodclassics.opp.dao.UserRepository;
-import hoodclassics.opp.domain.RepositoryUser;
+import hoodclassics.opp.domain.HoodClassicsUser;
 
 @Service
 public class UsernamePasswordService implements UserDetailsService {
@@ -20,9 +20,9 @@ public class UsernamePasswordService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		RepositoryUser user = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(
+		HoodClassicsUser user = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(
 				"No user with username " + username));
-		// TODO: Implement user authorities (in the DB) and return them here
+		// TODO: Check if moderator and add authorities here
 		return new User(username, user.getPassword(), Collections.emptyList());
 	}
 
