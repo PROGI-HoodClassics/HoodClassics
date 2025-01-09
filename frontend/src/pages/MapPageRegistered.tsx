@@ -152,13 +152,13 @@ const UserMap = () => {
                                 placeholder="Title"
                                 value={tempPin.title}
                                 onChange={(e) => setTempPin({ ...tempPin, title: e.target.value })}
-                                style={{ width: "100%", marginBottom: "8px", backgroundColor: "white"}}
+                                style={{ width: "100%", marginBottom: "8px", backgroundColor: "white", color: "black"}}
                             />
                             <textarea
                                 placeholder="Text"
                                 value={tempPin.text}
                                 onChange={(e) => setTempPin({ ...tempPin, text: e.target.value })}
-                                style={{ width: "100%", backgroundColor: "white" }}
+                                style={{ width: "100%", backgroundColor: "white", color: "black"}}
                             />
                             <button onClick={saveTempPin} style={{ marginTop: "8px" }}>
                                 Save
