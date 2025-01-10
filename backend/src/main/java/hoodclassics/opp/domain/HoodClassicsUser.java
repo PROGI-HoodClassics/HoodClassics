@@ -43,7 +43,7 @@ public class HoodClassicsUser {
 		this.email = email;
 		this.username = username;
 		this.password = null;
-		this.isModerator = null;
+		this.isModerator = false;
 	}
 
 	//Spring ovo treba ali ne znam zašto
@@ -52,7 +52,7 @@ public class HoodClassicsUser {
 		this.email = null;
 		this.username = null;
 		this.password = null;
-		this.isModerator = null;
+		this.isModerator = false;
 	}
 
 	

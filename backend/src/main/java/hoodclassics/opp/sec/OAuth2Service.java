@@ -1,10 +1,16 @@
 package hoodclassics.opp.sec;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +33,20 @@ public class OAuth2Service implements OAuth2UserService<OAuth2UserRequest, OAuth
 		String email = user.getAttribute("email");
 		String username = name + surname;
 		HoodClassicsUser newUser = new HoodClassicsUser(email, username);
-
-		// TODO: Implement user authorities (in the DB) and add them to the created user here
+		
 		if (!userRepo.findByUsername(username).isPresent()) {
 			userRepo.save(newUser);
 		}
 		
-		return user;
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+		if (userRepo.findByUsername(username).isPresent() && 
+				userRepo.findByUsername(username).get().getIsModerator()) {
+			authorities.add(new SimpleGrantedAuthority("ROLE_MODERATOR"));
+		}
+		
+		// Creating a new object identical to the previous one, but with authorities
+		return new DefaultOAuth2User(authorities, user.getAttributes(), "email");
 	}
 
 }
