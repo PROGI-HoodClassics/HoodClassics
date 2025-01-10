@@ -28,21 +28,19 @@ public class Story {
 	@Column(name="upload_timestamp")
 	private Timestamp uploadTimestamp;
 	
-	@ManyToOne
-	@JoinColumn(name="user_id")
-	private HoodClassicsUser user;
+	@Column(name="user_id")
+	private Long userId;
 	
-	@ManyToOne
-	@JoinColumn(name="town_id")
-	private Town town;
+	@Column(name="town_id")
+	private Long townId;
 
 	public Story(String text, String title, Timestamp uploadTimestamp, Long userId, Long townId) {
 		super();
 		this.text = text;
 		this.title = title;
 		this.uploadTimestamp = uploadTimestamp;
-		this.user = user;
-		this.town = town;
+		this.userId = userId;
+		this.townId = townId;
 	}
 	
 	public Story() {
@@ -50,8 +48,8 @@ public class Story {
 		this.text = null;
 		this.title = null;
 		this.uploadTimestamp = null;
-		this.user = null;
-		this.town = null;
+		this.userId = null;
+		this.townId = null;
 	}
 
 	public String getText() {
@@ -73,10 +71,10 @@ public class Story {
 		this.uploadTimestamp = uploadTimestamp;
 	}
 	public Long getUserId() {
-		return user.getUserId();
+		return userId;
 	}
 	public Long getTownId() {
-		return town.getTownId();
+		return townId;
 	}
 	public Long getStoryId() {
 		return storyId;
@@ -85,7 +83,7 @@ public class Story {
 	@Override
 	public String toString() {
 		return "Story [storyId=" + storyId + ", text=" + text + ", title=" + title + ", uploadTimestamp="
-				+ uploadTimestamp + ", userId=" + user.getUserId() + ", townId=" + town.getTownId() + "]";
+				+ uploadTimestamp + ", userId=" + userId + ", townId=" + townId + "]";
 	}
 	
 }

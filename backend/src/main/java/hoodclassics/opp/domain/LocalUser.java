@@ -11,38 +11,37 @@ import jakarta.persistence.Table;
 @Table(name="local_users")
 public class LocalUser {
 	
+	// TODO: Multiple @Id annotations may not work as intended, look into @EmbeddedId and @Embeddable
 	@Id
-	@ManyToOne
-	@JoinColumn(name="town_id")
-	private Town town;
+	@Column(name="town_id")
+	private Long townId;
 	
 	@Id
-	@ManyToOne
-	@JoinColumn(name="user_id")
-	private HoodClassicsUser user;
+	@Column(name="user_id")
+	private Long userId;
 	
 	public LocalUser(Long townId, Long userId) {
 		super();
-		this.town = town;
-		this.user = user;
+		this.townId = townId;
+		this.userId = userId;
 	}
 	
 	public LocalUser() {
 		super();
-		this.town = null;
-		this.user = null;
+		this.townId = null;
+		this.userId = null;
 	}
 	
 	public Long getTownId() {
-		return town.getTownId();
+		return townId;
 	}
 	public Long getUserId() {
-		return user.getUserId();
+		return userId;
 	}
 
 	@Override
 	public String toString() {
-		return "LocalUser [townId=" + town.getTownId() + ", userId=" + user.getUserId() + "]";
+		return "LocalUser [townId=" + townId + ", userId=" + userId + "]";
 	}
 	
 }

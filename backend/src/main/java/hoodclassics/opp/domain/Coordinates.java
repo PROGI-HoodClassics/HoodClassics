@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 @Table(name="coordinates")
 public class Coordinates {
 
+	// TODO: Multiple @Id annotations may not work as intended, look into @EmbeddedId and @Embeddable
 	@Id
 	@Column(name="longitude")
 	private Double longitude;
@@ -14,27 +15,25 @@ public class Coordinates {
 	@Column(name="latitude")
 	private Double latitude;
 	
-	@ManyToOne
-	@JoinColumn(name="town_id")
-	private Town town;
+	@Column(name="town_id")
+	private Long townId;
 	
-	@ManyToOne
-	@JoinColumn(name="story_id")
-	private Story story;
+	@Column(name="story_id")
+	private Long storyId;
 	
 	public Coordinates() {
 		this.latitude = null;
 		this.longitude = null;
-		this.town = null;
-		this.story = null;
+		this.townId = null;
+		this.storyId = null;
 	}
 
 	public Coordinates(Double longitude, Double latitude, Long townId, Long storyId) {
 		super();
 		this.longitude = longitude;
 		this.latitude = latitude;
-		this.town = town;
-		this.story = story;
+		this.townId = townId;
+		this.storyId = storyId;
 	}
 
 	public Double getLongitude() {
@@ -50,15 +49,15 @@ public class Coordinates {
 		this.latitude = latitude;
 	}
 	public Long getTownId() {
-		return town.getTownId();
+		return townId;
 	}
 	public Long getStoryId() {
-		return story.getStoryId();
+		return storyId;
 	}
 	@Override
 	public String toString() {
-		return "Coordinates [longitude=" + longitude + ", latitude=" + latitude + ", townId=" + town.getTownId() +
-				", storyId=" + story.getStoryId() + "]";
+		return "Coordinates [longitude=" + longitude + ", latitude=" + latitude + ", townId=" + townId +
+				", storyId=" + storyId + "]";
 	}
 	
 }

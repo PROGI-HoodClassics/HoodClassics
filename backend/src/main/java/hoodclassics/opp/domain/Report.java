@@ -1,4 +1,4 @@
-/*package hoodclassics.opp.domain;
+package hoodclassics.opp.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,13 +18,11 @@ public class Report {
 	private Long reportId;
 	
 
-	@ManyToOne
-	@JoinColumn(name="user_id")
+	@Column(name="reporter_user_id")
 	private Long reporterUserId;
 	
 
-	@ManyToOne
-	@JoinColumn(name="user_id")
+	@Column(name="reported_user_id")
 	private Long reportedUserId;
 	
 	@Column(name="description")
@@ -33,8 +31,7 @@ public class Report {
 	@Column(name="report_category")
 	private String reportCategory;
 	
-	@ManyToOne
-	@JoinColumn(name="story_id")
+	@Column(name="story_id")
 	private Long storyId;
 
 	public Report(Long reportId, Long reporterUserId, Long reportedUserId, String description, String reportCategory,
@@ -109,4 +106,3 @@ public class Report {
 	}
 	
 }
-*/

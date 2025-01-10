@@ -11,39 +11,38 @@ import jakarta.persistence.Table;
 @Table(name="is_tagged")
 public class IsTagged {
 
+	// TODO: Multiple @Id annotations may not work as intended, look into @EmbeddedId and @Embeddable
 	@Id
-	@ManyToOne
-	@JoinColumn(name="story_id")
-	private Story story;
+	@Column(name="story_id")
+	private Long storyId;
 	
 	@Id
-	@ManyToOne
-	@JoinColumn(name="tag_id")
-	private Tag tag;
+	@Column(name="tag_id")
+	private Long tagId;
 	
 	public IsTagged() {
 		super();
-		this.story = null;
-		this.tag = null;
+		this.storyId = null;
+		this.tagId = null;
 	}
 
 	public IsTagged(Long storyId, Long tagId) {
 		super();
-		this.story = story;
-		this.tag = tag;
+		this.storyId = storyId;
+		this.tagId = tagId;
 	}
 
 	public Long getStoryId() {
-		return story.getStoryId();
+		return storyId;
 	}
 
 	public Long getTagId() {
-		return tag.getTagId();
+		return tagId;
 	}
 
 	@Override
 	public String toString() {
-		return "IsTagged [storyId=" + story.getStoryId() + ", tagId=" + tag.getTagId() + "]";
+		return "IsTagged [storyId=" + storyId + ", tagId=" + tagId + "]";
 	}
 	
 }

@@ -26,15 +26,14 @@ public class Town {
 	@Column(name="state")
 	private String state;
 	
-	@ManyToOne
-	@JoinColumn(name="country_id")
-	private Country country;
+	@Column(name="country_id")
+	private Long countryId;
 	
 	public Town() {
 		super();
 		this.townName = null;
 		this.county = null;
-		this.country = null;
+		this.countryId = null;
 		this.state = null;
 	}
 
@@ -43,7 +42,7 @@ public class Town {
 		this.townName = townName;
 		this.county = county;
 		this.state = state;
-		this.country = country;
+		this.countryId = countryId;
 	}
 	
 	public String getTownName() {
@@ -65,7 +64,7 @@ public class Town {
 		this.state = state;
 	}
 	public Long getCountryId() {
-		return country.getCountryId();
+		return countryId;
 	}
 	public Long getTownId() {
 		return townId;
@@ -74,7 +73,7 @@ public class Town {
 	@Override
 	public String toString() {
 		return "Town [townId=" + townId + ", townName=" + townName + ", county=" + county + ", state=" + state
-				+ ", countryId=" + country.getCountryId() + "]";
+				+ ", countryId=" + countryId + "]";
 	}
 	
 }

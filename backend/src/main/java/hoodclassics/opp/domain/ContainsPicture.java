@@ -10,28 +10,26 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name="contains_picture")
 public class ContainsPicture {
-
-	// TODO: Multiple @Id annotations may be risky. Refactor to use @EmbeddedId and @Embeddable
+	
+	// TODO: Multiple @Id annotations may not work as intended, look into @EmbeddedId and @Embeddable
 	@Id
-	@ManyToOne
-	@JoinColumn(name="href")
+	@Column(name="href")
 	private String href;
 	
 	@Id
-	@ManyToOne
-	@JoinColumn(name="story_id")
-	private Story story;
+	@Column(name="story_id")
+	private Long storyId;
 	
 	public ContainsPicture() {
 		super();
 		this.href = null;
-		this.story = null;
+		this.storyId = null;
 	}
 	
 	public ContainsPicture(String href, Long storyId) {
 		super();
 		this.href = href;
-		this.story = story;
+		this.storyId = storyId;
 	}
 
 	public String getHref() {
@@ -43,12 +41,12 @@ public class ContainsPicture {
 	}
 
 	public Long getStoryId() {
-		return story.getStoryId();
+		return storyId;
 	}
 
 	@Override
 	public String toString() {
-		return "ContainsPicture [href=" + href + ", storyId=" + story.getStoryId() + "]";
+		return "ContainsPicture [href=" + href + ", storyId=" + storyId + "]";
 	}
 	
 }

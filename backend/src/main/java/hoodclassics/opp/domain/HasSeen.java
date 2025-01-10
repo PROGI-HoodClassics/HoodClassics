@@ -1,4 +1,4 @@
-/*package hoodclassics.opp.domain;
+package hoodclassics.opp.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,14 +11,13 @@ import jakarta.persistence.Table;
 @Table(name="has_seen")
 public class HasSeen {
 	
+	// TODO: Multiple @Id annotations may not work as intended, look into @EmbeddedId and @Embeddable
 	@Id
-	@OneToMany
-	@JoinColumn(name="user_id")
-	private HoodClassicsUser user;
+	@Column(name="user_id")
+	private Long userId;
 	
 	@Id
-	@OneToMany
-	@JoinColumn(name="story_id")
+	@Column(name="story_id")
 	private Long storyId;
 	
 	@Column(name="liked")
@@ -26,19 +25,19 @@ public class HasSeen {
 	
 	public HasSeen() {
 		this.liked = null;
-		this.user = null;
+		this.userId = null;
 		this.storyId = null;
 	}
 
 	public HasSeen(Long userId, Long storyId, Boolean liked) {
 		super();
-		this.user = user;
+		this.userId = userId;
 		this.storyId = storyId;
 		this.liked = liked;
 	}
 
 	public Long getUserId() {
-		return user.getUserId();
+		return userId;
 	}
 	public void setUserId(Long userId) {
 		this.userId = userId;
@@ -61,4 +60,4 @@ public class HasSeen {
 		return "HasSeen [userId=" + userId + ", storyId=" + storyId + ", liked=" + liked + "]";
 	}
 	
-}*/
+}
