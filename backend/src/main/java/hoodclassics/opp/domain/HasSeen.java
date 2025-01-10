@@ -1,4 +1,4 @@
-package hoodclassics.opp.domain;
+/*package hoodclassics.opp.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +14,7 @@ public class HasSeen {
 	@Id
 	@OneToMany
 	@JoinColumn(name="user_id")
-	private Long userId;
+	private HoodClassicsUser user;
 	
 	@Id
 	@OneToMany
@@ -26,19 +26,19 @@ public class HasSeen {
 	
 	public HasSeen() {
 		this.liked = null;
-		this.userId = null;
+		this.user = null;
 		this.storyId = null;
 	}
 
 	public HasSeen(Long userId, Long storyId, Boolean liked) {
 		super();
-		this.userId = userId;
+		this.user = user;
 		this.storyId = storyId;
 		this.liked = liked;
 	}
 
 	public Long getUserId() {
-		return userId;
+		return user.getUserId();
 	}
 	public void setUserId(Long userId) {
 		this.userId = userId;
@@ -61,4 +61,4 @@ public class HasSeen {
 		return "HasSeen [userId=" + userId + ", storyId=" + storyId + ", liked=" + liked + "]";
 	}
 	
-}
+}*/

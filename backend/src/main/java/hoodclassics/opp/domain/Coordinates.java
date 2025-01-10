@@ -1,11 +1,6 @@
 package hoodclassics.opp.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name="coordinates")
@@ -19,27 +14,27 @@ public class Coordinates {
 	@Column(name="latitude")
 	private Double latitude;
 	
-	@OneToMany
+	@ManyToOne
 	@JoinColumn(name="town_id")
-	private Long townId;
+	private Town town;
 	
-	@OneToMany
+	@ManyToOne
 	@JoinColumn(name="story_id")
-	private Long storyId;
+	private Story story;
 	
 	public Coordinates() {
 		this.latitude = null;
 		this.longitude = null;
-		this.townId = null;
-		this.storyId = null;
+		this.town = null;
+		this.story = null;
 	}
 
 	public Coordinates(Double longitude, Double latitude, Long townId, Long storyId) {
 		super();
 		this.longitude = longitude;
 		this.latitude = latitude;
-		this.townId = townId;
-		this.storyId = storyId;
+		this.town = town;
+		this.story = story;
 	}
 
 	public Double getLongitude() {
@@ -55,21 +50,15 @@ public class Coordinates {
 		this.latitude = latitude;
 	}
 	public Long getTownId() {
-		return townId;
-	}
-	public void setTownId(Long townId) {
-		this.townId = townId;
+		return town.getTownId();
 	}
 	public Long getStoryId() {
-		return storyId;
-	}
-	public void setStoryId(Long storyId) {
-		this.storyId = storyId;
+		return story.getStoryId();
 	}
 	@Override
 	public String toString() {
-		return "Coordinates [longitude=" + longitude + ", latitude=" + latitude + ", townId=" + townId + ", storyId="
-				+ storyId + "]";
+		return "Coordinates [longitude=" + longitude + ", latitude=" + latitude + ", townId=" + town.getTownId() +
+				", storyId=" + story.getStoryId() + "]";
 	}
 	
 }

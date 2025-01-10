@@ -16,6 +16,6 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public Story getStory(Long id) {
-        return storyRepo.findById(id);
+        return storyRepo.findByStoryId(id);
     }
 }

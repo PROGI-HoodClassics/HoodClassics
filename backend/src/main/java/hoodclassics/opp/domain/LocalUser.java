@@ -14,41 +14,35 @@ public class LocalUser {
 	@Id
 	@ManyToOne
 	@JoinColumn(name="town_id")
-	private Long townId;
+	private Town town;
 	
 	@Id
 	@ManyToOne
 	@JoinColumn(name="user_id")
-	private Long userId;
+	private HoodClassicsUser user;
 	
 	public LocalUser(Long townId, Long userId) {
 		super();
-		this.townId = townId;
-		this.userId = userId;
+		this.town = town;
+		this.user = user;
 	}
 	
 	public LocalUser() {
 		super();
-		this.townId = null;
-		this.userId = null;
+		this.town = null;
+		this.user = null;
 	}
 	
 	public Long getTownId() {
-		return townId;
-	}
-	public void setTownId(Long townId) {
-		this.townId = townId;
+		return town.getTownId();
 	}
 	public Long getUserId() {
-		return userId;
-	}
-	public void setUserId(Long userId) {
-		this.userId = userId;
+		return user.getUserId();
 	}
 
 	@Override
 	public String toString() {
-		return "LocalUser [townId=" + townId + ", userId=" + userId + "]";
+		return "LocalUser [townId=" + town.getTownId() + ", userId=" + user.getUserId() + "]";
 	}
 	
 }

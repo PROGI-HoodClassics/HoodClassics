@@ -14,44 +14,36 @@ public class IsTagged {
 	@Id
 	@ManyToOne
 	@JoinColumn(name="story_id")
-	private Long storyId;
+	private Story story;
 	
 	@Id
 	@ManyToOne
 	@JoinColumn(name="tag_id")
-	private Long tagId;
+	private Tag tag;
 	
 	public IsTagged() {
 		super();
-		this.storyId = null;
-		this.tagId = null;
+		this.story = null;
+		this.tag = null;
 	}
 
 	public IsTagged(Long storyId, Long tagId) {
 		super();
-		this.storyId = storyId;
-		this.tagId = tagId;
+		this.story = story;
+		this.tag = tag;
 	}
 
 	public Long getStoryId() {
-		return storyId;
-	}
-
-	public void setStoryId(Long storyId) {
-		this.storyId = storyId;
+		return story.getStoryId();
 	}
 
 	public Long getTagId() {
-		return tagId;
-	}
-
-	public void setTagId(Long tagId) {
-		this.tagId = tagId;
+		return tag.getTagId();
 	}
 
 	@Override
 	public String toString() {
-		return "IsTagged [storyId=" + storyId + ", tagId=" + tagId + "]";
+		return "IsTagged [storyId=" + story.getStoryId() + ", tagId=" + tag.getTagId() + "]";
 	}
 	
 }

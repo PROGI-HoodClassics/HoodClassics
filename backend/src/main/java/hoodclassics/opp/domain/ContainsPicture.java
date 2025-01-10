@@ -20,18 +20,18 @@ public class ContainsPicture {
 	@Id
 	@ManyToOne
 	@JoinColumn(name="story_id")
-	private Long storyId;
+	private Story story;
 	
 	public ContainsPicture() {
 		super();
 		this.href = null;
-		this.storyId = null;
+		this.story = null;
 	}
 	
 	public ContainsPicture(String href, Long storyId) {
 		super();
 		this.href = href;
-		this.storyId = storyId;
+		this.story = story;
 	}
 
 	public String getHref() {
@@ -43,16 +43,12 @@ public class ContainsPicture {
 	}
 
 	public Long getStoryId() {
-		return storyId;
-	}
-
-	public void setStoryId(Long storyId) {
-		this.storyId = storyId;
+		return story.getStoryId();
 	}
 
 	@Override
 	public String toString() {
-		return "ContainsPicture [href=" + href + ", storyId=" + storyId + "]";
+		return "ContainsPicture [href=" + href + ", storyId=" + story.getStoryId() + "]";
 	}
 	
 }
