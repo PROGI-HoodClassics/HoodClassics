@@ -66,7 +66,7 @@ public class StoryServiceImpl implements StoryService {
         HoodClassicsUser user = userRepository.findByUsername(username).get(); // napravi check isPresent
         Long user_id = user.getUserId();
 
-        if (!localUserRepository.existsByTownIdAndUserId(town_id, user_id)) {
+        if (!localUserRepository.existsByUserIdTownIdKey_TownIdAndUserIdTownIdKey_UserId(town_id, user_id)) {
             return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
         Story newStory = new Story(text, title, Timestamp.from(Instant.now()), user_id, town_id);
