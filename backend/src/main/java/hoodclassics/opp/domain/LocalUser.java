@@ -1,14 +1,11 @@
 package hoodclassics.opp.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
+import  hoodclassics.opp.domain.compositeKeys.LocalUserId;
 @Entity
 @Table(name="local_users")
+@IdClass(LocalUserId.class)
 public class LocalUser {
 	
 	// TODO: Multiple @Id annotations may not work as intended, look into @EmbeddedId and @Embeddable
