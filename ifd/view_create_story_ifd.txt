@@ -24,7 +24,6 @@ Form:
 
 Request Body:
 	            {
-		    "username": "string"
       	            "text": "string",
 	            "title": "string", 
   	            "latitude": "number", 
