@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/story")
+@RequestMapping("/api/story")
 public class StoryController {
 
     @Autowired

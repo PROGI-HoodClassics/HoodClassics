@@ -27,9 +27,14 @@ public class UserController {
 	
 	// Was used for testing
 	/*
-	@GetMapping("/AuthoritiesTest")
+	@GetMapping("/authoritiestest")
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+	}
+	
+	@GetMapping("/nametest")
+	public String getName() {
+		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 	*/
 	
