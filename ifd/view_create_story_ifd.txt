@@ -24,8 +24,9 @@ Form:
 
 Request Body:
 	            {
-      	        "text": "string",
-	              "title": "string", 
+		    "username": "string"
+      	            "text": "string",
+	            "title": "string", 
   	            "latitude": "number", 
   	            "longitude": "number"
 	            }
@@ -47,7 +48,7 @@ Response Body:
 	             }
 === VIEW STORIES === 
 Form:
-	GET /stories/getstories HTTP/1.1
+	GET api/story/stories HTTP/1.1
 	Host: localhost:8080
 	Content-Type: application/x-www-form-urlencoded
 	Content-Length: 28

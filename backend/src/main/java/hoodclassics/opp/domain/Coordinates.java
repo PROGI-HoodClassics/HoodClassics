@@ -6,14 +6,8 @@ import jakarta.persistence.*;
 @Table(name="coordinates")
 public class Coordinates {
 
-	// TODO: Multiple @Id annotations may not work as intended, look into @EmbeddedId and @Embeddable
-	@Id
-	@Column(name="longitude")
-	private Double longitude;
-	
-	@Id
-	@Column(name="latitude")
-	private Double latitude;
+	@EmbeddedId
+	private LongitudeLatitudeKey longitudeLatitudeKey;
 	
 	@Column(name="town_id")
 	private Long townId;
@@ -22,31 +16,31 @@ public class Coordinates {
 	private Long storyId;
 	
 	public Coordinates() {
-		this.latitude = null;
-		this.longitude = null;
+		this.longitudeLatitudeKey.setLongitude(null);
+		this.longitudeLatitudeKey.setLatitude(null);
 		this.townId = null;
 		this.storyId = null;
 	}
 
 	public Coordinates(Double longitude, Double latitude, Long townId, Long storyId) {
 		super();
-		this.longitude = longitude;
-		this.latitude = latitude;
+		this.longitudeLatitudeKey.setLongitude(longitude);
+		this.longitudeLatitudeKey.setLatitude(latitude);
 		this.townId = townId;
 		this.storyId = storyId;
 	}
 
 	public Double getLongitude() {
-		return longitude;
+		return this.longitudeLatitudeKey.getLongitude();
 	}
 	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
+		this.longitudeLatitudeKey.setLongitude(longitude);
 	}
 	public Double getLatitude() {
-		return latitude;
+		return this.longitudeLatitudeKey.getLatitude();
 	}
 	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
+		this.longitudeLatitudeKey.setLatitude(latitude);
 	}
 	public Long getTownId() {
 		return townId;
@@ -56,7 +50,8 @@ public class Coordinates {
 	}
 	@Override
 	public String toString() {
-		return "Coordinates [longitude=" + longitude + ", latitude=" + latitude + ", townId=" + townId +
+		return "Coordinates [longitude=" + this.longitudeLatitudeKey.getLongitude() + 
+				", latitude=" + this.longitudeLatitudeKey.getLatitude() + ", townId=" + townId +
 				", storyId=" + storyId + "]";
 	}
 	

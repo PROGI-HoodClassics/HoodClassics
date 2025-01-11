@@ -1,6 +1,10 @@
 package hoodclassics.opp.domain;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -11,42 +15,39 @@ import jakarta.persistence.Table;
 @Table(name="contains_picture")
 public class ContainsPicture {
 	
-	// TODO: Multiple @Id annotations may not work as intended, look into @EmbeddedId and @Embeddable
-	@Id
-	@Column(name="href")
-	private String href;
-	
-	@Id
-	@Column(name="story_id")
-	private Long storyId;
+	@EmbeddedId
+	private HrefStoryIdKey hrefStoryIdKey;
 	
 	public ContainsPicture() {
 		super();
-		this.href = null;
-		this.storyId = null;
+		this.hrefStoryIdKey = null;
 	}
 	
 	public ContainsPicture(String href, Long storyId) {
 		super();
-		this.href = href;
-		this.storyId = storyId;
+		this.hrefStoryIdKey.setHref(href);
+		this.hrefStoryIdKey.setStoryId(storyId);
 	}
 
 	public String getHref() {
-		return href;
+		return hrefStoryIdKey.getHref();
 	}
 
 	public void setHref(String href) {
-		this.href = href;
+		this.hrefStoryIdKey.setHref(href);
 	}
 
 	public Long getStoryId() {
-		return storyId;
+		return hrefStoryIdKey.getStoryId();
+	}
+	
+	public void setStoryId(Long storyId) {
+		this.hrefStoryIdKey.setStoryId(storyId);
 	}
 
 	@Override
 	public String toString() {
-		return "ContainsPicture [href=" + href + ", storyId=" + storyId + "]";
+		return "ContainsPicture [href=" + hrefStoryIdKey.getHref() + ", storyId=" + hrefStoryIdKey.getStoryId() + "]";
 	}
 	
 }

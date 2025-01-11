@@ -1,44 +1,42 @@
 package hoodclassics.opp.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
-import  hoodclassics.opp.domain.compositeKeys.LocalUserId;
 @Entity
 @Table(name="local_users")
-@IdClass(LocalUserId.class)
 public class LocalUser {
 	
-	// TODO: Multiple @Id annotations may not work as intended, look into @EmbeddedId and @Embeddable
-	@Id
-	@Column(name="town_id")
-	private Long townId;
-	
-	@Id
-	@Column(name="user_id")
-	private Long userId;
+	@EmbeddedId
+	private UserIdTownIdKey userIdTownIdKey;
 	
 	public LocalUser(Long townId, Long userId) {
 		super();
-		this.townId = townId;
-		this.userId = userId;
+		this.userIdTownIdKey.setTownId(userId);
+		this.userIdTownIdKey.setUserId(userId);
 	}
 	
 	public LocalUser() {
 		super();
-		this.townId = null;
-		this.userId = null;
+		this.userIdTownIdKey = new UserIdTownIdKey();
 	}
 	
 	public Long getTownId() {
-		return townId;
+		return this.userIdTownIdKey.getTownId();
 	}
 	public Long getUserId() {
-		return userId;
+		return this.userIdTownIdKey.getUserId();
 	}
 
 	@Override
 	public String toString() {
-		return "LocalUser [townId=" + townId + ", userId=" + userId + "]";
+		return "LocalUser [townId=" + this.userIdTownIdKey.getTownId() + ", userId="
+	+ this.userIdTownIdKey.getUserId() + "]";
 	}
 	
 }
