@@ -42,6 +42,7 @@ const LoginPage = () => {
           console.log("Login successful!");
           navigate("/mapRegistered")
         } else {
+
           const data = await response.json();
           setError(data.message || "Login failed. Please try again.");
         }

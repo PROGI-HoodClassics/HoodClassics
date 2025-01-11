@@ -5,7 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import MapPage from "./pages/MapPage";
 import MapPageRegistered from "./pages/MapPageRegistered";
 import { PinProvider } from "./context/PinContext";
-import ProfilePage from "./pages/profilePage";
+import ProfilePage from "./pages/ProfilePage";
 
 const App = () => {
     return (
