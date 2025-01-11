@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import MapPage from "./pages/MapPage";
 import MapPageRegistered from "./pages/MapPageRegistered";
 import { PinProvider } from "./context/PinContext";
+import ProfilePage from "./pages/profilePage";
 
 const App = () => {
     return (
@@ -16,6 +17,7 @@ const App = () => {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/map" element={<MapPage />} />
                     <Route path="/mapRegistered" element={<MapPageRegistered />} />
+                    <Route path="/profilePage" element={<ProfilePage />} />
                 </Routes>
             </Router>
         </PinProvider>
