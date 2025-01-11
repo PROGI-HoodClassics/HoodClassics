@@ -1,6 +1,7 @@
 package hoodclassics.opp.domain;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -11,42 +12,36 @@ import jakarta.persistence.Table;
 @Table(name="has_seen")
 public class HasSeen {
 	
-	// TODO: Multiple @Id annotations may not work as intended, look into @EmbeddedId and @Embeddable
-	@Id
-	@Column(name="user_id")
-	private Long userId;
-	
-	@Id
-	@Column(name="story_id")
-	private Long storyId;
+	@EmbeddedId
+	private UserIdStoryIdKey userIdStoryIdKey;
 	
 	@Column(name="liked")
 	private Boolean liked;
 	
 	public HasSeen() {
 		this.liked = null;
-		this.userId = null;
-		this.storyId = null;
+		this.userIdStoryIdKey = new UserIdStoryIdKey();
+		this.liked = false;
 	}
 
 	public HasSeen(Long userId, Long storyId, Boolean liked) {
 		super();
-		this.userId = userId;
-		this.storyId = storyId;
+		this.userIdStoryIdKey.setUserId(userId);
+		this.userIdStoryIdKey.setStoryId(storyId);
 		this.liked = liked;
 	}
 
 	public Long getUserId() {
-		return userId;
+		return this.userIdStoryIdKey.getUserId();
 	}
 	public void setUserId(Long userId) {
-		this.userId = userId;
+		this.userIdStoryIdKey.setUserId(userId);
 	}
 	public Long getStoryId() {
-		return storyId;
+		return this.userIdStoryIdKey.getStoryId();
 	}
 	public void setStoryId(Long storyId) {
-		this.storyId = storyId;
+		this.userIdStoryIdKey.setStoryId(storyId);
 	}
 	public Boolean getLiked() {
 		return liked;
@@ -57,7 +52,8 @@ public class HasSeen {
 
 	@Override
 	public String toString() {
-		return "HasSeen [userId=" + userId + ", storyId=" + storyId + ", liked=" + liked + "]";
+		return "HasSeen [userId=" + this.userIdStoryIdKey.getUserId() 
+		+ ", storyId=" + this.userIdStoryIdKey.getStoryId() + ", liked=" + liked + "]";
 	}
 	
 }
