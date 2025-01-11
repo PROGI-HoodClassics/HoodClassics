@@ -35,7 +35,7 @@ const LoginPage = () => {
         });
         if (response.ok) {
           console.log("Registration successful!");
-          navigate("/mapRegistered")
+          navigate("/profilePage")
         } 
         else {
           const data = await response.json();
