@@ -103,7 +103,8 @@ public class StoryServiceImpl implements StoryService {
             return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
         Story newStory = new Story(text, title, Timestamp.from(Instant.now()), user_id, town_id);
-        storyRepo.save(newStory);
+        Long storyId = storyRepo.save(newStory).getStoryId();
+        coordsRepo.save(new Coordinates(longitude, latitude, town_id, storyId));
         return ResponseEntity.ok("");
     }
 
