@@ -30,6 +30,7 @@ const LoginPage = () => {
         const response = await fetch(`${API_BASE_URL}/register?username=${email}&password=${password}`, {
           method: "POST",
           headers: {
+
           },
           body: formData.toString(),
         });

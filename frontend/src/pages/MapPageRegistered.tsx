@@ -1,14 +1,16 @@
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap} from "react-leaflet";
+import {MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap} from "react-leaflet";
 import HeaderRegistered from "../components/HeaderRegistered";
-import { usePins } from "../context/PinContext";
-import { useState, useEffect } from "react";
-import L from "leaflet";
+import {usePins} from "../context/PinContext";
+import {useState, useEffect} from "react";
+import L, {LatLng, latLng} from "leaflet";
 import "leaflet/dist/leaflet.css";
+
 
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import redPinImage from "../assets/photos/red-pin.png"; // Use your local red pin image
+const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080';
 
 // Custom red pin icon for user location
 const redIcon = new L.Icon({
@@ -28,67 +30,32 @@ const customIcon = new L.Icon({
     shadowSize: [41, 41],
 });
 
+
+const customMarker = new L.Icon({
+    iconUrl: "https://unpkg.com/leaflet@1.5.1/dist/images/marker-icon.png",
+    iconSize: [25, 41],
+    iconAnchor: [10, 41],
+    popupAnchor: [2, -40]
+});
+
 const MapPageRegistered = () => {
     return (
         <>
-            <HeaderRegistered />
+            <HeaderRegistered/>
             <div>Add Pins</div>
-            <UserMap />
+            <UserMap/>
         </>
     );
 };
 
-const LocationMarker = () => {
-  const [position, setPosition] = useState(null);
-  const map = useMap();
-  const defaultPosition = [37.7749, -122.4194];
 
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      console.warn("Geolocation is not supported by your browser");
-      setPosition(defaultPosition); 
-      return;
-    }
-
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setPosition([latitude, longitude]);
-        map.setView([latitude, longitude], 13); 
-      },
-      (err) => {
-        console.error(err);
-        setPosition(defaultPosition);
-      },
-      { enableHighAccuracy: true }
-    );
-
-    return () => navigator.geolocation.clearWatch(watchId); 
-  }, [map]);
-
-
-  const customIcon = new L.Icon({
-    iconUrl: markerIcon,
-    iconRetinaUrl: markerIcon2x,
-    shadowUrl: markerShadow,
-    iconSize: [25, 41], 
-    iconAnchor: [12, 41], 
-    popupAnchor: [1, -34], 
-    shadowSize: [41, 41], 
-  });
-
-  return position ? (
-    <Marker position={position} icon={customIcon}>
-      <Popup>You are here!</Popup>
-    </Marker>
-  ) : null;
-};
 
 const UserMap = () => {
     const initialPosition = [45.8004, 15.9714];
-    const { pins, addPin } = usePins();
+    const {pins, addPin, updatePins} = usePins();
     const [tempPin, setTempPin] = useState<{ position: [number, number]; title: string; text: string } | null>(null);
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+
 
     // Get user's location
     useEffect(() => {
@@ -107,8 +74,12 @@ const UserMap = () => {
     }, []);
 
     const handleMapClick = (latlng: [number, number]) => {
-        setTempPin({ position: latlng, title: "", text: "" });
+        setTempPin({position: latlng, title: "", text: ""});
     };
+
+    const handleMoveEnd = async (latLng: [number, number]) => {
+        await updatePins(pins, latLng);
+    }
 
     const saveTempPin = async () => {
         if (tempPin?.title && tempPin.text) {
@@ -119,19 +90,30 @@ const UserMap = () => {
         }
     };
 
+
     return (
         <MapContainer
             center={initialPosition}
             zoom={13}
-            style={{ width: "100vw", height: "100vh" }}
+            style={{width: "100vw", height: "100vh"}}
         >
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="&copy; OpenStreetMap contributors"
             />
-            <LocationMarker />
-            <ClickHandler onMapClick={handleMapClick} />
-            {pins.map((pin, index) => (
+            <MoveEndHandler onMoveEnd={handleMoveEnd}/>
+            {
+                pins.filter((pin) => {
+                    return pin != undefined
+                }).map((pin, index) => {
+                    return (
+                        <Marker key={pin.story_id || index} position={pin.position} icon={customMarker}>
+                        </Marker>
+                    )
+                })
+            }
+            <ClickHandler onMapClick={handleMapClick}/>
+            {pins.filter((pin)=>{return pin != undefined}).map((pin, index) => (
                 <Marker key={pin.story_id || index} position={pin.position} icon={customIcon}>
                     <Popup>
                         <strong>{pin.title}</strong>
@@ -151,16 +133,16 @@ const UserMap = () => {
                                 type="text"
                                 placeholder="Title"
                                 value={tempPin.title}
-                                onChange={(e) => setTempPin({ ...tempPin, title: e.target.value })}
-                                style={{ width: "100%", marginBottom: "8px", backgroundColor: "white", color: "black"}}
+                                onChange={(e) => setTempPin({...tempPin, title: e.target.value})}
+                                style={{width: "100%", marginBottom: "8px", backgroundColor: "white", color: "black"}}
                             />
                             <textarea
                                 placeholder="Text"
                                 value={tempPin.text}
-                                onChange={(e) => setTempPin({ ...tempPin, text: e.target.value })}
-                                style={{ width: "100%", backgroundColor: "white", color: "black"}}
+                                onChange={(e) => setTempPin({...tempPin, text: e.target.value})}
+                                style={{width: "100%", backgroundColor: "white", color: "black"}}
                             />
-                            <button onClick={saveTempPin} style={{ marginTop: "8px" }}>
+                            <button onClick={saveTempPin} style={{marginTop: "8px"}}>
                                 Save
                             </button>
                         </div>
@@ -178,7 +160,7 @@ const UserMap = () => {
     );
 };
 
-const ClickHandler = ({ onMapClick }: { onMapClick: (latlng: [number, number]) => void }) => {
+const ClickHandler = ({onMapClick}: { onMapClick: (latlng: [number, number]) => void }) => {
     useMapEvents({
         click: (e) => {
             const latlng: [number, number] = [e.latlng.lat, e.latlng.lng];
@@ -186,6 +168,17 @@ const ClickHandler = ({ onMapClick }: { onMapClick: (latlng: [number, number]) =
         },
     });
 
+    return null;
+};
+
+const MoveEndHandler = ({onMoveEnd}: { onMoveEnd: (latLng: [number, number]) => Promise<void> }) => {
+    const map = useMapEvents({
+        moveend: async () => {
+            const position = map.getCenter();
+//            const zoom = map.getZoom();
+            await onMoveEnd([position.lat, position.lng])
+        },
+    });
     return null;
 };
 

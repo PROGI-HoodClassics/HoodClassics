@@ -1,61 +1,78 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import axios from "axios";
+import React, {createContext, useContext, useEffect, useState, ReactNode} from "react";
+import {Pin} from "@mui/icons-material";
+
+const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080';
 
 type Pin = {
     story_id?: string; // Optional for newly created pins
     position: [number, number];
-    text: string;
-    title: string;
+    text?: string;
+    title?: string;
     likes?: number;
-    dislikes?: number;
     user_id?: number;
 };
 
 interface PinContextType {
     pins: Pin[];
-    addPin: (pin: Omit<Pin, "story_id" | "likes" | "dislikes" | "user_id">) => Promise<void>;
-    fetchPins: () => Promise<void>;
+    addPin: (pin: Omit<Pin, "story_id" | "likes" | "user_id">) => Promise<void>;
+    updatePins: (pins: Array<Pin>, latLng: [number, number]) => Promise<void>;
 }
 
 const PinContext = createContext<PinContextType | undefined>(undefined);
 
-export const PinProvider = ({ children }: { children: ReactNode }) => {
+export const PinProvider = ({children}: { children: ReactNode }) => {
     const [pins, setPins] = useState<Pin[]>([]);
 
-    const fetchPins = async () => {
-        try {
-            const response = await axios.get("/api/story/all"); // Adjust endpoint if necessary
-            const fetchedPins = response.data.map((story: any) => ({
-                story_id: story.story_id,
-                position: [story.latitude, story.longitude],
-                text: story.text,
-                title: story.title,
-                likes: story.likes,
-                dislikes: story.dislikes,
-                user_id: story.user_id,
-            }));
-            setPins(fetchedPins);
-        } catch (error) {
-            console.error("Failed to fetch pins:", error);
-        }
-    };
+    const updatePins = async (pins: Array<Pin>, latLng: [number, number]) => {
 
-    const addPin = async (newPin: Omit<Pin, "story_id" | "likes" | "dislikes" | "user_id">) => {
+        const response = await fetch(`${API_BASE_URL}/api/story/stories?longitude=${latLng[0]}&latitude=${latLng[1]}&radius=10`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        })
+        const responseBody = await response.json()
+        const fetchedPins = responseBody.map((story, index)=>{
+            return {
+                story_id: story.story_id,
+                position: [story.longitude, story.latitude],
+                likes: story.likes,
+            }
+        });
+
+
+
+
+        setPins((prevPins) => {
+            const newPins = fetchedPins.filter((fetchedPin)=> !prevPins.find((oldPin)=> oldPin.story_id == fetchedPin.story_id))
+
+            return [...prevPins, ...newPins]
+        });
+    }
+
+    const addPin = async (newPin: Omit<Pin, "story_id" | "likes" | "user_id">) => {
         try {
-            const response = await axios.post("/api/story", {
-                text: newPin.text,
-                title: newPin.title,
-                latitude: newPin.position[0],
-                longitude: newPin.position[1],
-            });
+            const response = await fetch(`${API_BASE_URL}/api/story`, {
+                method: "POST",
+                headers: {
+                    "content-type":"application/json;charset=UTF-8"
+                },
+                body: JSON.stringify({
+                    text: newPin.text,
+                    title: newPin.title,
+                    latitude: newPin.position[0],
+                    longitude: newPin.position[1],
+                })
+            })
+
+            let body = await response.json()
             const createdPin = {
-                story_id: response.data.story_id,
-                position: [response.data.latitude, response.data.longitude],
-                text: response.data.text,
-                title: response.data.title,
-                likes: response.data.likes,
-                dislikes: response.data.dislikes,
-                user_id: response.data.user_id,
+                story_id: body.story_id,
+                position: [body.latitude, body.longitude],
+                text: body.text,
+                title: body.title,
+                likes: body.likes,
+                user_id: body.user_id,
             };
             setPins((prevPins) => [...prevPins, createdPin]);
         } catch (error) {
@@ -64,11 +81,10 @@ export const PinProvider = ({ children }: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        fetchPins(); // Fetch pins on context initialization
     }, []);
 
     return (
-        <PinContext.Provider value={{ pins, addPin, fetchPins }}>
+        <PinContext.Provider value={{pins, addPin, updatePins}}>
             {children}
         </PinContext.Provider>
     );
