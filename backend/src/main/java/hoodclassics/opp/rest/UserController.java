@@ -29,8 +29,8 @@ public class UserController {
 	}
 
 	public static class LocationRequest {
-		private double latitude;
-		private double longitude;
+		public Double latitude;
+		public Double longitude;
 	}
 
 	// Was used for testing
