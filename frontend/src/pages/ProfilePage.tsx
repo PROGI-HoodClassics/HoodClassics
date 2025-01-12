@@ -1,61 +1,79 @@
 import React, { useState } from "react";
-import { Box, Container, TextField, Typography, IconButton, Button } from "@mui/material";
-import { PhotoCamera, Add, Delete } from "@mui/icons-material";
+import {
+  Box,
+  Container,
+  Typography,
+  IconButton,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import Header from "../components/Header";
-import muralImage from "../assets/photos/mural.png";
-import pfp from "../assets/photos/pfp.jpg";
+
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080'; 
 
 const ProfilePage: React.FC = () => {
-  const [user, setUser] = useState({
-    name: "",
-    surname: "",
-    placesOfLiving: [""], 
+  const [placesOfLiving, setPlacesOfLiving] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const customIcon = new L.Icon({
+    iconUrl: markerIcon,
+    iconRetinaUrl: markerIcon2x,
+    shadowUrl: markerShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
   });
 
-  const [profileImage, setProfileImage] = useState(pfp);
+  const SelectLocationMap = () => {
+    useMapEvents({
+      click: (e) => {
+        const { lat, lng } = e.latlng;
+        setPlacesOfLiving((prev) => [...prev, { lat, lng }]);
+      },
+    });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
-    const { name, value } = e.target;
+    return null;
+  };
 
-    if (name === "placesOfLiving" && index !== undefined) {
-      setUser((prevUser) => {
-        const updatedPlaces = [...prevUser.placesOfLiving];
-        updatedPlaces[index] = value;
-        return {
-          ...prevUser,
-          placesOfLiving: updatedPlaces,
-        };
+  const removePlace = (index: number) => {
+    setPlacesOfLiving((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const savePlaces = async () => {
+    try {
+      const formData = new URLSearchParams();
+      placesOfLiving.forEach((place, index) => {
+        formData.append(`towns[${index}][lat]`, place.lat.toString());
+        formData.append(`towns[${index}][lng]`, place.lng.toString());
       });
-    } else {
-      setUser((prevUser) => ({
-        ...prevUser,
-        [name]: value,
-      }));
-    }
-  };
 
-  const addPlaceOfLiving = () => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      placesOfLiving: [...prevUser.placesOfLiving, ""],
-    }));
-  };
+      const response = await fetch(`${API_BASE_URL}/user/town`, {
+        method: "POST",
+        headers: {
+        },
+        body: formData.toString(),
+      });
 
-  const removePlaceOfLiving = (index: number) => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      placesOfLiving: prevUser.placesOfLiving.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      if (response.ok) {
+        console.log("Places saved successfully!");
+      } else {
+        const data = await response.json();
+        setError(data.message || "Failed to save places. Please try again.");
+      }
+    } catch (error) {
+      setError("An error occurred while saving places. Please try again.");
+      console.error("Save places request error:", error);
     }
   };
 
@@ -67,7 +85,6 @@ const ProfilePage: React.FC = () => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundImage: `url(${muralImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -85,148 +102,80 @@ const ProfilePage: React.FC = () => {
       <Box
         sx={{
           position: "absolute",
-          top: "13%",
-          width: "auto",
-          maxWidth: "400px",
-          height: "auto",
-          maxHeight: "640px",
+          top: "14%",
+          width: "90%",
+          maxWidth: "800px",
           backgroundColor: "white",
           borderRadius: 4,
           overflow: "hidden",
+          padding: 4,
         }}
       >
-        <Container maxWidth="xs">
-          <Box sx={{ mt: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <Box
+        <Typography variant="h5" align="center" sx={{ mb: 2, color: "black", fontWeight: "bold" }}>
+          Select Your Places of Living
+        </Typography>
+
+        {}
+        <Box sx={{ height: "400px", width: "100%", mb: 4 }}>
+          <MapContainer
+            center={[45.8004, 15.9714]} 
+            zoom={13}
+            style={{ width: "100%", height: "100%" }}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="&copy; OpenStreetMap contributors"
+            />
+            <SelectLocationMap />
+            {placesOfLiving.map((place, index) => (
+              <Marker
+                key={index}
+                position={[place.lat, place.lng]}
+                icon={customIcon}
+              />
+            ))}
+          </MapContainer>
+        </Box>
+
+        {}
+        <Typography variant="h6" sx={{ mb: 2, color: "black", fontWeight: "bold" }}>
+          Selected Places:
+        </Typography>
+        <List>
+          {placesOfLiving.map((place, index) => (
+            <ListItem
+              key={index}
               sx={{
-                width: "115px",
-                height: "115px",
-                borderRadius: "50%",
-                backgroundColor: "#0",
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
-                justifyContent: "center",
-                position: "relative",
-                marginBottom: 3,
-                overflow: "hidden",
-                border: "2px solid #ccc",
+                color: "black",
+                fontWeight: "bold",
               }}
             >
-              <img
-                src={profileImage}
-                alt="Profile"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  borderRadius: "50%",
-                  position: "relative",
-                }}
+              <ListItemText
+                primary={`Lat: ${place.lat.toFixed(4)}, Lng: ${place.lng.toFixed(4)}`}
               />
-              <IconButton
-                sx={{
-                  position: "absolute",
-                  bottom: 10,
-                  right: 15,
-                  backgroundColor: "rgba(104, 105, 102, 0.5)",
-                  borderRadius: "50%",
-                  padding: "8px",
-                  transition: "background-color 0.3s, transform 0.3s",
-                  "&:hover": {
-                    backgroundColor: "rgba(104, 105, 102, 0.8)",
-                    transform: "scale(1.2)",
-                  },
-                  "& svg": {
-                    color: "white",
-                  },
-                }}
-                size="large"
-                aria-label="Upload photo"
-                onClick={() => document.getElementById("file-input")?.click()}
-              >
-                <PhotoCamera sx={{ fontSize: "1.5rem" }} />
+              <IconButton onClick={() => removePlace(index)}>
+                <Delete />
               </IconButton>
-              <input
-                id="file-input"
-                type="file"
-                style={{ display: "none" }}
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-            </Box>
+            </ListItem>
+          ))}
+        </List>
 
-            <Typography variant="h5" align="center" color="black">
-              Edit profile
-            </Typography>
-            <form>
-              <TextField
-                label="Name"
-                name="name"
-                fullWidth
-                margin="normal"
-                value={user.name}
-                onChange={handleChange}
-              />
-              <TextField
-                label="Surname"
-                name="surname"
-                fullWidth
-                margin="normal"
-                value={user.surname}
-                onChange={handleChange}
-              />
+        {error && (
+          <Typography sx={{ mt: 2, color: "red" }}>{error}</Typography>
+        )}
 
-              {}
-              <Box
-                sx={{
-                  width: "100%", 
-                  maxHeight: "200px", 
-                  overflowY: "auto",  
-                  mb: 2, 
-                }}
-              >
-                {user.placesOfLiving.map((place, index) => (
-                  <Box key={index} display="flex" alignItems="center" mb={2}>
-                    <TextField
-                      label={`Place of Living ${index + 1}`}
-                      name="placesOfLiving"
-                      fullWidth
-                      margin="normal"
-                      value={place}
-                      onChange={(e) => handleChange(e, index)}
-                    />
-                    <IconButton
-                      onClick={() => removePlaceOfLiving(index)}
-                      sx={{ ml: 2 }}
-                      aria-label="Remove place"
-                    >
-                      <Delete />
-                    </IconButton>
-                  </Box>
-                ))}
-              </Box>
-
-              <Button
-                onClick={addPlaceOfLiving}
-                startIcon={<Add />}
-                sx={{ mt: 2 }}
-                variant="outlined"
-              >
-                Add Place
-              </Button>
-            </form>
-            <Box sx={{ mt: 4, textAlign: "left", width: "100%" }}>
-              <Typography><strong>Name:</strong> {user.name}</Typography>
-              <Typography><strong>Surname:</strong> {user.surname}</Typography>
-              <Typography><strong>Places of Living:</strong></Typography>
-              <ul>
-                {user.placesOfLiving.map((place, index) => (
-                  <li key={index}>{place}</li>
-                ))}
-              </ul>
-            </Box>
-          </Box>
-        </Container>
+        <Box sx={{ mt: 4 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={savePlaces}
+          >
+            Save Places
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
