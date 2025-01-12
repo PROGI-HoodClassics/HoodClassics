@@ -35,7 +35,7 @@ public class LocalUser {
 
 	@Override
 	public String toString() {
-		return "LocalUser [townId=" + this.userIdTownIdKey.getTownId() + ", userId=" 
+		return "LocalUser [townId=" + this.userIdTownIdKey.getTownId() + ", userId="
 	+ this.userIdTownIdKey.getUserId() + "]";
 	}
 	
