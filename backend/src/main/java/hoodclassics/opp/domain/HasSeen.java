@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 public class HasSeen {
 	
 	@EmbeddedId
-	private UserIdStoryIdKey userIdStoryIdKey;
+	private UserIdStoryIdKey userIdStoryIdKey = new UserIdStoryIdKey();
 	
 	@Column(name="liked")
 	private Boolean liked;

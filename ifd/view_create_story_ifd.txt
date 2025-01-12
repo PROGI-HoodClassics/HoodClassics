@@ -48,15 +48,9 @@ Response Body:
 	             }
 === VIEW STORIES === 
 Form:
-	GET api/story/stories HTTP/1.1
-	Host: localhost:8080
-	Content-Type: application/x-www-form-urlencoded
-	Content-Length: 28
-
-	longitude=1234&latitude=1234&radius=10
+	GET /api/story/stories?longitude=1.0&latitude=1.0&radius=10 HTTP/1.1
 Reponses:
 	- success - 200 OK "OK"
-	- no story_id in database - 404 NOT FOUND "That story doesn't exist"
 
 Response Body:
 		[

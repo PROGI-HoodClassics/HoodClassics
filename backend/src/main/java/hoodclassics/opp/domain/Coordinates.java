@@ -7,7 +7,8 @@ import jakarta.persistence.*;
 public class Coordinates {
 
 	@EmbeddedId
-	private LongitudeLatitudeKey longitudeLatitudeKey;
+	// TODO: Setirati ga na non-null u konstruktorima. Takoder u ostatku baze.
+	private LongitudeLatitudeKey longitudeLatitudeKey = new LongitudeLatitudeKey();
 	
 	@Column(name="town_id")
 	private Long townId;

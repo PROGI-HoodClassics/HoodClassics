@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface StoryRepository extends JpaRepository<Story, Long> {
 
-    Story findByStoryId(Long id);
+    Story findByStoryId(Long id); 
 }

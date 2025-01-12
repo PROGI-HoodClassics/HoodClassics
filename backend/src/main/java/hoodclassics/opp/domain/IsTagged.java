@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 public class IsTagged {
 
 	@EmbeddedId
-	private StoryIdTagIdKey storyIdTagIdKey;
+	private StoryIdTagIdKey storyIdTagIdKey = new StoryIdTagIdKey();
 	
 	public IsTagged() {
 		super();

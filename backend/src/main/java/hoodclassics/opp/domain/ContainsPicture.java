@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 public class ContainsPicture {
 	
 	@EmbeddedId
-	private HrefStoryIdKey hrefStoryIdKey;
+	private HrefStoryIdKey hrefStoryIdKey = new HrefStoryIdKey();
 	
 	public ContainsPicture() {
 		super();

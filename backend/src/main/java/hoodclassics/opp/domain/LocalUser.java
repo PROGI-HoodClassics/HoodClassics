@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 public class LocalUser {
 	
 	@EmbeddedId
-	private UserIdTownIdKey userIdTownIdKey;
+	private UserIdTownIdKey userIdTownIdKey = new UserIdTownIdKey();
 	
 	public LocalUser(Long townId, Long userId) {
 		super();
