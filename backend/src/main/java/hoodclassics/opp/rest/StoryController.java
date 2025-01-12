@@ -33,12 +33,16 @@ public class StoryController {
     }
 
     @PostMapping
-    @ResponseBody()
-    public ResponseEntity<String> postStory(@RequestParam String text,
-                                            @RequestParam String title,
-                                            @RequestParam Double latitude,
-                                            @RequestParam Double longitude) {
-        return storyService.createStory(text, title, latitude, longitude);
+    public ResponseEntity<String> postStory(@RequestBody CreateStoryBody body) {
+        return storyService.createStory(body.text, body.title, body.latitude, body.longitude);
+    }
+
+
+    public static class CreateStoryBody{
+        public String text;
+        public String title;
+        public Double latitude;
+        public Double longitude;
     }
 
 }
