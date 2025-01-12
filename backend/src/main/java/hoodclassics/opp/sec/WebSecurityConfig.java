@@ -39,7 +39,7 @@ public class WebSecurityConfig {
 		.oauth2Login(config -> config
 				.clientRegistrationRepository(clientRegistrationRepository)
 				.userInfoEndpoint(userInfo -> userInfo.userService(oAuth2Service))
-				.successHandler(new SimpleUrlAuthenticationSuccessHandler("/")))
+				.successHandler(new SimpleUrlAuthenticationSuccessHandler("/mapRegistered")))
 		.formLogin(config -> config
 				.defaultSuccessUrl("/", true)
 				.failureHandler(new LoginAuthenticationFailureHandler()));

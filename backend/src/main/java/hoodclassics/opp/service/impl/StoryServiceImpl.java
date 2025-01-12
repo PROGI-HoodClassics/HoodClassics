@@ -18,13 +18,13 @@ import org.springframework.http.HttpStatus;
 import java.sql.Timestamp;
 import java.time.Instant;
 
-/*
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-*/
+
 @Service
 public class StoryServiceImpl implements StoryService {
-    //private static final Logger logger = LoggerFactory.getLogger(StoryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(StoryService.class);
 
     @Autowired
     private StoryRepository storyRepo;
@@ -49,21 +49,17 @@ public class StoryServiceImpl implements StoryService {
                                       String title,
                                       Double latitude,
                                       Double longitude) {
-        String adress = this.geocodingService.reverseGeocode(latitude, longitude);
-        String townName = this.geocodingService.extractTownFromAddress(adress);
+        String address = this.geocodingService.reverseGeocode(latitude, longitude);
+        String townName = this.geocodingService.extractLocationFromAddress(address);
+        String country = this.geocodingService.extractCountryFromAddress(address);  //primjer kako se dohvaća država
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        /*
-        logger.debug(text);
-        logger.debug(adress);
-        logger.debug(townName);
-        logger.debug(username);
-        */
+
         Town town = townRepository.findByTownName(townName);
         if (town == null) {
             return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
         }
         Long town_id = town.getTownId();
-        HoodClassicsUser user = userRepository.findByUsername(username).get(); // napravi check isPresent
+        HoodClassicsUser user = userRepository.findByUsername(username).get();
         Long user_id = user.getUserId();
 
         if (!localUserRepository.existsByUserIdTownIdKey_TownIdAndUserIdTownIdKey_UserId(town_id, user_id)) {

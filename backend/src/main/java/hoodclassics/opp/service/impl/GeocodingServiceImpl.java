@@ -2,10 +2,13 @@ package hoodclassics.opp.service.impl;
 import hoodclassics.opp.service.GeocodingService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+/*
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+*/
 @Service
 public class GeocodingServiceImpl implements GeocodingService {
 
@@ -17,64 +20,77 @@ public class GeocodingServiceImpl implements GeocodingService {
         this.objectMapper = new ObjectMapper();
     }
 
-    // iz koordinata dobiješ adresu lokacije
+
+    @Override
     public String reverseGeocode(double latitude, double longitude) {
+        //Logger logger = LoggerFactory.getLogger(GeocodingServiceImpl.class);
+
         String url = "https://nominatim.openstreetmap.org/reverse?lat="
                 + latitude
                 + "&lon="
                 + longitude
                 + "&format=json&email=your_email@example.com";
 
-        String jsonResponse = restTemplate.getForObject(url, String.class);
         try {
+            String jsonResponse = restTemplate.getForObject(url, String.class);
+            //logger.debug("Nominatim API Response: {}", jsonResponse);
             JsonNode rootNode = objectMapper.readTree(jsonResponse);
             JsonNode addressNode = rootNode.get("address");
 
             if (addressNode != null) {
-                String city = addressNode.get("city") != null ? addressNode.get("city").asText() : "Unknown City";
-                String country = addressNode.get("country") != null ? addressNode.get("country").asText() : "Unknown Country";
-                return city + ", " + country;
+                String location = getBestLocation(addressNode);
+                String country = getField(addressNode, "country");
+
+                return location + ", " + (country != null ? country : "Unknown Country");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "Location not found!";
         }
-
         return "Location not found!";
     }
 
-    // iz adrese dobiješ koordinate
-    public String forwardGeocode(String address) {
-        String url = UriComponentsBuilder.fromHttpUrl("https://nominatim.openstreetmap.org/search")
-                .queryParam("q", address)
-                .queryParam("format", "json")
-                .queryParam("email", "your_email@example.com")
-                .build().toUriString();
 
-        String jsonResponse = restTemplate.getForObject(url, String.class);
-
-        try {
-            JsonNode rootNode = objectMapper.readTree(jsonResponse);
-            if (rootNode.isArray() && rootNode.size() > 0) {
-                JsonNode firstResult = rootNode.get(0);
-                double lat = firstResult.get("lat").asDouble();
-                double lon = firstResult.get("lon").asDouble();
-                return "Latitude: " + lat + ", Longitude: " + lon;
+    private String getBestLocation(JsonNode addressNode) {
+        String[] locationFields = {"town", "city", "city_district", "village"};
+        for (String field : locationFields) {
+            if (addressNode.has(field) && !addressNode.get(field).asText().isBlank()) {
+                return addressNode.get(field).asText();
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
-        return "Address not found!";
+        return "Unknown City";
     }
+
+    private String getField(JsonNode node, String fieldName) {
+        return node.has(fieldName) ? node.get(fieldName).asText() : null;
+    }
+
+
     @Override
-    public String extractTownFromAddress(String address) {
-        if (address != null && !address.isEmpty()) {
+    public String extractLocationFromAddress(String address) {
+        if (address != null && !address.isBlank()) {
+            String[] parts = address.split(",");
+            for (String part : parts) {
+                String trimmedPart = part.trim();
+                if (!trimmedPart.isEmpty()) {
+                    return trimmedPart;
+                }
+            }
+        }
+        return "Location not found!";
+    }
+
+    @Override
+    public String extractCountryFromAddress(String address) {
+        if (address != null && !address.isBlank()) {
             String[] parts = address.split(",");
             if (parts.length > 0) {
-                return parts[0].trim();
+                String lastPart = parts[parts.length - 1].trim();
+                if (!lastPart.isEmpty()) {
+                    return lastPart;
+                }
             }
         }
-        return "Town not found!";
+        return "Country not found!";
     }
 }
