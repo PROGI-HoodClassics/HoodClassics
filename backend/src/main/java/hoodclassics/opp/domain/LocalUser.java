@@ -17,7 +17,7 @@ public class LocalUser {
 	
 	public LocalUser(Long townId, Long userId) {
 		super();
-		this.userIdTownIdKey.setTownId(userId);
+		this.userIdTownIdKey.setTownId(townId);
 		this.userIdTownIdKey.setUserId(userId);
 	}
 	

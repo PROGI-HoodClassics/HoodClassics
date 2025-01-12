@@ -10,4 +10,5 @@ public interface UserRepository extends JpaRepository<HoodClassicsUser, Long> {
 
     Optional<HoodClassicsUser> findByUsername(String username);
     Optional<HoodClassicsUser> findByUsernameAndPassword(String username, String password);
+    Optional<HoodClassicsUser> findByEmail(String email);
 }
