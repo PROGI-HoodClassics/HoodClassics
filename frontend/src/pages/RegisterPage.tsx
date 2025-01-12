@@ -35,7 +35,21 @@ const LoginPage = () => {
         });
         if (response.ok) {
           console.log("Registration successful!");
-          navigate("/profilePage")
+
+          const response1 = await fetch(`${API_BASE_URL}/login?username=${email}&password=${password}`, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    /*
+                    body: formData.toString()
+                    */
+                  });
+          if (response1.ok) {
+            navigate("/profilePage")
+          } else {
+            console.error("We have a problem.")
+          }
         } 
         else {
           const data = await response.json();
