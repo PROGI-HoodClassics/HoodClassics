@@ -9,9 +9,17 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/")
 public class HomeController {
 
-	@GetMapping("/")
+	@GetMapping({"/", "/map", "/mapRegistered"})
 	public ModelAndView welcome() {
 		return new ModelAndView("forward:index.html");
 	}
+	
+	// For testing purposes
+	/*
+	@GetMapping("/")
+	public String welcome() {
+		return "Welcome!";
+	}
+	*/
 	
 }
