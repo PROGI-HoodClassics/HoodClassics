@@ -1,6 +1,7 @@
 package hoodclassics.opp.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import hoodclassics.opp.dao.LocalUserRepository;
 import hoodclassics.opp.dao.TownRepository;
@@ -34,14 +35,21 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void addToTown(double latitude, double longitude) {
-		String address = geocodingService.reverseGeocode(latitude, longitude);
-		String country = geocodingService.extractCountryFromAddress(address);
-		String townName = geocodingService.extractLocationFromAddress(address);
-
-		Town town = townRepo.findByTownName(townName);
+		Optional<String> maybeAddress = geocodingService.reverseGeocode(latitude, longitude);
+		if (maybeAddress.isEmpty()) {
+			System.out.println("The coordinates don't match a valid location");
+			return;
+		}
+		Optional<String> maybeCountry = geocodingService.extractCountryFromAddress(maybeAddress.get());
+		Optional<String> maybeTownName = geocodingService.extractLocationFromAddress(maybeAddress.get());
+		if (maybeCountry.isEmpty() || maybeTownName.isEmpty()) {
+			System.out.println("Invalid Town or Country");
+			return;
+		}
+		Town town = townRepo.findByTownName(maybeTownName.get());
 		if (town == null) {
 			Town newTown = new Town();
-			newTown.setTownName(townName);
+			newTown.setTownName(maybeTownName.get());
 			newTown.setCounty(null);
 			newTown.setState(null);
 			town = newTown;
