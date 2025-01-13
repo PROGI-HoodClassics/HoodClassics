@@ -52,9 +52,11 @@ const MapPageRegistered = () => {
 
 const UserMap = () => {
     const initialPosition = [45.8004, 15.9714];
-    const {pins, addPin, updatePins} = usePins();
+    const {pins, addPin, updatePins, fetchPin} = usePins();
     const [tempPin, setTempPin] = useState<{ position: [number, number]; title: string; text: string } | null>(null);
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+
+    console.log("Pins rendered in the map:", pins);
 
 
     // Get user's location
@@ -63,6 +65,7 @@ const UserMap = () => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     setUserLocation([position.coords.latitude, position.coords.longitude]);
+                    updatePins(pins,  [position.coords.longitude,position.coords.latitude]);
                 },
                 (error) => {
                     console.error("Geolocation error:", error);
@@ -78,8 +81,10 @@ const UserMap = () => {
     };
 
     const handleMoveEnd = async (latLng: [number, number]) => {
-        await updatePins(pins, latLng);
+        await updatePins(pins, [latLng[1],latLng[0]]);
     }
+
+
 
     const saveTempPin = async () => {
         if (tempPin?.title && tempPin.text) {
@@ -107,17 +112,25 @@ const UserMap = () => {
                     return pin != undefined
                 }).map((pin, index) => {
                     return (
-                        <Marker key={pin.story_id || index} position={pin.position} icon={customMarker}>
-                        </Marker>
+                        <Marker key={pin.story_id || index} position={pin.position} icon={customMarker}/>
                     )
                 })
             }
             <ClickHandler onMapClick={handleMapClick}/>
             {pins.filter((pin)=>{return pin != undefined}).map((pin, index) => (
-                <Marker key={pin.story_id || index} position={pin.position} icon={customIcon}>
+
+                <Marker key={pin.story_id || index} position={pin.position} icon={customIcon} eventHandlers={{
+                    click: () => {
+                        if (pin.story_id) {
+                            fetchPin(pin.story_id); // Only call fetchPin if story_id exists
+                        } else {
+                            console.error("Missing story_id for pin:", pin);
+                        }
+                    },
+                }} >
                     <Popup>
-                        <strong>{pin.title}</strong>
-                        <p>{pin.text}</p>
+                        <strong>{pin.title || "Title"}</strong>
+                        <p>{pin.text || "Text"}</p>
                         <p>Likes: {pin.likes || 0}</p>
                     </Popup>
                 </Marker>
