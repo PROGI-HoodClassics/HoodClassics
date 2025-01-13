@@ -1,15 +1,16 @@
-// src/components/StyledGoogleButton.tsx
-
 import React from 'react';
 import { Button } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
+
+//API callovi se trebaju raditi preko enviroment varijabli jer deployana aplikacija ne salje zahtjeve na localHost
+const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080';
 
 const StyledGoogleButton: React.FC = () => {
     //const navigate = useNavigate();
       return (
         <Button
         component="a"
-        href="http://localhost:8080/users/list" 
+        href={`${API_BASE_URL}/oauth2/authorization/google`}
         variant="outlined"
         fullWidth
         sx={styles.googleButton}

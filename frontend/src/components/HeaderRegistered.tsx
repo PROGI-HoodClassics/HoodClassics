@@ -1,8 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/photos/logo1.jpg";
-import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 
-const Header = () => {
+const HeaderRegistered = () => {
   const navigate = useNavigate();
 
   const handleHomeClick = () => {
@@ -45,22 +45,9 @@ const Header = () => {
           </Typography>
         </Box>
         <div style={styles.navLinks}>
-          <Button
-            color="inherit"
-            component={Link}
-            to="/register"
-            sx={styles.link}
-          >
-            Register
-          </Button>
-          <Button
-            color="inherit"
-            component={Link}
-            to="/login"
-            sx={styles.link}
-          >
-            Login
-          </Button>
+            <Box sx={styles.text}>
+                Logged in
+            </Box>
         </div>
       </Toolbar>
     </AppBar>
@@ -95,7 +82,7 @@ const styles = {
       fontSize: "2rem", 
     },
     "@media (max-width: 600px)": {
-      fontSize: "1.5rem", 
+      fontSize: "1rem", 
     },
   },
   navLinks: {
@@ -107,22 +94,15 @@ const styles = {
       alignItems: "center",    
     },
   },
-  link: {
+  text: {
     marginLeft: "1rem",
-    fontSize: "1rem",
+    fontSize: "1.5rem",
     fontWeight: "bold",
-    transition: "transform 0.2s ease, background-color 0.2s ease",
-    "&:hover": {
-      backgroundColor: "#D46F26",
-      color: "white",
-      transform: "scale(1.05)",
-      textShadow: "2px 2px 8px rgba(255, 155, 72, 0.4)",
-    },
     "@media (max-width: 600px)": {
       marginLeft: "0", 
-      fontSize: "0.8rem",
+      marginBottom: "1rem", 
     },
   },
 };
 
-export default Header;
+export default HeaderRegistered;
