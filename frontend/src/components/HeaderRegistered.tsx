@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/photos/logo1.jpg";
+import returnIcon from "../assets/photos/return_icon.png";
 import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 
 const HeaderRegistered = () => {
@@ -7,6 +8,9 @@ const HeaderRegistered = () => {
 
   const handleHomeClick = () => {
     navigate('/');
+  }
+  const handleMapRegisteredClick = () =>{
+    navigate('/profilePage')
   }
 
   return (
@@ -44,11 +48,28 @@ const HeaderRegistered = () => {
             HoodClassics
           </Typography>
         </Box>
-        <div style={styles.navLinks}>
+
+
+        <Box style={styles.navLinks}>
+        <Box  
+        onClick={handleMapRegisteredClick}
+        sx={{
+              transition: "transform 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.1)",
+              },
+            }}>
+          <img src={returnIcon}
+          style={{
+            width: "88px",
+            height: "88px",
+          }}  
+        />
+        </Box>
             <Box sx={styles.text}>
                 Logged in
             </Box>
-        </div>
+        </Box>
       </Toolbar>
     </AppBar>
   );
