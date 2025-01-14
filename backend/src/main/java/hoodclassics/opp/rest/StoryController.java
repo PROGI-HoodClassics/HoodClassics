@@ -20,11 +20,9 @@ public class StoryController {
     @Autowired
     private StoryService storyService;
 
-
-
     @GetMapping("/{story_id}")
     @ResponseBody()
-    public Story getStory(@PathVariable String story_id) {
+    public ResponseEntity<Map<String,Object>> getStory(@PathVariable String story_id) {
         return storyService.getStory(Long.parseLong(story_id));
     }
 

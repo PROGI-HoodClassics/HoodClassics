@@ -11,5 +11,5 @@ import hoodclassics.opp.domain.LongitudeLatitudeKey;
 public interface CoordinatesRepository extends JpaRepository<Coordinates, LongitudeLatitudeKey> {
 	
 	List<Coordinates> findAll();
-	
+	Coordinates findByStoryId(Long storyId);
 }

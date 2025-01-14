@@ -6,6 +6,7 @@ import hoodclassics.opp.dao.*;
 import hoodclassics.opp.domain.*;
 import hoodclassics.opp.dao.StoryRepository;
 import hoodclassics.opp.service.StoryService;
+import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,11 +42,29 @@ public class StoryServiceImpl implements StoryService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private HasSeenRepository hasSeenRepository;
+    private HasSeenRepository hasSeenRepo;
 
     @Override
-    public Story getStory(Long id) {
-        return storyRepo.findByStoryId(id);
+    public ResponseEntity<Map<String,Object>> getStory(Long id) {
+        Story story =  storyRepo.findByStoryId(id);
+        String text = story.getText();
+        String title = story.getTitle();
+        Long likes = hasSeenRepo.countLikesByStoryId(id);
+        Long user_id = story.getUserId();
+        Coordinates coords = coordsRepo.findByStoryId(id);
+        Double latitude = coords.getLatitude();
+        Double longitude = coords.getLongitude();
+
+        Map<String, Object> response = new HashMap<String, Object>();
+        response.put("story_id", id.toString());
+        response.put("text", text);
+        response.put("title", title);
+        response.put("latitude", latitude);
+        response.put("longitude", longitude);
+        response.put("likes", likes);
+        response.put("dislikes", 0);
+        response.put("user_id", user_id);
+        return ResponseEntity.ok(response);
     }
 
 	@Override
@@ -113,7 +132,7 @@ public class StoryServiceImpl implements StoryService {
         coordsRepo.save(new Coordinates(longitude, latitude, town_id, storyId));
 
         HasSeen hasSeen = new HasSeen(user_id, storyId, false);
-        hasSeenRepository.save(hasSeen);
+        hasSeenRepo.save(hasSeen);
 
         Map<String, Object> response = new HashMap<String, Object>();
         response.put("story_id", storyId.toString());

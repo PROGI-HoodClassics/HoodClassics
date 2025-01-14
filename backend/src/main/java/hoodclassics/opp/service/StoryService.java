@@ -12,7 +12,7 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
 public interface StoryService {
-    Story getStory(Long id);
+    ResponseEntity<Map<String,Object>> getStory(Long id);
     ResponseEntity<List<StoryPin>> getStories(Double longitude, Double latitude, Double radius);
     ResponseEntity<Map<String, Object>> createStory(
                                String text,
