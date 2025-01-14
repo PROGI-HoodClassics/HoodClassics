@@ -1,0 +1,12 @@
+==== LIKE A STORY ====
+Form:
+	POST /api/story/like/{story_id}
+
+Responses:
+	   - success - 200 OK "Story liked"
+	   - no story_id in database - 404 NOT FOUND "That story doesn't exist"
+
+Response Body:
+		{
+		  "likes": "number"
+		}
