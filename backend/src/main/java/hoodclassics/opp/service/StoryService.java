@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 public interface StoryService {
     Story getStory(Long id);
     ResponseEntity<List<StoryPin>> getStories(Double longitude, Double latitude, Double radius);
-    ResponseEntity<String> createStory(
+    ResponseEntity<Map<String, Object>> createStory(
                                String text,
                                String title,
                                Double latitude,

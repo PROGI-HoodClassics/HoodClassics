@@ -4,6 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 /*
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +26,7 @@ public class GeocodingServiceImpl implements GeocodingService {
 
 
     @Override
-    public String reverseGeocode(double latitude, double longitude) {
+    public Optional<String> reverseGeocode(double latitude, double longitude) {
         //Logger logger = LoggerFactory.getLogger(GeocodingServiceImpl.class);
 
         String url = "https://nominatim.openstreetmap.org/reverse?lat="
@@ -38,59 +42,67 @@ public class GeocodingServiceImpl implements GeocodingService {
             JsonNode addressNode = rootNode.get("address");
 
             if (addressNode != null) {
-                String location = getBestLocation(addressNode);
-                String country = getField(addressNode, "country");
+                Optional<String> maybeLocation = getBestLocation(addressNode);
+                String location;
+                Optional<String> maybeCountry = getField(addressNode, "country");
+                String country;
+                if (maybeCountry.isEmpty() || maybeLocation.isEmpty()) {
+                    return Optional.empty();
+                } else {
+                    location = maybeLocation.get();
+                    country = maybeCountry.get();
+                }
 
-                return location + ", " + (country != null ? country : "Unknown Country");
+                return Optional.of(location + ", " + country);
             }
         } catch (Exception e) {
-            return "Location not found!";
+            return Optional.empty();
         }
-        return "Location not found!";
+        return Optional.empty();
     }
 
 
-    private String getBestLocation(JsonNode addressNode) {
+    private Optional<String> getBestLocation(JsonNode addressNode) {
         String[] locationFields = {"town", "city", "city_district", "village"};
         for (String field : locationFields) {
             if (addressNode.has(field) && !addressNode.get(field).asText().isBlank()) {
-                return addressNode.get(field).asText();
+                return Optional.of(addressNode.get(field).asText());
             }
         }
 
-        return "Unknown City";
+        return Optional.empty();
     }
 
-    private String getField(JsonNode node, String fieldName) {
-        return node.has(fieldName) ? node.get(fieldName).asText() : null;
+    private Optional<String> getField(JsonNode node, String fieldName) {
+        return node.has(fieldName) ? Optional.of(node.get(fieldName).asText()) : Optional.empty();
     }
 
 
     @Override
-    public String extractLocationFromAddress(String address) {
+    public Optional<String> extractLocationFromAddress(String address) {
         if (address != null && !address.isBlank()) {
             String[] parts = address.split(",");
             for (String part : parts) {
                 String trimmedPart = part.trim();
                 if (!trimmedPart.isEmpty()) {
-                    return trimmedPart;
+                    return Optional.of(trimmedPart);
                 }
             }
         }
-        return "Location not found!";
+        return Optional.empty();
     }
 
     @Override
-    public String extractCountryFromAddress(String address) {
+    public Optional<String> extractCountryFromAddress(String address) {
         if (address != null && !address.isBlank()) {
             String[] parts = address.split(",");
             if (parts.length > 0) {
                 String lastPart = parts[parts.length - 1].trim();
                 if (!lastPart.isEmpty()) {
-                    return lastPart;
+                    return Optional.of(lastPart);
                 }
             }
         }
-        return "Country not found!";
+        return Optional.empty();
     }
 }

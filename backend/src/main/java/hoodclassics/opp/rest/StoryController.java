@@ -5,6 +5,8 @@ import hoodclassics.opp.domain.StoryPin;
 import hoodclassics.opp.service.StoryService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +35,7 @@ public class StoryController {
     }
 
     @PostMapping
-    public ResponseEntity<String> postStory(@RequestBody CreateStoryBody body) {
+    public ResponseEntity<Map<String, Object>> postStory(@RequestBody CreateStoryBody body) {
         return storyService.createStory(body.text, body.title, body.latitude, body.longitude);
     }
 

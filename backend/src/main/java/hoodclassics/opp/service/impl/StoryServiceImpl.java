@@ -1,17 +1,10 @@
 package hoodclassics.opp.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import hoodclassics.opp.dao.CoordinatesRepository;
+import hoodclassics.opp.dao.*;
+import hoodclassics.opp.domain.*;
 import hoodclassics.opp.dao.StoryRepository;
-import hoodclassics.opp.domain.Coordinates;
-import hoodclassics.opp.dao.StoryRepository;
-import hoodclassics.opp.dao.UserRepository;
-import hoodclassics.opp.domain.HoodClassicsUser;
-import hoodclassics.opp.domain.Story;
-import hoodclassics.opp.domain.StoryPin;
 import hoodclassics.opp.service.StoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,14 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import hoodclassics.opp.dao.LocalUserRepository;
-import hoodclassics.opp.dao.TownRepository;
-import hoodclassics.opp.domain.Town;
 import hoodclassics.opp.service.GeocodingService;
 import org.springframework.http.HttpStatus;
 import java.sql.Timestamp;
 import java.time.Instant;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,19 +27,21 @@ public class StoryServiceImpl implements StoryService {
 	// In km
 	private static final Double earthRadius = 6378.14;
     // private static final Logger logger = LoggerFactory.getLogger(StoryService.class);
+    @Autowired
+    private GeocodingService geocodingService;
 
     @Autowired
     private StoryRepository storyRepo;
     @Autowired
     private CoordinatesRepository coordsRepo;
     @Autowired
-    private GeocodingService geocodingService;
-    @Autowired
     private TownRepository townRepository;
     @Autowired
     private LocalUserRepository localUserRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private HasSeenRepository hasSeenRepository;
 
     @Override
     public Story getStory(Long id) {
@@ -81,31 +72,59 @@ public class StoryServiceImpl implements StoryService {
 	}
 
     @Override
-    public ResponseEntity<String> createStory(
+    public ResponseEntity<Map<String,Object>> createStory(
                                       String text,
                                       String title,
                                       Double latitude,
                                       Double longitude) {
-        String address = this.geocodingService.reverseGeocode(latitude, longitude);
-        String townName = this.geocodingService.extractLocationFromAddress(address);
-        String country = this.geocodingService.extractCountryFromAddress(address);  //primjer kako se dohvaća država
+        Optional<String> maybeAddress = this.geocodingService.reverseGeocode(latitude, longitude);
+        if (maybeAddress.isEmpty()) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("error", "invalid coordinates");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
+        Optional<String> maybeTownName = this.geocodingService.extractLocationFromAddress(maybeAddress.get());
+        Optional<String> maybeCountry = this.geocodingService.extractCountryFromAddress(maybeAddress.get());
+        if (maybeTownName.isEmpty() || maybeCountry.isEmpty()) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("error", "invalid coordinates, address exists but town or country doesn't...probably should call Hrvoje");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+
+        }
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Town town = townRepository.findByTownName(townName);
+        Town town = townRepository.findByTownName(maybeTownName.get());
         if (town == null) {
-            return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+            Map<String, Object> response = new HashMap<String, Object>();
+            response.put("error", "This town doesn't exist in database, probably there aren't any users associated with this town");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         Long town_id = town.getTownId();
         HoodClassicsUser user = userRepository.findByUsername(username).get();
         Long user_id = user.getUserId();
 
         if (!localUserRepository.existsByUserIdTownIdKey_TownIdAndUserIdTownIdKey_UserId(town_id, user_id)) {
-            return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+            Map<String, Object> response = new HashMap<String, Object>();
+            response.put("error", "You are not a local here!");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
         Story newStory = new Story(text, title, Timestamp.from(Instant.now()), user_id, town_id);
         Long storyId = storyRepo.save(newStory).getStoryId();
         coordsRepo.save(new Coordinates(longitude, latitude, town_id, storyId));
-        return ResponseEntity.ok("");
+
+        HasSeen hasSeen = new HasSeen(user_id, storyId, false);
+        hasSeenRepository.save(hasSeen);
+
+        Map<String, Object> response = new HashMap<String, Object>();
+        response.put("story_id", storyId.toString());
+        response.put("text", text);
+        response.put("title", title);
+        response.put("latitude", latitude);
+        response.put("longitude", longitude);
+        response.put("likes", 0);
+        response.put("dislikes", 0);
+        response.put("user_id", user_id);
+        return ResponseEntity.ok(response);
     }
 
 }

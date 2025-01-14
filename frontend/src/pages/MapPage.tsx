@@ -39,7 +39,7 @@ const customIcon = new L.Icon({
 
 const UserMap = () => {
     const initialPosition = [45.8004, 15.9714];
-    const {pins,updatePins} = usePins();
+    const {pins,updatePins, fetchPin} = usePins();
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
 
 
@@ -48,6 +48,8 @@ const UserMap = () => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     setUserLocation([position.coords.latitude, position.coords.longitude]);
+                    updatePins(pins,  [position.coords.longitude,position.coords.latitude]);
+
                 },
                 (error) => {
                     console.error("Geolocation error:", error);
@@ -73,7 +75,9 @@ const UserMap = () => {
             {pins.filter((pin) => {
                 return pin != undefined
             }).map((pin, index) => (
-                <Marker key={pin.story_id || index} position={pin.position} icon={customIcon}>
+                <Marker key={pin.story_id || index} position={pin.position} icon={customIcon} eventHandlers={{
+                    click: () => fetchPin(pin.story_id || ''),
+                }}>
                     <Popup>
                         <strong>{pin.title}</strong>
                         <p>{pin.text}</p>

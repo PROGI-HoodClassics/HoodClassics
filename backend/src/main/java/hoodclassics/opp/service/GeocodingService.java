@@ -1,7 +1,9 @@
 package hoodclassics.opp.service;
 
+import java.util.Optional;
+
 public interface GeocodingService {
-    String reverseGeocode(double latitude, double longitude);
-    public String extractLocationFromAddress(String address);
-    public String extractCountryFromAddress(String address);
+    Optional<String> reverseGeocode(double latitude, double longitude);
+    public Optional<String> extractLocationFromAddress(String address);
+    public Optional<String> extractCountryFromAddress(String address);
 }
