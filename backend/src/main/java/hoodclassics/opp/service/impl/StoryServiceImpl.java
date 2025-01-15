@@ -6,21 +6,16 @@ import hoodclassics.opp.dao.*;
 import hoodclassics.opp.domain.*;
 import hoodclassics.opp.dao.StoryRepository;
 import hoodclassics.opp.service.StoryService;
-import net.minidev.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import hoodclassics.opp.service.GeocodingService;
-import org.springframework.http.HttpStatus;
+
 import java.sql.Timestamp;
 import java.time.Instant;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class StoryServiceImpl implements StoryService {
@@ -143,6 +138,39 @@ public class StoryServiceImpl implements StoryService {
         response.put("likes", 0);
         response.put("dislikes", 0);
         response.put("user_id", user_id);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> likeStory(Long story_id) {
+        Map<String, Object> response = new HashMap<String, Object>();
+        Long likes;
+
+        if (!storyRepo.existsById(story_id)) {
+            response.put("error", "That story doesn't exist");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Long user_id = userRepository.findByUsername(username).get().getUserId();
+        UserIdStoryIdKey key = new UserIdStoryIdKey(user_id, story_id);
+        boolean exists = hasSeenRepo.existsById(key);
+        if (exists) {
+            HasSeen h = hasSeenRepo.findByUserIdStoryIdKey(key);
+            boolean liked = h.getLiked();
+            if (liked) {
+                h.setLiked(false);
+                hasSeenRepo.save(h);
+                likes = hasSeenRepo.countLikesByStoryId(story_id);
+                response.put("likes", likes);
+                return ResponseEntity.ok(response);
+            }
+        }
+
+        HasSeen hasSeen = new HasSeen(user_id, story_id, true);
+        hasSeenRepo.save(hasSeen);
+        likes = hasSeenRepo.countLikesByStoryId(story_id);
+        response.put("likes", likes);
         return ResponseEntity.ok(response);
     }
 

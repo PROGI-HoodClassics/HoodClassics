@@ -24,8 +24,10 @@ public class UserController {
 	}
 
 	@PostMapping("/town")
-	public void addToTown(@RequestBody LocationRequest location) {
-		userService.addToTown(location.latitude, location.longitude);
+	public void addToTown(@RequestBody List<LocationRequest> locations) {
+		for (LocationRequest location : locations) {
+			userService.addToTown(location.latitude, location.longitude);
+		}
 	}
 
 	public static class LocationRequest {
