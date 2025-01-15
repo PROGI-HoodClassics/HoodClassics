@@ -19,6 +19,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { useNavigate } from "react-router-dom";
+import HeaderRegistered from "../components/HeaderRegistered";
 
 const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080'; 
 
@@ -105,7 +106,7 @@ const ProfilePage: React.FC = () => {
         width: "100%",
       }}
     >
-      <Header />
+      <HeaderRegistered />
       <Box
         sx={{
           position: "absolute",

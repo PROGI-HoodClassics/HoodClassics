@@ -12,6 +12,9 @@ const HeaderRegistered = () => {
   const handleMapRegisteredClick = () =>{
     navigate('/profilePage')
   }
+  const handleReportClick = () => {
+    navigate('/reportPage')
+  }
 
   return (
     <AppBar position="fixed" sx={styles.header}>
@@ -46,6 +49,13 @@ const HeaderRegistered = () => {
           </Box>
           <Typography variant="h4" sx={styles.title} onClick={handleHomeClick}>
             HoodClassics
+          </Typography>
+        </Box>
+
+        <Box
+        onClick={handleReportClick}>
+        <Typography variant="h5" sx={styles.reportText} onClick={handleHomeClick}>
+            Report
           </Typography>
         </Box>
 
@@ -98,6 +108,25 @@ const styles = {
     "&:hover": {
       transform: "scale(1.05)",
       textShadow: "2px 2px 8px rgba(255, 155, 72, 0.4)",
+    },
+    "@media (max-width: 768px)": {
+      fontSize: "2rem", 
+    },
+    "@media (max-width: 600px)": {
+      fontSize: "1rem", 
+    },
+  },
+  reportText:{
+    marginLeft: "0.5rem",
+    fontWeight: "bold",
+    fontSize: "2rem",
+    fontFamily: "'Roboto', sans-serif",
+    letterSpacing: "2px",
+    transition: "transform 0.2s ease, text-shadow 0.2s ease",
+    "&:hover": {
+      transform: "scale(1.05)",
+      textShadow: "2px 2px 8px rgba(255, 155, 72, 0.4)",
+      color: "green",
     },
     "@media (max-width: 768px)": {
       fontSize: "2rem", 
