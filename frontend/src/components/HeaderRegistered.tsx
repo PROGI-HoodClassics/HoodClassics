@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/photos/logo1.jpg";
-import returnIcon from "../assets/photos/return_icon.png";
+import returnIcon from "../assets/photos/pfp.png";
+import reportIcon from "../assets/photos/reportIcon.png";
 import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 
 const HeaderRegistered = () => {
@@ -26,16 +27,8 @@ const HeaderRegistered = () => {
           padding: "0 1rem", 
         }}
       >
-        <Box sx={styles.leftSection}>
-          <Box
-            onClick={handleHomeClick}
-            sx={{
-              transition: "transform 0.3s ease",
-              "&:hover": {
-                transform: "scale(1.08)",
-              },
-            }}
-          >
+        <Box sx={styles.leftSection}
+            onClick={handleHomeClick}>
             <img
               src={logo}
               style={{
@@ -46,39 +39,65 @@ const HeaderRegistered = () => {
                 marginTop: "0.4rem",
               }}
             />
-          </Box>
           <Typography variant="h4" sx={styles.title} onClick={handleHomeClick}>
             HoodClassics
           </Typography>
         </Box>
 
+
+        <Box style={styles.navLinks}>
         <Box
-        onClick={handleReportClick}>
-        <Typography variant="h5" sx={styles.reportText} onClick={handleHomeClick}>
+        onClick={handleReportClick}
+        sx={{
+          display: "flex",
+          flexDirection: "column", 
+          alignItems: "center",   
+          justifyContent: "center",
+          transition: "transform 0.3s ease",
+          "&:hover": {
+            transform: "scale(1.1)",
+          },
+        }}>
+          <img src={reportIcon}
+          style={styles.imgStyle} />
+        <Typography 
+          sx={{
+            marginTop: "-1px", 
+            marginBottom: "8px",
+            fontWeight: "bold", 
+            fontSize: "17px",
+          }}
+        >
             Report
           </Typography>
         </Box>
 
-
-        <Box style={styles.navLinks}>
         <Box  
         onClick={handleMapRegisteredClick}
         sx={{
+              display: "flex",
+              flexDirection: "column", 
+              alignItems: "center",    
+              justifyContent: "center",
               transition: "transform 0.3s ease",
               "&:hover": {
                 transform: "scale(1.1)",
               },
             }}>
           <img src={returnIcon}
-          style={{
-            width: "88px",
-            height: "88px",
-          }}  
+          style={styles.imgStyle}  
         />
+         <Typography
+          sx={{
+            marginTop: "-1px", 
+            marginBottom: "8px",
+            fontWeight: "bold", 
+            fontSize: "15px",
+          }}
+        >
+          My Profile
+        </Typography>
         </Box>
-            <Box sx={styles.text}>
-                Logged in
-            </Box>
         </Box>
       </Toolbar>
     </AppBar>
@@ -87,6 +106,11 @@ const HeaderRegistered = () => {
 
 const styles = {
   header: {
+    width: "100%",
+    position: "fixed",
+    top: 0,
+    left: 0,
+    zIndex: 1100,
     backgroundColor: "rgb(197, 105, 54)",
     padding: "0 2rem",
     boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
@@ -94,19 +118,30 @@ const styles = {
       padding: "0 1rem", 
     },
   },
+  imgStyle: {
+    filter: "invert(100%)",
+    width: "50px",
+    height: "50px",
+    marginTop: "5px",
+  },
   leftSection: {
     display: "flex",
     alignItems: "center",
+    gap: "1rem",         
+    transition: "transform 0.3s ease", 
+    "&:hover": {
+      transform: "scale(1.08)", 
+      cursor: "pointer",       
+    },
   },
   title: {
-    marginLeft: "0.5rem",
+    marginLeft: "-0.5rem",
     fontWeight: "bold",
     fontSize: "2.5rem",
     fontFamily: "'Roboto', sans-serif",
     letterSpacing: "2px",
-    transition: "transform 0.2s ease, text-shadow 0.2s ease",
+    transition: "transform 0.3s ease, text-shadow 0.2s ease",
     "&:hover": {
-      transform: "scale(1.05)",
       textShadow: "2px 2px 8px rgba(255, 155, 72, 0.4)",
     },
     "@media (max-width: 768px)": {
@@ -118,6 +153,7 @@ const styles = {
   },
   reportText:{
     marginLeft: "0.5rem",
+    marginRight: "2rem",
     fontWeight: "bold",
     fontSize: "2rem",
     fontFamily: "'Roboto', sans-serif",
@@ -125,8 +161,8 @@ const styles = {
     transition: "transform 0.2s ease, text-shadow 0.2s ease",
     "&:hover": {
       transform: "scale(1.05)",
-      textShadow: "2px 2px 8px rgba(255, 155, 72, 0.4)",
-      color: "green",
+      textShadow:  "2px 2px 8px rgba(255, 255, 255, 0.4)",
+      color: "rgba(255, 254, 254, 0.86)",
     },
     "@media (max-width: 768px)": {
       fontSize: "2rem", 
@@ -139,6 +175,7 @@ const styles = {
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "center",
+    gap: "1.5rem",
     "@media (max-width: 600px)": {
       flexDirection: "column", 
       alignItems: "center",    

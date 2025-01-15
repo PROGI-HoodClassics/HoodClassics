@@ -100,7 +100,7 @@ const UserMap = () => {
         <MapContainer
             center={initialPosition}
             zoom={13}
-            style={{width: "100vw", height: "100vh"}}
+            style={{width: "100vw", height: "calc(100vh - 64px)", marginTop: "64px"}}
         >
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
