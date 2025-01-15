@@ -37,6 +37,10 @@ public class StoryController {
         return storyService.createStory(body.text, body.title, body.latitude, body.longitude);
     }
 
+    @PostMapping("/like/{story_id}")
+    public ResponseEntity<Map<String, Object>> likeStory(@PathVariable String story_id) {
+        return storyService.likeStory(Long.parseLong(story_id));
+    }
 
     public static class CreateStoryBody{
         public String text;
