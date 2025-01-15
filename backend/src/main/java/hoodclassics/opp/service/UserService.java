@@ -8,4 +8,6 @@ import org.springframework.http.ResponseEntity;
 public interface UserService {
 	List<HoodClassicsUser> listUsers();
     void addToTown(double latitude, double longitude);
+    boolean isModerator();
+    boolean exists();
 }

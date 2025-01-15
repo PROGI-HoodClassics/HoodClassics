@@ -86,4 +86,14 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	@Override
+	public boolean isModerator() {
+		return userRepo.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).get().getIsModerator();
+	}
+
+	@Override
+	public boolean exists() {
+		return userRepo.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).isPresent();
+    }
+
 }
