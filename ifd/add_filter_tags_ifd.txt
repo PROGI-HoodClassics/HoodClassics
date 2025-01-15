@@ -9,10 +9,10 @@ Request Body:
 		}
 
 Responses:
-	- success - 200 OK
+	- success - 200 OK "OK"
 	- tag already exists - 403 FORBIDDEN "That story already has that tag"
-	- bad tag_id - 400 BAD REQUEST "That tag_id does not correspond to a tag"
-	
+	- bad tag_id - 400 BAD REQUEST "{tag_id} does not correspond to a tag"
+	- story doesn't exist - 400 BAD REQUEST "{story_id} does not correspond to a story"
 
 ==== GET LIST OF STORIES WITH TAG(S) ====
 Form:

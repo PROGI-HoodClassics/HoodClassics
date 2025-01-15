@@ -38,6 +38,10 @@ public class StoryServiceImpl implements StoryService {
     private UserRepository userRepository;
     @Autowired
     private HasSeenRepository hasSeenRepo;
+    @Autowired
+    private IsTaggedRepository isTaggedRepo;
+    @Autowired
+    private TagRepository tagRepo;
 
     @Override
     public ResponseEntity<Map<String,Object>> getStory(Long id) {
@@ -173,5 +177,20 @@ public class StoryServiceImpl implements StoryService {
         response.put("likes", likes);
         return ResponseEntity.ok(response);
     }
+
+	@Override
+	public ResponseEntity<String> addTagToStory(Long storyId, Long tagId) {
+		Boolean isAlreadyTagged =  isTaggedRepo.findById(new StoryIdTagIdKey(storyId, tagId)).isPresent();
+		if (isAlreadyTagged) {
+			return new ResponseEntity<String>("That story already has that tag", HttpStatus.FORBIDDEN);
+		} else if (tagRepo.findById(tagId).isEmpty()) {
+			return new ResponseEntity<String>(tagId + " does not correspond to a tag", HttpStatus.BAD_REQUEST);
+		} else if (storyRepo.findById(storyId).isEmpty()) {
+			return new ResponseEntity<String>(storyId + " does not correspond to a story", HttpStatus.BAD_REQUEST);
+		} else {
+			isTaggedRepo.save(new IsTagged(storyId, tagId));
+			return new ResponseEntity<String>("OK", HttpStatus.OK);
+		}
+	}
 
 }

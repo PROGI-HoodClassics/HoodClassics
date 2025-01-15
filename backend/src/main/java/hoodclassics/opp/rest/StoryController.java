@@ -31,6 +31,11 @@ public class StoryController {
     			@RequestParam Double latitude, @RequestParam Double radius) {
     	return storyService.getStories(longitude, latitude, radius);
     }
+    
+    @PostMapping("/addtag")
+    public ResponseEntity<String> addTagToStory(@RequestBody AddTagToStoryBody body) {
+    	return storyService.addTagToStory(body.story_id, body.tag_id);
+    }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> postStory(@RequestBody CreateStoryBody body) {
@@ -47,6 +52,11 @@ public class StoryController {
         public String title;
         public Double latitude;
         public Double longitude;
+    }
+    
+    public static class AddTagToStoryBody {
+    	public Long story_id;
+    	public Long tag_id;
     }
 
 }
