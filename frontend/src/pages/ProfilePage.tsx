@@ -55,31 +55,24 @@ const ProfilePage: React.FC = () => {
 
   const savePlaces = async () => {
     try {
-      const formData = new URLSearchParams();
-      placesOfLiving.forEach((place, index) => {
-        formData.append("latitude", place.lat.toString());
-        formData.append("longitude", place.lng.toString());
-        /* ovo služi za više lokacija
-        formData.append(`towns[${index}][lat]`, place.lat.toString());
-        formData.append(`towns[${index}][lng]`, place.lng.toString());
-        */
-      });
-      const payload = {
-        latitude: placesOfLiving[0].lat,
-        longitude: placesOfLiving[0].lng,
+      const requestBody = {
+        towns: placesOfLiving.map((place) => ({
+          lat: place.lat,
+          lng: place.lng,
+        })),
       };
-
+  
       const response = await fetch(`${API_BASE_URL}/users/town`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json", 
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(requestBody), 
       });
-
+  
       if (response.ok) {
         console.log("Places saved successfully!");
-        navigate("/mapRegistered")
+        navigate("/mapRegistered");
       } else {
         const data = await response.json();
         setError(data.message || "Failed to save places. Please try again.");
@@ -89,6 +82,7 @@ const ProfilePage: React.FC = () => {
       console.error("Save places request error:", error);
     }
   };
+  
 
   return (
     <Box
