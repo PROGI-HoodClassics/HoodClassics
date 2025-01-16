@@ -57,6 +57,27 @@ public class UserServiceImpl implements UserService {
 			townRepo.save(newTown);
 		}
 		Long townId = town.getTownId();
+		Long userId = trueUserId();
+
+		if (!localUserRepo.existsByUserIdTownIdKey_TownIdAndUserIdTownIdKey_UserId(townId, userId)) {
+			LocalUser newUser = new LocalUser(townId, userId);
+			localUserRepo.save(newUser);
+		} else {
+			System.out.println("LocalUser already exists.");
+		}
+	}
+
+	@Override
+	public boolean isModerator() {
+		return userRepo.findByUserId(trueUserId()).get().getIsModerator();
+	}
+
+	@Override
+	public boolean exists() {
+		return userRepo.findByUserId(trueUserId()).isPresent();
+    }
+
+	public Long trueUserId() {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		boolean oauthUser = username.contains("@gmail.com");
 		Long userId = null;
@@ -77,23 +98,7 @@ public class UserServiceImpl implements UserService {
 				System.out.println("User not found");
 			}
 		}
-
-		if (!localUserRepo.existsByUserIdTownIdKey_TownIdAndUserIdTownIdKey_UserId(townId, userId)) {
-			LocalUser newUser = new LocalUser(townId, userId);
-			localUserRepo.save(newUser);
-		} else {
-			System.out.println("LocalUser already exists.");
-		}
+		return userId;
 	}
-
-	@Override
-	public boolean isModerator() {
-		return userRepo.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).get().getIsModerator();
-	}
-
-	@Override
-	public boolean exists() {
-		return userRepo.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).isPresent();
-    }
 
 }
