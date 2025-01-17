@@ -1,0 +1,36 @@
+==== DELETE STORY ====
+Form:
+	POST /api/story/delete/{story_id}
+
+Responses:
+	- success - 200 OK "Story deleted"
+	- not a moderator or author - 401 UNAUTHORIZED "Not a moderator or the author"
+	- no story in database - 404 NOT FOUND "Story doesn't exist"
+
+==== LIST REPORTS ====
+Form:
+	GET /api/reports
+
+Responses:
+	- success - 200 OK "OK"
+	- not a moderator - 401 UNAUTHORIZED "You are not a moderator"
+
+Response Body:
+		[
+		    {
+			"reportId": "number",
+			"reporterUserId": "number",
+			"reportedUserId": "number",
+			"description": "string",
+			"reportCategory": "string",
+			"storyId": "number"
+		    },
+		    {
+			"reportId": "number",
+			"reporterUserId": "number",
+			"reportedUserId": "number",
+			"description": "string",
+			"reportCategory": "string",
+			"storyId": "number"
+		    }
+		]

@@ -1,5 +1,6 @@
 package hoodclassics.opp.rest;
 
+import hoodclassics.opp.domain.Report;
 import hoodclassics.opp.domain.Story;
 import hoodclassics.opp.domain.StoryPin;
 import hoodclassics.opp.service.StoryService;
@@ -8,7 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import hoodclassics.opp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,8 @@ public class StoryController {
 
     @Autowired
     private StoryService storyService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/{story_id}")
     @ResponseBody()
@@ -45,6 +50,16 @@ public class StoryController {
     @PostMapping("/like/{story_id}")
     public ResponseEntity<Map<String, Object>> likeStory(@PathVariable String story_id) {
         return storyService.likeStory(Long.parseLong(story_id));
+    }
+
+    @PostMapping("/reports")
+    public ResponseEntity<?> getReports() {
+        boolean isModerator = userService.isModerator();
+        if (!isModerator) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not a moderator");
+        }
+        List<Report> reports = storyService.getReports();
+        return ResponseEntity.status(HttpStatus.OK).body(reports);
     }
 
     public static class CreateStoryBody{

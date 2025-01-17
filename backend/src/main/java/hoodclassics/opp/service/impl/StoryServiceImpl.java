@@ -6,6 +6,7 @@ import hoodclassics.opp.dao.*;
 import hoodclassics.opp.domain.*;
 import hoodclassics.opp.dao.StoryRepository;
 import hoodclassics.opp.service.StoryService;
+import hoodclassics.opp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,8 @@ public class StoryServiceImpl implements StoryService {
     // private static final Logger logger = LoggerFactory.getLogger(StoryService.class);
     @Autowired
     private GeocodingService geocodingService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private StoryRepository storyRepo;
@@ -42,6 +45,8 @@ public class StoryServiceImpl implements StoryService {
     private IsTaggedRepository isTaggedRepo;
     @Autowired
     private TagRepository tagRepo;
+    @Autowired
+    private ReportRepository reportRepo;
 
     @Override
     public ResponseEntity<Map<String,Object>> getStory(Long id) {
@@ -90,11 +95,7 @@ public class StoryServiceImpl implements StoryService {
 	}
 
     @Override
-    public ResponseEntity<Map<String,Object>> createStory(
-                                      String text,
-                                      String title,
-                                      Double latitude,
-                                      Double longitude) {
+    public ResponseEntity<Map<String,Object>> createStory(String text, String title, Double latitude, Double longitude) {
         Optional<String> maybeAddress = this.geocodingService.reverseGeocode(latitude, longitude);
         if (maybeAddress.isEmpty()) {
             Map<String, Object> response = new HashMap<>();
@@ -192,5 +193,10 @@ public class StoryServiceImpl implements StoryService {
 			return new ResponseEntity<String>("OK", HttpStatus.OK);
 		}
 	}
+
+    @Override
+    public List<Report> getReports() {
+        return reportRepo.findAll();
+    }
 
 }

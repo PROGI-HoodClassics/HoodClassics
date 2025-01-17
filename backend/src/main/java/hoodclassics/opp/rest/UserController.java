@@ -53,10 +53,6 @@ public class UserController {
 			return towns;
 		}
 
-		public void setTowns(List<Town> towns) {
-			this.towns = towns;
-		}
-
 		public static class Town {
 			private Double lat;
 			private Double lng;
@@ -64,14 +60,8 @@ public class UserController {
 			public Double getLat() {
 				return lat;
 			}
-			public void setLat(Double lat) {
-				this.lat = lat;
-			}
 			public Double getLng() {
 				return lng;
-			}
-			public void setLng(Double lng) {
-				this.lng = lng;
 			}
 			public Town() {}
 		}
