@@ -13,9 +13,32 @@ const HeaderRegistered = () => {
   const handleMapRegisteredClick = () =>{
     navigate('/profilePage')
   }
-  const handleReportClick = () => {
-    navigate('/reportPage')
-  }
+  const handleReportClick = async () => {
+    try {
+      const response = await fetch('/api/isModerator', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          //'Authorization': `Bearer ${localStorage.getItem('authToken')}` 
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch moderator status');
+      }
+
+      const data = await response.json();
+
+      if (data.isModerator) {
+        navigate('/reportsPage'); 
+      } else {
+        alert('Access Denied: You are not authorized to view this page.');
+      }
+    } catch (error) {
+      console.error('Error checking moderator status:', error);
+      alert('An error occurred while checking access. Please try again later.');
+    }
+  };
 
   return (
     <AppBar position="fixed" sx={styles.header}>
@@ -68,7 +91,7 @@ const HeaderRegistered = () => {
             fontSize: "17px",
           }}
         >
-            Report
+            Reports
           </Typography>
         </Box>
 
