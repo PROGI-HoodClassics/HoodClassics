@@ -6,7 +6,8 @@ import MapPage from "./pages/MapPage";
 import MapPageRegistered from "./pages/MapPageRegistered";
 import { PinProvider } from "./context/PinContext";
 import ProfilePage from "./pages/ProfilePage";
-import ReportPage from "./pages/ReportPage";
+import ReportsPage from "./pages/ReportsPage";
+
 
 const App = () => {
     return (
@@ -19,7 +20,7 @@ const App = () => {
                     <Route path="/map" element={<MapPage />} />
                     <Route path="/mapRegistered" element={<MapPageRegistered />} />
                     <Route path="/profilePage" element={<ProfilePage />} />
-                    <Route path="/reportPage" element={<ReportPage />} />
+                    <Route path="/reportsPage" element={<ReportsPage />} />
                 </Routes>
             </Router>
         </PinProvider>
