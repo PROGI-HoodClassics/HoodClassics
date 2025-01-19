@@ -17,6 +17,7 @@ interface PinContextType {
     addPin: (pin: Omit<Pin, "story_id" | "likes" | "user_id">) => Promise<void>;
     updatePins: (pins: Array<Pin>, latLng: [number, number]) => Promise<void>;
     fetchPin: (storyId: string) => Promise<void >;
+    likePin: (storyId: string) => Promise<void>;
 }
 
 const PinContext = createContext<PinContextType | undefined>(undefined);
@@ -67,25 +68,23 @@ export const PinProvider = ({children}: { children: ReactNode }) => {
             }
 
             const body = await response.json();
-            console.log("Raw API Response for fetched pin:", body); // Debugging log
+            console.log("Raw API Response for fetched pin:", body);
 
-            // Find the pin's position in the existing state
             const existingPin = pins.find((pin) => pin.story_id === storyId);
             if (!existingPin) {
                 console.error(`No existing position for story_id: ${storyId}`);
-                return; // Skip if no position is found in the existing state
+                return;
             }
 
             const updatedPin = {
-                story_id: body.storyId,
-                position: existingPin.position, // Use the existing position
+                story_id: body.story_id,
+                position: existingPin.position,
                 text: body.text || "",
                 title: body.title || "Untitled",
                 likes: Number(body.likes) || 0,
                 user_id: Number(body.user_id) || 0,
             };
 
-            // Update the pin in the state
             setPins((prevPins) =>
                 prevPins.map((pin) =>
                     pin.story_id === storyId ? updatedPin : pin
@@ -93,9 +92,11 @@ export const PinProvider = ({children}: { children: ReactNode }) => {
             );
 
             console.log("Updated Pin:", updatedPin);
+            return updatedPin;
         } catch (error) {
             console.error("Failed to fetch pin:", error);
         }
+
     };
 
     const addPin = async (newPin: Omit<Pin, "story_id" | "likes" | "user_id">) => {
@@ -127,10 +128,44 @@ export const PinProvider = ({children}: { children: ReactNode }) => {
             console.error("Failed to add pin:", error);
         }
     };
+    const likePin = async (storyId: string) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/story/like/${storyId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const newLikes = data.likes;
+                setPins((prevPins) =>
+                    prevPins.map((pin) =>
+                        pin.story_id === storyId
+                            ? {
+                                ...pin,
+                                likes: newLikes,
+                            }
+                            : pin
+                    )
+                );
+                console.log(`Pin ${storyId} liked. New likes = ${newLikes}`);
+            } else if (response.status === 404) {
+                // If the server says the story doesn't exist
+                console.error("That story doesn't exist");
+            } else {
+                console.error("Failed to like story, status code:", response.status);
+            }
+        } catch (error) {
+            console.error("Network error while liking story:", error);
+        }
+    };
+
 
 
     return (
-        <PinContext.Provider value={{pins, addPin, updatePins: fetchPins, fetchPin}}>
+        <PinContext.Provider value={{pins, addPin, updatePins: fetchPins, fetchPin, likePin}}>
             {children}
         </PinContext.Provider>
     );

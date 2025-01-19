@@ -1,24 +1,19 @@
-import {MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import HeaderRegistered from "../components/HeaderRegistered";
-import {usePins} from "../context/PinContext";
-import {useState, useEffect} from "react";
-import L, {LatLng, latLng} from "leaflet";
+import { usePins } from "../context/PinContext";
+import { useState, useEffect } from "react";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+import { Drawer, Box, Typography, IconButton, TextField, Button, Fab } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
+import CheckIcon from "@mui/icons-material/Check";
 
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
-import redPinImage from "../assets/photos/red-pin.png"; // Use your local red pin image
-const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080';
-
-// Custom red pin icon for user location
-const redIcon = new L.Icon({
-    iconUrl: redPinImage,
-    iconSize: [30, 41], // Adjusted size for the red pin
-    iconAnchor: [15, 41], // Anchor at the bottom center
-    popupAnchor: [0, -40], // Offset for the popup
-});
+import redPinImage from "../assets/photos/red-pin.png";
 
 const customIcon = new L.Icon({
     iconUrl: markerIcon,
@@ -30,42 +25,50 @@ const customIcon = new L.Icon({
     shadowSize: [41, 41],
 });
 
-
-const customMarker = new L.Icon({
-    iconUrl: "https://unpkg.com/leaflet@1.5.1/dist/images/marker-icon.png",
-    iconSize: [25, 41],
-    iconAnchor: [10, 41],
-    popupAnchor: [2, -40]
+const redIcon = new L.Icon({
+    iconUrl: redPinImage,
+    iconSize: [30, 41],
+    iconAnchor: [15, 41],
+    popupAnchor: [0, -40],
 });
 
 const MapPageRegistered = () => {
     return (
         <>
-            <HeaderRegistered/>
+            <HeaderRegistered />
             <div>Add Pins</div>
-            <UserMap/>
+            <UserMap />
         </>
     );
 };
 
-
+type PinData = {
+    story_id?: string;
+    position: [number, number];
+    title?: string;
+    text?: string;
+    likes?: number;
+};
 
 const UserMap = () => {
-    const initialPosition = [45.8004, 15.9714];
-    const {pins, addPin, updatePins, fetchPin} = usePins();
-    const [tempPin, setTempPin] = useState<{ position: [number, number]; title: string; text: string } | null>(null);
+    const initialPosition: [number, number] = [45.8004, 15.9714];
+    const { pins, addPin, updatePins, fetchPin, likePin } = usePins();
+
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
 
-    console.log("Pins rendered in the map:", pins);
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [drawerMode, setDrawerMode] = useState<"create" | "view" | null>(null);
 
+    const [activePin, setActivePin] = useState<PinData | null>(null);
+    const [newPinData, setNewPinData] = useState<PinData | null>(null);
+    const [canAddPins, setCanAddPins] = useState(false);
 
-    // Get user's location
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setUserLocation([position.coords.latitude, position.coords.longitude]);
-                    updatePins(pins,  [position.coords.longitude,position.coords.latitude]);
+                (pos) => {
+                    setUserLocation([pos.coords.latitude, pos.coords.longitude]);
+                    updatePins(pins, [pos.coords.longitude, pos.coords.latitude]);
                 },
                 (error) => {
                     console.error("Geolocation error:", error);
@@ -76,120 +79,207 @@ const UserMap = () => {
         }
     }, []);
 
+    const handleToggleAddPins = () => {
+        setCanAddPins((prev) => !prev);
+    };
+
+
     const handleMapClick = (latlng: [number, number]) => {
-        setTempPin({position: latlng, title: "", text: ""});
+        if (!canAddPins) {
+            return;
+        }
+        setDrawerMode("create");
+        setNewPinData({
+            position: latlng,
+            title: "",
+            text: "",
+        });
+        setDrawerOpen(true);
+    };
+
+    const handlePinClick = async (pin: PinData) => {
+        if (pin.story_id) {
+            const fetchedPin = await fetchPin(pin.story_id);
+            setActivePin(fetchedPin);
+        } else {
+            setActivePin(pin);
+        }
+        setDrawerMode("view");
+        setDrawerOpen(true);
+    };
+
+    const handleSaveNewPin = async () => {
+        if (!newPinData) return;
+        // Validate required fields
+        if (!newPinData.title || !newPinData.text) {
+            alert("Please fill in both the title and text!");
+            return;
+        }
+        // Add the pin via context
+        await addPin(newPinData);
+        // Reset creation form and close Drawer
+        setNewPinData(null);
+        setDrawerOpen(false);
+        setDrawerMode(null);
+    };
+    const handleLike = async () => {
+        if (!activePin?.story_id) return;
+        await likePin(activePin.story_id);
+        setActivePin((prev) =>
+            prev ? {...prev, likes: prev.likes! + 1} : null
+        );
+    };
+
+    const closeDrawer = () => {
+        setDrawerOpen(false);
+        setDrawerMode(null);
+        setActivePin(null);
+        setNewPinData(null);
     };
 
     const handleMoveEnd = async (latLng: [number, number]) => {
-        await updatePins(pins, [latLng[1],latLng[0]]);
-    }
-
-
-
-    const saveTempPin = async () => {
-        if (tempPin?.title && tempPin.text) {
-            await addPin(tempPin);
-            setTempPin(null);
-        } else {
-            alert("Please fill in both the title and text!");
-        }
+        // The position param is lat,lng, but your updatePins might need [lng, lat]
+        await updatePins(pins, [latLng[1], latLng[0]]);
     };
 
-
     return (
-        <MapContainer
-            center={initialPosition}
-            zoom={13}
-            style={{width: "100vw", height: "calc(100vh - 64px)", marginTop: "64px"}}
-        >
-            <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; OpenStreetMap contributors"
-            />
-            <MoveEndHandler onMoveEnd={handleMoveEnd}/>
-            {
-                pins.filter((pin) => {
-                    return pin != undefined
-                }).map((pin, index) => {
-                    return (
-                        <Marker key={pin.story_id || index} position={pin.position} icon={customMarker}/>
-                    )
-                })
-            }
-            <ClickHandler onMapClick={handleMapClick}/>
-            {pins.filter((pin)=>{return pin != undefined}).map((pin, index) => (
+        <>
+            <MapContainer
+                center={initialPosition}
+                zoom={13}
+                style={{ width: "100vw", height: "calc(100vh - 64px)", marginTop: "64px" }}
+            >
+                <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution="&copy; OpenStreetMap contributors"
+                />
+                <MoveEndHandler onMoveEnd={handleMoveEnd} />
+                <ClickHandler onMapClick={handleMapClick} />
 
-                <Marker key={pin.story_id || index} position={pin.position} icon={customIcon} eventHandlers={{
-                    click: () => {
-                        if (pin.story_id) {
-                            fetchPin(pin.story_id); // Only call fetchPin if story_id exists
-                        } else {
-                            console.error("Missing story_id for pin:", pin);
-                        }
-                    },
-                }} >
-                    <Popup>
-                        <strong>{pin.title || "Title"}</strong>
-                        <p>{pin.text || "Text"}</p>
-                        <p>Likes: {pin.likes || 0}</p>
-                    </Popup>
-                </Marker>
-            ))}
-            {tempPin && (
-                <Marker position={tempPin.position} icon={customIcon}>
-                    <Popup
-                        position={tempPin.position}
-                        onClose={() => setTempPin(null)}
-                    >
-                        <div>
-                            <input
-                                type="text"
-                                placeholder="Title"
-                                value={tempPin.title}
-                                onChange={(e) => setTempPin({...tempPin, title: e.target.value})}
-                                style={{width: "100%", marginBottom: "8px", backgroundColor: "white", color: "black"}}
+                {/* Existing pins */}
+                {pins
+                    .filter((pin: any) => pin !== undefined)
+                    .map((pin: PinData, index: number) => (
+                        <Marker
+                            key={pin.story_id || index}
+                            position={pin.position}
+                            icon={customIcon}
+                            eventHandlers={{
+                                click: () => handlePinClick(pin),
+                            }}
+                        />
+                    ))
+                }
+
+                {/* User location */}
+                {userLocation && (
+                    <Marker position={userLocation} icon={redIcon} />
+                )}
+
+                {/* Show a marker immediately for the new pin if newPinData is set */}
+                {newPinData && newPinData.position && (
+                    <Marker position={newPinData.position} icon={customIcon} />
+                )}
+            </MapContainer>
+            {/* Floating toggle button in bottom-left corner */}
+            <Fab
+                onClick={handleToggleAddPins}
+                color={canAddPins ? "secondary" : "primary"}
+                className="add-pin-button"
+                sx={{
+                    position: "absolute",
+                    bottom: 20,
+                    left: 20,
+                    zIndex: 9999,
+                }}
+            >
+                {canAddPins ? <CheckIcon /> : <AddIcon />}
+            </Fab>
+
+            {/* The shared Drawer for both "create" and "view" modes */}
+            <Drawer
+                anchor="right"
+                open={drawerOpen}
+                onClose={closeDrawer}
+            >
+                <Box sx={{ width: 300, p: 2 }}>
+                    {/* Header */}
+                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                        <Typography variant="h6">
+                            {drawerMode === "create" ? "Create New Pin" : "Pin Details"}
+                        </Typography>
+                        <IconButton onClick={closeDrawer}>
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
+
+                    {/* CONTENT: depends on drawerMode */}
+                    {drawerMode === "create" && newPinData ? (
+                        <>
+                            <TextField
+                                fullWidth
+                                label="Title"
+                                value={newPinData.title}
+                                onChange={(e) => setNewPinData({ ...newPinData, title: e.target.value })}
+                                sx={{ mb: 2 }}
                             />
-                            <textarea
-                                placeholder="Text"
-                                value={tempPin.text}
-                                onChange={(e) => setTempPin({...tempPin, text: e.target.value})}
-                                style={{width: "100%", backgroundColor: "white", color: "black"}}
+                            <TextField
+                                fullWidth
+                                label="Text"
+                                multiline
+                                rows={4}
+                                value={newPinData.text}
+                                onChange={(e) => setNewPinData({ ...newPinData, text: e.target.value })}
+                                sx={{ mb: 2 }}
                             />
-                            <button onClick={saveTempPin} style={{marginTop: "8px"}}>
-                                Save
-                            </button>
-                        </div>
-                    </Popup>
-                </Marker>
-            )}
-            {userLocation && (
-                <Marker position={userLocation} icon={redIcon}>
-                    <Popup>
-                        <strong>Your Location</strong>
-                    </Popup>
-                </Marker>
-            )}
-        </MapContainer>
+                            <Button variant="contained" onClick={handleSaveNewPin}>
+                                Save Pin
+                            </Button>
+                        </>
+                    ) : drawerMode === "view" && activePin ? (
+                        <>
+                            <Typography variant="title1" gutterBottom>
+                                <strong>Title:</strong> {activePin.title || "N/A"}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom>
+                                {activePin.text || "No description."}
+                            </Typography>
+                            <Typography variant="body2">
+                                <strong>Likes:</strong> {activePin.likes || 0}
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                onClick={handleLike}
+                                sx={{ mt: 2 }}
+                            >
+                                Like
+                            </Button>
+                        </>
+                    ) : (
+                        <Typography variant="body2">No content to display.</Typography>
+                    )}
+                </Box>
+            </Drawer>
+        </>
     );
 };
 
-const ClickHandler = ({onMapClick}: { onMapClick: (latlng: [number, number]) => void }) => {
+
+const ClickHandler = ({onMapClick,}: { onMapClick: (latlng: [number, number]) => void; }) => {
     useMapEvents({
         click: (e) => {
-            const latlng: [number, number] = [e.latlng.lat, e.latlng.lng];
-            onMapClick(latlng);
+            onMapClick([e.latlng.lat, e.latlng.lng]);
         },
     });
-
     return null;
 };
 
-const MoveEndHandler = ({onMoveEnd}: { onMoveEnd: (latLng: [number, number]) => Promise<void> }) => {
+
+const MoveEndHandler = ({onMoveEnd,}: { onMoveEnd: (latLng: [number, number]) => Promise<void>; }) => {
     const map = useMapEvents({
         moveend: async () => {
             const position = map.getCenter();
-//            const zoom = map.getZoom();
-            await onMoveEnd([position.lat, position.lng])
+            await onMoveEnd([position.lat, position.lng]);
         },
     });
     return null;
