@@ -168,6 +168,7 @@ public class StoryServiceImpl implements StoryService {
                 hasSeenRepo.save(h);
                 likes = hasSeenRepo.countLikesByStoryId(story_id);
                 response.put("likes", likes);
+                response.put("hasLiked", false);
                 return ResponseEntity.ok(response);
             }
         }
@@ -176,6 +177,7 @@ public class StoryServiceImpl implements StoryService {
         hasSeenRepo.save(hasSeen);
         likes = hasSeenRepo.countLikesByStoryId(story_id);
         response.put("likes", likes);
+        response.put("hasLiked", true);
         return ResponseEntity.ok(response);
     }
 
