@@ -25,12 +25,6 @@ public class StoryController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/{story_id}")
-    @ResponseBody()
-    public ResponseEntity<Map<String,Object>> getStory(@PathVariable String story_id) {
-        return storyService.getStory(Long.parseLong(story_id));
-    }
-
     @GetMapping(value="/stories")
     public ResponseEntity<List<StoryPin>> getStories(@RequestParam Double longitude,
     			@RequestParam Double latitude, @RequestParam Double radius) {
@@ -52,7 +46,7 @@ public class StoryController {
         return storyService.likeStory(Long.parseLong(story_id));
     }
 
-    @PostMapping("/reports")
+    @GetMapping("/reports")
     public ResponseEntity<?> getReports() {
         boolean isModerator = userService.isModerator();
         if (!isModerator) {
@@ -74,4 +68,9 @@ public class StoryController {
     	public Long tag_id;
     }
 
+    @GetMapping("/{story_id}")
+    @ResponseBody()
+    public ResponseEntity<Map<String,Object>> getStory(@PathVariable String story_id) {
+        return storyService.getStory(Long.parseLong(story_id));
+    }
 }

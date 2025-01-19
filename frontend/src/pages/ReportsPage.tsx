@@ -19,7 +19,7 @@ const ReportPage: React.FC = () => {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/reports`);
+        const response = await fetch(`${API_BASE_URL}/api/story/reports`);
         if (!response.ok) {
           throw new Error("Failed to fetch reported stories.");
         }

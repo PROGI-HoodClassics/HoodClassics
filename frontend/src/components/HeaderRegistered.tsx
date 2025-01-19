@@ -15,7 +15,7 @@ const HeaderRegistered = () => {
   }
   const handleReportClick = async () => {
     try {
-      const response = await fetch('/api/isModerator', {
+      const response = await fetch('/users/moderator', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ const HeaderRegistered = () => {
 
       const data = await response.json();
 
-      if (data.isModerator) {
+      if (data) {
         navigate('/reportsPage'); 
       } else {
         alert('Access Denied: You are not authorized to view this page.');
