@@ -10,4 +10,5 @@ public interface UserService {
     void addToTown(double latitude, double longitude);
     boolean isModerator();
     boolean exists();
+    Long trueUserId();
 }

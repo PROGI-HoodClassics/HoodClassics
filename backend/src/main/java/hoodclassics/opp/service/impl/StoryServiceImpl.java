@@ -157,7 +157,7 @@ public class StoryServiceImpl implements StoryService {
         }
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long user_id = userRepository.findByUsername(username).get().getUserId();
+        Long user_id = userService.trueUserId();
         UserIdStoryIdKey key = new UserIdStoryIdKey(user_id, story_id);
         boolean exists = hasSeenRepo.existsById(key);
         if (exists) {
