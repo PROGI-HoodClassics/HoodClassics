@@ -1,6 +1,7 @@
 package hoodclassics.opp.service;
 
 import hoodclassics.opp.domain.Report;
+import hoodclassics.opp.domain.Story;
 import hoodclassics.opp.domain.StoryPin;
 import org.springframework.http.ResponseEntity;
 
@@ -15,4 +16,6 @@ public interface StoryService {
     ResponseEntity<String> addTagToStory(Long storyId, Long tagId);
     ResponseEntity<Map<String, Object>> submitReport(Long storyID, String reportCategory, String description);
     List<Report> getReports();
+    Story getStoryObj(Long id);
+    ResponseEntity <String> deleteStory(Long id);
 }

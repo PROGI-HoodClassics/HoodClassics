@@ -202,6 +202,18 @@ public class StoryServiceImpl implements StoryService {
     }
 
     @Override
+    public Story getStoryObj(Long id) {
+        return storyRepo.findByStoryId(id);
+    }
+
+    @Override
+    public ResponseEntity<String> deleteStory(Long id) {
+        coordsRepo.deleteByStoryId(id);
+        storyRepo.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Story deleted");
+    }
+
+    @Override
     public ResponseEntity<Map<String, Object>> submitReport(Long storyID, String reportCategory, String description) {
         Map<String, Object> response = new HashMap<String, Object>();
 

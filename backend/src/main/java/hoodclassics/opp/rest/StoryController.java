@@ -26,8 +26,8 @@ public class StoryController {
     private UserService userService;
 
     @GetMapping(value="/stories")
-    public ResponseEntity<List<StoryPin>> getStories(@RequestParam Double longitude,
-    			@RequestParam Double latitude, @RequestParam Double radius) {
+    public ResponseEntity<List<StoryPin>> getStories(@RequestParam Double longitude, @RequestParam Double latitude,
+                                                     @RequestParam Double radius) {
     	return storyService.getStories(longitude, latitude, radius);
     }
     
@@ -79,5 +79,20 @@ public class StoryController {
                                                             @RequestParam String reportCategory,
                                                             @RequestParam String description) {
         return storyService.submitReport(storyID, reportCategory, description);
+    }
+
+    @PostMapping("/delete/{story_id}")
+    public ResponseEntity<String> deleteStory(@PathVariable String story_id) {
+        Long id = Long.parseLong(story_id);
+        boolean isModerator = userService.isModerator();
+        Long userId = userService.trueUserId();
+        if (storyService.getStoryObj(id) == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Story doesn't exist");
+        }
+        Long authId = storyService.getStoryObj(id).getUserId();
+        if (!isModerator && !userId.equals(authId)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not a moderator or the author");
+        }
+        return storyService.deleteStory(id);
     }
 }
