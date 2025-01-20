@@ -73,4 +73,11 @@ public class StoryController {
     public ResponseEntity<Map<String,Object>> getStory(@PathVariable String story_id) {
         return storyService.getStory(Long.parseLong(story_id));
     }
+
+    @PostMapping("/report")
+    public ResponseEntity<Map<String, Object>> submitReport(@RequestParam Long storyID,
+                                                            @RequestParam String reportCategory,
+                                                            @RequestParam String description) {
+        return storyService.submitReport(storyID, reportCategory, description);
+    }
 }

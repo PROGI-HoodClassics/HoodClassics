@@ -34,10 +34,9 @@ public class Report {
 	@Column(name="story_id")
 	private Long storyId;
 
-	public Report(Long reportId, Long reporterUserId, Long reportedUserId, String description, String reportCategory,
+	public Report(Long reporterUserId, Long reportedUserId, String description, String reportCategory,
 			Long storyId) {
 		super();
-		this.reportId = reportId;
 		this.reporterUserId = reporterUserId;
 		this.reportedUserId = reportedUserId;
 		this.description = description;

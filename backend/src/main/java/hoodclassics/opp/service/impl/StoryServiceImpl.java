@@ -201,4 +201,25 @@ public class StoryServiceImpl implements StoryService {
         return reportRepo.findAll();
     }
 
+    @Override
+    public ResponseEntity<Map<String, Object>> submitReport(Long storyID, String reportCategory, String description) {
+        Map<String, Object> response = new HashMap<String, Object>();
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<HoodClassicsUser> user = userRepository.findByUsername(username);
+        Long reporterUserID;
+        if (!user.isEmpty()) {
+            reporterUserID = user.get().getUserId();
+        } else {
+            response.put("message", "User doesn't exist");
+            return  new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        Long reportedUserID = storyRepo.findByStoryId(storyID).getUserId();
+        Report report = new Report(reporterUserID, reportedUserID, description, reportCategory, storyID);
+        reportRepo.save(report);
+        response.put("message", "Report added successfully");
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -13,5 +13,6 @@ public interface StoryService {
     ResponseEntity<Map<String, Object>> createStory(String text, String title, Double latitude, Double longitude);
     ResponseEntity<Map<String, Object>> likeStory(Long id);
     ResponseEntity<String> addTagToStory(Long storyId, Long tagId);
+    ResponseEntity<Map<String, Object>> submitReport(Long storyID, String reportCategory, String description);
     List<Report> getReports();
 }
