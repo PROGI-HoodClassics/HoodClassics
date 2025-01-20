@@ -50,7 +50,12 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public ResponseEntity<Map<String,Object>> getStory(Long id) {
-        Story story =  storyRepo.findByStoryId(id);
+    	
+    	if (storyRepo.findByStoryId(id).isEmpty()) {
+    		return new ResponseEntity<Map<String, Object>>(new HashMap<String, Object>(), HttpStatus.NOT_FOUND);
+    	}
+    	
+        Story story =  storyRepo.findByStoryId(id).get();
         String text = story.getText();
         String title = story.getTitle();
         Long likes = hasSeenRepo.countLikesByStoryId(id);
@@ -74,7 +79,10 @@ public class StoryServiceImpl implements StoryService {
 	@Override
 	public ResponseEntity<List<StoryPin>> getStories(Double longitude, Double latitude, Double radius) {
 		List<Coordinates> coords = coordsRepo.findAll();
-		List<StoryPin> pins = coords.stream().map(x -> {return new StoryPin(x);}).toList();
+		List<StoryPin> pins = coords.stream().map(x -> {
+			Long likes = hasSeenRepo.countLikesByStoryId(x.getStoryId());
+			return new StoryPin(x.getLongitude(), x.getLatitude(), x.getStoryId(), likes);
+		}).toList();
 		pins = pins.stream().filter(x -> {
 			return getDistanceBetweenCoordinates(longitude, x.getLongitude(), latitude, x.getLatitude()) < radius;
 					}).toList();
@@ -96,7 +104,7 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public ResponseEntity<Map<String,Object>> createStory(String text, String title, Double latitude, Double longitude) {
-        Optional<String> maybeAddress = this.geocodingService.reverseGeocode(latitude, longitude);
+    	Optional<String> maybeAddress = this.geocodingService.reverseGeocode(latitude, longitude);
         if (maybeAddress.isEmpty()) {
             Map<String, Object> response = new HashMap<>();
             response.put("error", "invalid coordinates");
@@ -203,7 +211,7 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public Story getStoryObj(Long id) {
-        return storyRepo.findByStoryId(id);
+        return storyRepo.findByStoryId(id).get();
     }
 
     @Override
@@ -227,11 +235,40 @@ public class StoryServiceImpl implements StoryService {
             return  new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        Long reportedUserID = storyRepo.findByStoryId(storyID).getUserId();
+        // Check if this code handles invalid story IDs
+        Long reportedUserID = storyRepo.findByStoryId(storyID).get().getUserId();
         Report report = new Report(reporterUserID, reportedUserID, description, reportCategory, storyID);
         reportRepo.save(report);
         response.put("message", "Report added successfully");
         return ResponseEntity.ok(response);
     }
+
+	@Override
+	public ResponseEntity<Object> getStoriesByTags(Double longitude, Double latitude, Double radius,
+			List<Long> tagIds) {
+		List<StoryPin> pins = this.getStories(longitude, latitude, radius).getBody();
+		
+		for (Long tagId : tagIds) {
+			if (tagRepo.findById(tagId).isEmpty()) {
+				return new ResponseEntity<Object>(tagId + " does not correspond to a tag", HttpStatus.BAD_REQUEST);
+			}
+		}
+		
+		pins = pins.stream()
+				.filter(x -> {
+					return getDistanceBetweenCoordinates(longitude, x.getLongitude(), latitude, x.getLatitude()) < radius;
+					})
+				.filter(x -> { // Not very efficient, but it's a start. TODO: Optimize if possible.
+					for (Long tagId : tagIds) {
+						if (isTaggedRepo.findById(new StoryIdTagIdKey(x.getStoryId(), tagId)).isPresent()) {
+							return true;
+						}
+					}
+					return false;
+				})
+				.toList();
+		return new ResponseEntity<Object>(pins, HttpStatus.OK);
+		
+	}
 
 }

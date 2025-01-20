@@ -25,6 +25,12 @@ public class StoryController {
     @Autowired
     private UserService userService;
 
+    @GetMapping("/{story_id}")
+    @ResponseBody()
+    public ResponseEntity<Map<String,Object>> getStory(@PathVariable Long story_id) {
+        return storyService.getStory(story_id);
+    }
+
     @GetMapping(value="/stories")
     public ResponseEntity<List<StoryPin>> getStories(@RequestParam Double longitude, @RequestParam Double latitude,
                                                      @RequestParam Double radius) {
@@ -34,6 +40,11 @@ public class StoryController {
     @PostMapping("/addtag")
     public ResponseEntity<String> addTagToStory(@RequestBody AddTagToStoryBody body) {
     	return storyService.addTagToStory(body.story_id, body.tag_id);
+    }
+    
+    @PostMapping("/taggedstories")
+    public ResponseEntity<Object> getStoriesByTags(@RequestBody TaggedStoriesBody body) {
+    	return storyService.getStoriesByTags(body.longitude, body.latitude, body.radius, body.tags);
     }
 
     @PostMapping
@@ -67,11 +78,12 @@ public class StoryController {
     	public Long story_id;
     	public Long tag_id;
     }
-
-    @GetMapping("/{story_id}")
-    @ResponseBody()
-    public ResponseEntity<Map<String,Object>> getStory(@PathVariable String story_id) {
-        return storyService.getStory(Long.parseLong(story_id));
+    
+    public static class TaggedStoriesBody {
+    	public Double longitude;
+    	public Double latitude;
+    	public Double radius;
+    	public List<Long> tags;
     }
 
     @PostMapping("/report")

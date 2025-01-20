@@ -15,6 +15,7 @@ public interface StoryService {
     ResponseEntity<Map<String, Object>> likeStory(Long id);
     ResponseEntity<String> addTagToStory(Long storyId, Long tagId);
     ResponseEntity<Map<String, Object>> submitReport(Long storyID, String reportCategory, String description);
+    ResponseEntity<Object> getStoriesByTags(Double longitude, Double latitude, Double radius, List<Long> tagIds);
     List<Report> getReports();
     Story getStoryObj(Long id);
     ResponseEntity <String> deleteStory(Long id);

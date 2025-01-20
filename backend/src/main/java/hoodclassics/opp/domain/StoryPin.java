@@ -6,29 +6,22 @@ public class StoryPin {
 	private Double longitude;
 	private Double latitude;
 	private Long storyId;
-	private Integer likes;
+	private Long likes;
 	
 	public StoryPin() {
 		super();
 		this.longitude = null;
 		this.latitude = null;
 		this.storyId = null;
-		this.likes = 0;
+		this.likes = null;
 	}
 
-	public StoryPin(Double longitude, Double latitude, Long storyId, Integer likes) {
+	public StoryPin(Double longitude, Double latitude, Long storyId, Long likes) {
 		super();
 		this.longitude = longitude;
 		this.latitude = latitude;
 		this.storyId = storyId;
-		this.likes = 0;
-	}
-	
-	public StoryPin(Coordinates coordinates) {
-		this.longitude = coordinates.getLongitude();
-		this.latitude = coordinates.getLatitude();
-		this.storyId = coordinates.getStoryId();
-		this.likes = 0;
+		this.likes = likes;
 	}
 
 	public Double getLongitude() {
@@ -55,11 +48,11 @@ public class StoryPin {
 		this.storyId = storyId;
 	}
 
-	public Integer getLikes() {
+	public Long getLikes() {
 		return likes;
 	}
 
-	public void setLikes(Integer likes) {
+	public void setLikes(Long likes) {
 		this.likes = likes;
 	}
 	

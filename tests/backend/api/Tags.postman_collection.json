@@ -1,0 +1,412 @@
+{
+	"info": {
+		"_postman_id": "52ebf35d-b5a9-4628-98cc-d2f67e004860",
+		"name": "Tags",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41279343"
+	},
+	"item": [
+		{
+			"name": "Add tag (tourist)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Failed to like unauthenticated\", function () {",
+							"  pm.response.to.have.status(401);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"story_id\" : \"1\",\n    \"tag_id\" : \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/story/addtag",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"addtag"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch pins with 2 tags (tourist)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fetched correct story pins\", function () {",
+							"  pm.response.to.have.status(200);",
+							"",
+							"  const expectedBody = [",
+							"    {",
+							"        \"storyId\" : \"1\",",
+							"        \"latitude\" : \"45.81466552408981\",",
+							"        \"longitude\" : \"15.979814251930389\",",
+							"        \"likes\" : \"1\"",
+							"    },",
+							"    {",
+							"        \"storyId\" : \"2\",",
+							"        \"latitude\" : \"45.800873703358214\",",
+							"        \"longitude\" : \"15.971270141762062\",",
+							"        \"likes\" : \"0\"",
+							"    }",
+							"  ];",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(String(responseBody[0].storyId)).to.deep.equal(expectedBody[0].storyId);",
+							"  pm.expect(String(responseBody[0].longitude)).to.deep.equal(expectedBody[0].longitude);",
+							"  pm.expect(String(responseBody[0].latitude)).to.deep.equal(expectedBody[0].latitude);",
+							"  pm.expect(String(responseBody[0].likes)).to.deep.equal(expectedBody[0].likes);",
+							"",
+							"  pm.expect(String(responseBody[1].storyId)).to.deep.equal(expectedBody[1].storyId);",
+							"  pm.expect(String(responseBody[1].longitude)).to.deep.equal(expectedBody[1].longitude);",
+							"  pm.expect(String(responseBody[1].latitude)).to.deep.equal(expectedBody[1].latitude);",
+							"  pm.expect(String(responseBody[1].likes)).to.deep.equal(expectedBody[1].likes);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"latitude\" : \"45.8150\",\n\t\"longitude\" : \"15.9819\",\n\t\"radius\" : \"10\",\n\t\"tags\" : [\n        \"1\",\n        \"2\"\n\t]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/story/taggedstories",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"taggedstories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login (not a test)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add existing tag",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Failed to add, already tagged\", function () {",
+							"  pm.response.to.have.status(403);",
+							"",
+							"  const expectedBody = \"That story already has that tag\";",
+							"  ",
+							"  const responseBody = pm.response.text()",
+							"  pm.expect(responseBody).to.deep.equal(expectedBody);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"story_id\" : \"1\",\n    \"tag_id\" : \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/story/addtag",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"addtag"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add non-existing tag",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fail to add tag, tag_id invalid\", function () {",
+							"  pm.response.to.have.status(400);",
+							"",
+							"  const expectedBody = \"100 does not correspond to a tag\";",
+							"  ",
+							"  const responseBody = pm.response.text();",
+							"  pm.expect(responseBody).to.deep.equal(expectedBody);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"story_id\" : \"1\",\n    \"tag_id\" : \"100\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/story/addtag",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"addtag"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add tag bad story_id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fail to add tag, story_id invalid\", function () {",
+							"  pm.response.to.have.status(400);",
+							"",
+							"  const expectedBody = \"100 does not correspond to a story\";",
+							"  ",
+							"  const responseBody = pm.response.text();",
+							"  pm.expect(responseBody).to.deep.equal(expectedBody);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"story_id\" : \"100\",\n    \"tag_id\" : \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/story/addtag",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"addtag"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add new tag",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Added new tag\", function () {",
+							"  pm.response.to.have.status(200);",
+							"",
+							"  const expectedBody = \"OK\";",
+							"  ",
+							"  const responseBody = pm.response.text();",
+							"  pm.expect(responseBody).to.deep.equal(expectedBody);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"story_id\" : \"1\",\n    \"tag_id\" : \"2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/story/addtag",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"addtag"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch pins with new tag",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fetched correct story pins\", function () {",
+							"  pm.response.to.have.status(200);",
+							"",
+							"  const expectedBody = [",
+							"    {",
+							"        \"storyId\" : \"1\",",
+							"        \"latitude\" : \"45.81466552408981\",",
+							"        \"longitude\" : \"15.979814251930389\",",
+							"        \"likes\" : \"1\"",
+							"    }",
+							"  ];",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(String(responseBody[0].storyId)).to.deep.equal(expectedBody[0].storyId);",
+							"  pm.expect(String(responseBody[0].longitude)).to.deep.equal(expectedBody[0].longitude);",
+							"  pm.expect(String(responseBody[0].latitude)).to.deep.equal(expectedBody[0].latitude);",
+							"  pm.expect(String(responseBody[0].likes)).to.deep.equal(expectedBody[0].likes);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"latitude\" : \"45.8150\",\n\t\"longitude\" : \"15.9819\",\n\t\"radius\" : \"10\",\n\t\"tags\" : [\n\t\t\"2\"\n\t]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/story/taggedstories",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"taggedstories"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
