@@ -34,3 +34,25 @@ Response Body:
 			"storyId": "number"
 		    }
 		]
+
+==== REPORT ====
+	POST /api/story/report
+
+	Content-Type: multipart/form-data;
+
+
+	Content-Disposition: form-data; name="storyID" number
+
+	Content-Disposition: form-data; name="reportCategory" String
+
+	Content-Disposition: form-data; name="description" String
+
+
+	Responses:
+
+	    -succes - 200 OK "report sent"
+	    -not allowed to report (not a local) 401 UNAUTHORIZED
+
+	Response Body {
+	    "message": "String"
+	} 
