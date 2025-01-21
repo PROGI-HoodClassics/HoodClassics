@@ -5,10 +5,12 @@ import { useState, useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-import { Drawer, Box, Typography, IconButton, TextField, Button, Fab } from "@mui/material";
+import { Drawer, Box, Typography, IconButton, TextField, Button, Fab, Snackbar, Alert, FormControl, Select, MenuItem, InputLabel } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
+import FavoriteBorderTwoToneIcon from "@mui/icons-material/FavoriteBorderTwoTone";
+
 
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -27,7 +29,7 @@ const customIcon = new L.Icon({
 
 const redIcon = new L.Icon({
     iconUrl: redPinImage,
-    iconSize: [30, 41],
+    iconSize: [41, 41],
     iconAnchor: [15, 41],
     popupAnchor: [0, -40],
 });
@@ -48,13 +50,13 @@ type PinData = {
     title?: string;
     text?: string;
     likes?: number;
+    hasLiked?: boolean;
 };
 
 const UserMap = () => {
     const initialPosition: [number, number] = [45.8004, 15.9714];
-    const { pins, addPin, updatePins, fetchPin, likePin } = usePins();
-
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+    const { pins, addPin, updatePins, fetchPin, toggleLikePin, reportPin } = usePins();
 
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [drawerMode, setDrawerMode] = useState<"create" | "view" | null>(null);
@@ -62,6 +64,17 @@ const UserMap = () => {
     const [activePin, setActivePin] = useState<PinData | null>(null);
     const [newPinData, setNewPinData] = useState<PinData | null>(null);
     const [canAddPins, setCanAddPins] = useState(false);
+
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+
+    const [reportCategory, setReportCategory] = useState<string>("");
+    const [reportDescription, setReportDescription] = useState<string>("");
+
+    const REPORT_OPTIONS = [
+        "Neprimjeren sadržaj",
+        "Netočan sadržaj",
+    ];
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -122,12 +135,28 @@ const UserMap = () => {
         setDrawerOpen(false);
         setDrawerMode(null);
     };
-    const handleLike = async () => {
+    const handleToggleLike = async () => {
         if (!activePin?.story_id) return;
-        await likePin(activePin.story_id);
-        setActivePin((prev) =>
-            prev ? {...prev, likes: prev.likes! + 1} : null
-        );
+        const wasLiked = !!activePin.hasLiked;
+        const result = await toggleLikePin(activePin.story_id);
+
+        console.log("RESULT BATOOOOO " + result)
+        if (result) {
+            setActivePin((prev) => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    likes: result.likes,
+                    likedByCurrentUser: result.hasLiked,
+                };
+            });
+            if (result.hasLiked && !wasLiked) {
+                setSnackbarMessage("Liked");
+            }  else {
+                setSnackbarMessage("Unliked");
+            }
+            setSnackbarOpen(true);
+        }
     };
 
     const closeDrawer = () => {
@@ -138,9 +167,33 @@ const UserMap = () => {
     };
 
     const handleMoveEnd = async (latLng: [number, number]) => {
-        // The position param is lat,lng, but your updatePins might need [lng, lat]
         await updatePins(pins, [latLng[1], latLng[0]]);
     };
+
+    const handleReportSubmit = async () => {
+        if (!activePin?.story_id || !reportCategory) {
+            return;
+        }
+
+        const result = await reportPin(
+            activePin.story_id,    // storyId
+            reportCategory,        // category
+            reportDescription      // description
+        );
+
+        if (!result) {
+            console.error("Failed to send report. No response from server.");
+            return;
+        }
+
+        console.log("Report result:", result.message);
+        alert(`Report response: ${result.message}`);
+
+        setReportCategory("");
+        setReportDescription("");
+    };
+
+
 
     return (
         <>
@@ -156,7 +209,6 @@ const UserMap = () => {
                 <MoveEndHandler onMoveEnd={handleMoveEnd} />
                 <ClickHandler onMapClick={handleMapClick} />
 
-                {/* Existing pins */}
                 {pins
                     .filter((pin: any) => pin !== undefined)
                     .map((pin: PinData, index: number) => (
@@ -171,12 +223,10 @@ const UserMap = () => {
                     ))
                 }
 
-                {/* User location */}
                 {userLocation && (
                     <Marker position={userLocation} icon={redIcon} />
                 )}
 
-                {/* Show a marker immediately for the new pin if newPinData is set */}
                 {newPinData && newPinData.position && (
                     <Marker position={newPinData.position} icon={customIcon} />
                 )}
@@ -202,7 +252,7 @@ const UserMap = () => {
                 open={drawerOpen}
                 onClose={closeDrawer}
             >
-                <Box sx={{ width: 300, p: 2 }}>
+                <Box sx={{ width: 500, p: 2 }}>
                     {/* Header */}
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                         <Typography variant="h6">
@@ -247,19 +297,64 @@ const UserMap = () => {
                             <Typography variant="body2">
                                 <strong>Likes:</strong> {activePin.likes || 0}
                             </Typography>
-                            <Button
-                                variant="contained"
-                                onClick={handleLike}
-                                sx={{ mt: 2 }}
-                            >
-                                Like
-                            </Button>
+                            <IconButton onClick={handleToggleLike} sx={{ mt: 2 }}>
+                                <FavoriteBorderTwoToneIcon />
+                            </IconButton>
                         </>
                     ) : (
                         <Typography variant="body2">No content to display.</Typography>
                     )}
                 </Box>
+                <Box sx={{ mt: 3, margin: '3%' }}>
+                    <Typography variant="subtitle1">Report Story</Typography>
+                    <FormControl fullWidth sx={{ mt: 1 }}>
+                        <InputLabel id="report-category-label">Report Category</InputLabel>
+                        <Select
+                            labelId="report-category-label"
+                            value={reportCategory}
+                            label="Report Category"
+                            onChange={(e) => setReportCategory(e.target.value)}
+                        >
+                            {/* Hardcode your 2 options */}
+                            <MenuItem value="Neprimjeren sadrzaj">Neprimjeren sadrzaj</MenuItem>
+                            <MenuItem value="Netocan sadrzaj">Netocan sadrzaj</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* Text box for description (does NOT affect button enable) */}
+                    <TextField
+                        fullWidth
+                        multiline
+                        rows={3}
+                        label="Description (optional)"
+                        sx={{ mt: 2 }}
+                        value={reportDescription}
+                        onChange={(e) => setReportDescription(e.target.value)}
+                    />
+
+                    {/* Report button is enabled only if user chose a category */}
+                    <Button
+                        variant="contained"
+                        sx={{ mt: 2 }}
+                        disabled={!reportCategory} // only enable if reportCategory != ""
+                        onClick={handleReportSubmit}
+                    >
+                        Report
+                    </Button>
+                </Box>
             </Drawer>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert severity="info" onClose={() => setSnackbarOpen(false)}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
+
         </>
     );
 };
