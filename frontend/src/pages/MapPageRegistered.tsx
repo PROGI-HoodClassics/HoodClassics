@@ -9,8 +9,8 @@ import { Drawer, Box, Typography, IconButton, TextField, Button, Fab, Snackbar, 
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
-import FavoriteBorderTwoToneIcon from "@mui/icons-material/FavoriteBorderTwoTone";
 
+import FavoriteBorderTwoToneIcon from "@mui/icons-material/FavoriteBorderTwoTone";
 
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -26,6 +26,7 @@ const customIcon = new L.Icon({
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
 });
+
 
 const redIcon = new L.Icon({
     iconUrl: redPinImage,
@@ -50,26 +51,34 @@ type PinData = {
     title?: string;
     text?: string;
     likes?: number;
-    hasLiked?: boolean;
 };
 
 const UserMap = () => {
     const initialPosition: [number, number] = [45.8004, 15.9714];
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
     const { pins, addPin, updatePins, fetchPin, toggleLikePin, reportPin } = usePins();
-
+    const [selectedTags, setSelectedTags] = useState<string[]>([]); // To store selected tags
+    const [filteredStories, setFilteredStories] = useState<PinData[]>([]);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [drawerMode, setDrawerMode] = useState<"create" | "view" | null>(null);
-
     const [activePin, setActivePin] = useState<PinData | null>(null);
     const [newPinData, setNewPinData] = useState<PinData | null>(null);
     const [canAddPins, setCanAddPins] = useState(false);
+    const [tags, setTags] = useState([
+        { id: '1', name: 'Sport' },
+        { id: '2', name: 'Music' },
+        { id: '3', name: 'Travel' },
+        { id: '4', name: 'Food' },
+        { id: '5', name: 'Art' },
+    ]); 
+    
 
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
 
-    const [reportCategory, setReportCategory] = useState<string>("");
     const [reportDescription, setReportDescription] = useState<string>("");
+    const [reportCategory, setReportCategory] = useState<string>("");
 
     const REPORT_OPTIONS = [
         "Neprimjeren sadržaj",
@@ -92,10 +101,72 @@ const UserMap = () => {
         }
     }, []);
 
+
+    const fetchStoriesByTags = async () => {
+        if (!userLocation) return;
+    
+        const { latitude, longitude } = userLocation;
+        const radius = 5000; 
+    
+
+        const requestBody = {
+            longitude: longitude.toString(),
+            latitude: latitude.toString(),
+            radius: radius,
+            tagIds: selectedTags, 
+        };
+    
+        try {
+            const response = await fetch("/api/story/taggedstories", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+            });
+            if (!response.ok) {
+                throw new Error("Failed to fetch stories.");
+            }
+    
+            const data = await response.json();
+            setFilteredStories(data);
+        } catch (error) {
+            console.error("Error fetching stories:", error);
+        }
+    };
+    
+
+    const handleTagSelect = (tagId: string) => {
+        setSelectedTags((prevTags) => {
+            const newTags = [...prevTags];
+            const index = newTags.indexOf(tagId);
+            if (index > -1) {
+                newTags.splice(index, 1);
+            } else {
+                newTags.push(tagId);
+            }
+            return newTags;
+        });
+    };
+    
+
+    useEffect(() => {
+        fetchStoriesByTags();
+    }, [selectedTags, userLocation]); 
+
+    const handleOpenTags = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleCloseTags = () => {
+        setAnchorEl(null);
+    };
+
+    const openTags = Boolean(anchorEl);
+
     const handleToggleAddPins = () => {
         setCanAddPins((prev) => !prev);
     };
-
 
     const handleMapClick = (latlng: [number, number]) => {
         if (!canAddPins) {
@@ -123,31 +194,30 @@ const UserMap = () => {
 
     const handleSaveNewPin = async () => {
         if (!newPinData) return;
-        // Validate required fields
         if (!newPinData.title || !newPinData.text) {
             alert("Please fill in both the title and text!");
             return;
         }
-        // Add the pin via context
+        
         await addPin(newPinData);
-        // Reset creation form and close Drawer
+
         setNewPinData(null);
         setDrawerOpen(false);
         setDrawerMode(null);
     };
     const handleToggleLike = async () => {
         if (!activePin?.story_id) return;
-        const wasLiked = !!activePin.hasLiked;
         const result = await toggleLikePin(activePin.story_id);
+        const wasLiked = !!activePin.hasLiked;
 
         console.log("RESULT BATOOOOO " + result)
         if (result) {
             setActivePin((prev) => {
                 if (!prev) return null;
                 return {
+                    likedByCurrentUser: result.hasLiked,
                     ...prev,
                     likes: result.likes,
-                    likedByCurrentUser: result.hasLiked,
                 };
             });
             if (result.hasLiked && !wasLiked) {
@@ -168,11 +238,11 @@ const UserMap = () => {
 
     const handleMoveEnd = async (latLng: [number, number]) => {
         await updatePins(pins, [latLng[1], latLng[0]]);
+    const handleReportSubmit = async () => {
     };
 
-    const handleReportSubmit = async () => {
-        if (!activePin?.story_id || !reportCategory) {
             return;
+        if (!activePin?.story_id || !reportCategory) {
         }
 
         const result = await reportPin(
@@ -189,8 +259,8 @@ const UserMap = () => {
         console.log("Report result:", result.message);
         alert(`Report response: ${result.message}`);
 
-        setReportCategory("");
         setReportDescription("");
+        setReportCategory("");
     };
 
 
@@ -206,7 +276,6 @@ const UserMap = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; OpenStreetMap contributors"
                 />
-                <MoveEndHandler onMoveEnd={handleMoveEnd} />
                 <ClickHandler onMapClick={handleMapClick} />
 
                 {pins
@@ -220,9 +289,18 @@ const UserMap = () => {
                                 click: () => handlePinClick(pin),
                             }}
                         />
-                    ))
-                }
+                    ))}
 
+                {filteredStories.map((story: PinData, index: number) => (
+                    <Marker
+                        key={story.story_id || index}
+                        position={story.position}
+                        icon={customIcon}
+                        eventHandlers={{
+                            click: () => handlePinClick(story),
+                        }}
+                    />
+                ))}
                 {userLocation && (
                     <Marker position={userLocation} icon={redIcon} />
                 )}
@@ -230,8 +308,9 @@ const UserMap = () => {
                 {newPinData && newPinData.position && (
                     <Marker position={newPinData.position} icon={customIcon} />
                 )}
+
             </MapContainer>
-            {/* Floating toggle button in bottom-left corner */}
+
             <Fab
                 onClick={handleToggleAddPins}
                 color={canAddPins ? "secondary" : "primary"}
@@ -246,12 +325,84 @@ const UserMap = () => {
                 {canAddPins ? <CheckIcon /> : <AddIcon />}
             </Fab>
 
-            {/* The shared Drawer for both "create" and "view" modes */}
-            <Drawer
-                anchor="right"
-                open={drawerOpen}
-                onClose={closeDrawer}
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenTags}
+                sx={{
+                    position: "absolute",
+                    bottom: 20,
+                    right: 20,
+                    zIndex: 1000,
+                    borderRadius: "20px",
+                    padding: "10px 20px",
+                    fontWeight: "bold",
+                }}
             >
+                Show Tags
+            </Button>
+
+            <Popover
+            open={openTags}
+            anchorEl={anchorEl}
+            onClose={handleCloseTags}
+            anchorOrigin={{
+                vertical: "top",
+                horizontal: "center",
+            }}
+            transformOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+            }}
+            sx={{
+                "& .MuiPaper-root": {
+                    borderRadius: "16px",
+                    padding: "20px",
+                    backgroundColor: "white",
+                    marginTop: "-0.5rem",
+                },
+            }}
+        >
+            <Typography
+                variant="h6"
+                sx={{ textAlign: "center", marginBottom: 2, fontWeight: "bold" }}
+            >
+                Select a Tag
+            </Typography>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                    gap: 2,
+                }}
+            >
+                {tags.map((tag) => (
+                    <Chip
+                        key={tag.id}
+                        label={tag.name}
+                        clickable
+                        color={selectedTags.includes(tag.id) ? "secondary" : "primary"} 
+                        sx={{
+                            fontSize: "1rem",
+                            fontWeight: "bold",
+                            padding: "10px 20px",
+                            borderRadius: "24px",
+                            backgroundColor: selectedTags.includes(tag.id) ? "#1976d2" : "#e0f7fa", 
+                            color: selectedTags.includes(tag.id) ? "white" : "black", 
+                            "&:hover": {
+                                backgroundColor: selectedTags.includes(tag.id) ? "#1565c0" : "#b2ebf2",
+                            },
+                        }}
+                        onClick={() => handleTagSelect(tag.id)} 
+                    />
+                ))}
+            </Box>
+        </Popover>
+
+
+            <Drawer anchor="right" open={drawerOpen} onClose={closeDrawer}>
+                <Box sx={{ width: 300, p: 2 }}>
                 <Box sx={{ width: 500, p: 2 }}>
                     {/* Header */}
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -263,7 +414,6 @@ const UserMap = () => {
                         </IconButton>
                     </Box>
 
-                    {/* CONTENT: depends on drawerMode */}
                     {drawerMode === "create" && newPinData ? (
                         <>
                             <TextField
@@ -359,22 +509,10 @@ const UserMap = () => {
     );
 };
 
-
-const ClickHandler = ({onMapClick,}: { onMapClick: (latlng: [number, number]) => void; }) => {
+const ClickHandler = ({ onMapClick }: { onMapClick: (latlng: [number, number]) => void }) => {
     useMapEvents({
         click: (e) => {
             onMapClick([e.latlng.lat, e.latlng.lng]);
-        },
-    });
-    return null;
-};
-
-
-const MoveEndHandler = ({onMoveEnd,}: { onMoveEnd: (latLng: [number, number]) => Promise<void>; }) => {
-    const map = useMapEvents({
-        moveend: async () => {
-            const position = map.getCenter();
-            await onMoveEnd([position.lat, position.lng]);
         },
     });
     return null;
