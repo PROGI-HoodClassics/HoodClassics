@@ -5,10 +5,12 @@ import { useState, useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-import { Drawer, Box, Typography, IconButton, TextField, Button, Fab, Chip, Popover } from "@mui/material";
+import { Drawer, Box, Typography, IconButton, TextField, Button, Fab, Chip, Popover, FormControl, Select, MenuItem, InputLabel, Snackbar, Alert } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
+import FavoriteBorderTwoToneIcon from "@mui/icons-material/FavoriteBorderTwoTone";
+
 
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
@@ -65,6 +67,12 @@ const UserMap = () => {
     const [activePin, setActivePin] = useState<PinData | null>(null);
     const [newPinData, setNewPinData] = useState<PinData | null>(null);
     const [canAddPins, setCanAddPins] = useState(false);
+
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+
+    const [reportCategory, setReportCategory] = useState<string>("");
+    const [reportDescription, setReportDescription] = useState<string>("");
     
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [tags, setTags] = useState([
@@ -74,6 +82,11 @@ const UserMap = () => {
         { id: '4', name: 'Food' },
         { id: '5', name: 'Art' },
     ]); 
+
+    const REPORT_OPTIONS = [
+        "Neprimjeren sadržaj",
+        "Netočan sadržaj",
+    ];
 
 
 
@@ -197,12 +210,29 @@ const UserMap = () => {
         setDrawerOpen(false);
         setDrawerMode(null);
     };
-    const handleLike = async () => {
+    
+    const handleToggleLike = async () => {
         if (!activePin?.story_id) return;
-        await likePin(activePin.story_id);
-        setActivePin((prev) =>
-            prev ? {...prev, likes: prev.likes! + 1} : null
-        );
+        const wasLiked = !!activePin.hasLiked;
+        const result = await toggleLikePin(activePin.story_id);
+
+        console.log("RESULT BATOOOOO " + result)
+        if (result) {
+            setActivePin((prev) => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    likes: result.likes,
+                    likedByCurrentUser: result.hasLiked,
+                };
+            });
+            if (result.hasLiked && !wasLiked) {
+                setSnackbarMessage("Liked");
+            }  else {
+                setSnackbarMessage("Unliked");
+            }
+            setSnackbarOpen(true);
+        }
     };
 
     const closeDrawer = () => {
@@ -214,6 +244,29 @@ const UserMap = () => {
 
     const handleMoveEnd = async (latLng: [number, number]) => {
         await updatePins(pins, [latLng[1], latLng[0]]);
+    };
+
+    const handleReportSubmit = async () => {
+        if (!activePin?.story_id || !reportCategory) {
+            return;
+        }
+
+        const result = await reportPin(
+            activePin.story_id,    // storyId
+            reportCategory,        // category
+            reportDescription      // description
+        );
+
+        if (!result) {
+            console.error("Failed to send report. No response from server.");
+            return;
+        }
+
+        console.log("Report result:", result.message);
+        alert(`Report response: ${result.message}`);
+
+        setReportCategory("");
+        setReportDescription("");
     };
 
     return (
@@ -415,7 +468,51 @@ const UserMap = () => {
                         <Typography variant="body2">No content to display.</Typography>
                     )}
                 </Box>
+                <Box sx={{ mt: 3, margin: '3%' }}>
+                    <Typography variant="subtitle1">Report Story</Typography>
+                    <FormControl fullWidth sx={{ mt: 1 }}>
+                        <InputLabel id="report-category-label">Report Category</InputLabel>
+                        <Select
+                            labelId="report-category-label"
+                            value={reportCategory}
+                            label="Report Category"
+                            onChange={(e) => setReportCategory(e.target.value)}
+                        >
+                            <MenuItem value="Neprimjeren sadrzaj">Neprimjeren sadrzaj</MenuItem>
+                            <MenuItem value="Netocan sadrzaj">Netocan sadrzaj</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <TextField
+                        fullWidth
+                        multiline
+                        rows={3}
+                        label="Description (optional)"
+                        sx={{ mt: 2 }}
+                        value={reportDescription}
+                        onChange={(e) => setReportDescription(e.target.value)}
+                    />
+
+                    <Button
+                        variant="contained"
+                        sx={{ mt: 2 }}
+                        disabled={!reportCategory} 
+                        onClick={handleReportSubmit}
+                    >
+                        Report
+                    </Button>
+                </Box>
             </Drawer>
+            <Snackbar
+                            open={snackbarOpen}
+                            autoHideDuration={3000}
+                            onClose={() => setSnackbarOpen(false)}
+                            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                        >
+                            <Alert severity="info" onClose={() => setSnackbarOpen(false)}>
+                                {snackbarMessage}
+                            </Alert>
+                        </Snackbar>
         </>
     );
 };
