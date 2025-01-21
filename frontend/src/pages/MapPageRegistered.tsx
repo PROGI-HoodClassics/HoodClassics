@@ -17,6 +17,9 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import redPinImage from "../assets/photos/red-pin.png";
 
+const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080'; 
+
+
 const customIcon = new L.Icon({
     iconUrl: markerIcon,
     iconRetinaUrl: markerIcon2x,
@@ -29,7 +32,7 @@ const customIcon = new L.Icon({
 
 const redIcon = new L.Icon({
     iconUrl: redPinImage,
-    iconSize: [41, 41],
+    iconSize: [30, 41],
     iconAnchor: [15, 41],
     popupAnchor: [0, -40],
 });
@@ -110,19 +113,20 @@ const UserMap = () => {
     const fetchStoriesByTags = async () => {
         if (!userLocation) return;
     
-        const { latitude, longitude } = userLocation;
-        const radius = 5000; 
+        const latitude = userLocation[0]; 
+        const longitude = userLocation[1];
+        const radius = 10; 
     
 
         const requestBody = {
             longitude: longitude.toString(),
             latitude: latitude.toString(),
             radius: radius,
-            tagIds: selectedTags, 
+            tags: selectedTags, 
         };
     
         try {
-            const response = await fetch("/api/story/taggedstories", {
+            const response = await fetch(`${API_BASE_URL}/api/story/taggedstories`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -141,14 +145,14 @@ const UserMap = () => {
     };
     
 
-    const handleTagSelect = (tagId: string) => {
+    const handleTagSelect = (tags: string) => {
         setSelectedTags((prevTags) => {
             const newTags = [...prevTags];
-            const index = newTags.indexOf(tagId);
+            const index = newTags.indexOf(tags);
             if (index > -1) {
                 newTags.splice(index, 1);
             } else {
-                newTags.push(tagId);
+                newTags.push(tags);
             }
             return newTags;
         });
