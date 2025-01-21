@@ -10,6 +10,7 @@ type Pin = {
     title?: string;
     likes?: number;
     user_id?: number;
+    likedByCurrentUser?: boolean;
 };
 
 interface PinContextType {
@@ -17,7 +18,8 @@ interface PinContextType {
     addPin: (pin: Omit<Pin, "story_id" | "likes" | "user_id">) => Promise<void>;
     updatePins: (pins: Array<Pin>, latLng: [number, number]) => Promise<void>;
     fetchPin: (storyId: string) => Promise<void >;
-    likePin: (storyId: string) => Promise<void>;
+    toggleLikePin: (storyId: string) => Promise<void>;
+    reportPin: (storyId: string, category: string, description: string) => Promise<{ message: string } | undefined>;
 }
 
 const PinContext = createContext<PinContextType | undefined>(undefined);
@@ -128,7 +130,7 @@ export const PinProvider = ({children}: { children: ReactNode }) => {
             console.error("Failed to add pin:", error);
         }
     };
-    const likePin = async (storyId: string) => {
+    const toggleLikePin = async (storyId: string) => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/story/like/${storyId}`, {
                 method: "POST",
@@ -139,33 +141,68 @@ export const PinProvider = ({children}: { children: ReactNode }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                const newLikes = data.likes;
+                const { likes, hasLiked } = data;
+
                 setPins((prevPins) =>
-                    prevPins.map((pin) =>
-                        pin.story_id === storyId
-                            ? {
+                    prevPins.map((pin) => {
+                        if (pin.story_id === storyId) {
+                            return {
                                 ...pin,
-                                likes: newLikes,
-                            }
-                            : pin
-                    )
+                                likes,
+                                hasLiked,
+                            };
+                        }
+                        return pin;
+                    })
                 );
-                console.log(`Pin ${storyId} liked. New likes = ${newLikes}`);
+
+                console.log(`Pin ${storyId} toggled. New likes = ${likes}, likedByUser = ${hasLiked}`);
+
+                return { likes, hasLiked };
             } else if (response.status === 404) {
-                // If the server says the story doesn't exist
                 console.error("That story doesn't exist");
             } else {
-                console.error("Failed to like story, status code:", response.status);
+                console.error("Failed to toggle like, status code:", response.status);
             }
         } catch (error) {
-            console.error("Network error while liking story:", error);
+            console.error("Network error while toggling like:", error);
+        }
+    };
+
+    const reportPin = async (storyId: number, reportCategory: string, description: string): Promise<{ message: string } | undefined> => {
+        try {
+            const formData = new FormData();
+            formData.append("storyID", storyId);
+            formData.append("reportCategory", reportCategory);
+            formData.append("description", description);
+
+            const response = await fetch(`${API_BASE_URL}/api/story/report`, {
+                method: "POST",
+                body: formData,
+            });
+
+
+            const data = await response.json(); // e.g. { message: "report sent" }
+
+            if (response.ok) {
+                console.log("Report success:", data.message);
+                return data;
+            } else if (response.status === 401) {
+                console.warn("Not allowed to report (not a local).", data.message);
+                return data;
+            } else {
+                console.error("Report failed:", response.status, data.message);
+                return data;
+            }
+        } catch (error) {
+            console.error("Network error while reporting story:", error);
+            return undefined;
         }
     };
 
 
-
     return (
-        <PinContext.Provider value={{pins, addPin, updatePins: fetchPins, fetchPin, likePin}}>
+        <PinContext.Provider value={{pins, addPin, updatePins: fetchPins, fetchPin, toggleLikePin, reportPin}}>
             {children}
         </PinContext.Provider>
     );

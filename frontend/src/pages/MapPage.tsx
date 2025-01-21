@@ -14,6 +14,14 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import redPinImage from "../assets/photos/red-pin.png";
 
+type PinData = {
+    story_id?: string;
+    position: [number, number];
+    title?: string;
+    text?: string;
+    likes?: number;
+};
+
 const MapPage = () => {
     return (
         <>
@@ -69,19 +77,19 @@ const UserMap = () => {
     }, []);
 
     const handleMoveEnd = async (latLng: [number, number]) => {
-        await updatePins(pins, latLng);
+        await updatePins(pins, [latLng[1], latLng[0]]);
     };
 
     const handlePinClick = async (pin: any) => {
         console.log("PIN JE KLIKNUT" + pin.story_id);
 
         if (pin.story_id) {
-            const selectedPin = await fetchPin(pin.story_id);
-            setActivePin(selectedPin);
-            console.log("Kliknut pin" + pin.title + pin.text);
-            setDrawerOpen(true);
+            const fetchedPin = await fetchPin(pin.story_id);
+            setActivePin(fetchedPin);
+        } else {
+            setActivePin(pin);
         }
-
+        setDrawerOpen(true)
     };
 
     const closeDrawer = () => {
@@ -91,7 +99,6 @@ const UserMap = () => {
 
     return (
         <>
-            {/* The map */}
             <MapContainer center={initialPosition} zoom={13} style={{ width: "100vw", height: "100vh" }}>
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -99,10 +106,9 @@ const UserMap = () => {
                 />
                 <MoveEndHandler onMoveEnd={handleMoveEnd} />
 
-                {/* Markers for pins */}
                 {pins
                     .filter((pin: any) => pin !== undefined)
-                    .map((pin: any, index: number) => (
+                    .map((pin: PinData, index: number) => (
                         <Marker
                             key={pin.story_id || index}
                             position={pin.position}
@@ -114,21 +120,16 @@ const UserMap = () => {
                     ))
                 }
 
-                {/* Marker for the user location (red pin) */}
                 {userLocation && (
                     <Marker position={userLocation} icon={redIcon} />
                 )}
             </MapContainer>
 
-            {/* Material-UI Drawer for pin details */}
             <Drawer
                 anchor="right"
                 open={drawerOpen}
                 onClose={closeDrawer}
             >
-                {/*
-
-        */}
                 <Box sx={{ width: 500, p: 2, maxWidth: "80vw" }}>
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                         <Typography variant="h6" component="div">
@@ -160,7 +161,7 @@ const UserMap = () => {
     );
 };
 
-const MoveEndHandler = ({ onMoveEnd }: { onMoveEnd: (latLng: [number, number]) => Promise<void> }) => {
+const MoveEndHandler = ({onMoveEnd }: { onMoveEnd: (latLng: [number, number]) => Promise<void> }) => {
     const map = useMapEvents({
         moveend: async () => {
             const position = map.getCenter();

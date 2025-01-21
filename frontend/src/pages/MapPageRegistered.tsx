@@ -29,7 +29,7 @@ const customIcon = new L.Icon({
 
 const redIcon = new L.Icon({
     iconUrl: redPinImage,
-    iconSize: [30, 41],
+    iconSize: [41, 41],
     iconAnchor: [15, 41],
     popupAnchor: [0, -40],
 });
@@ -414,6 +414,8 @@ const UserMap = () => {
                 onClose={closeDrawer}
             >
                 <Box sx={{ width: 300, p: 2 }}>
+                <Box sx={{ width: 500, p: 2 }}>
+                    {/* Header */}
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                         <Typography variant="h6">
                             {drawerMode === "create" ? "Create New Pin" : "Pin Details"}
