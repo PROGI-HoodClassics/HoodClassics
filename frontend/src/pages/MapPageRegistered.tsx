@@ -25,7 +25,6 @@ const customIcon = new L.Icon({
     shadowSize: [41, 41],
 });
 
-
 const redIcon = new L.Icon({
     iconUrl: redPinImage,
     iconSize: [30, 41],
@@ -54,14 +53,19 @@ type PinData = {
 const UserMap = () => {
     const initialPosition: [number, number] = [45.8004, 15.9714];
     const { pins, addPin, updatePins, fetchPin, likePin } = usePins();
+
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+
     const [filteredStories, setFilteredStories] = useState<PinData[]>([]);
-    const [selectedTags, setSelectedTags] = useState<string[]>([]); // To store selected tags
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [drawerMode, setDrawerMode] = useState<"create" | "view" | null>(null);
+
     const [activePin, setActivePin] = useState<PinData | null>(null);
     const [newPinData, setNewPinData] = useState<PinData | null>(null);
     const [canAddPins, setCanAddPins] = useState(false);
+    
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [tags, setTags] = useState([
         { id: '1', name: 'Sport' },
@@ -70,10 +74,9 @@ const UserMap = () => {
         { id: '4', name: 'Food' },
         { id: '5', name: 'Art' },
     ]); 
-    
 
 
-    
+
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -157,6 +160,7 @@ const UserMap = () => {
         setCanAddPins((prev) => !prev);
     };
 
+
     const handleMapClick = (latlng: [number, number]) => {
         if (!canAddPins) {
             return;
@@ -187,19 +191,17 @@ const UserMap = () => {
             alert("Please fill in both the title and text!");
             return;
         }
-        
         await addPin(newPinData);
 
         setNewPinData(null);
         setDrawerOpen(false);
         setDrawerMode(null);
     };
-
     const handleLike = async () => {
         if (!activePin?.story_id) return;
         await likePin(activePin.story_id);
         setActivePin((prev) =>
-            prev ? { ...prev, likes: prev.likes! + 1 } : null
+            prev ? {...prev, likes: prev.likes! + 1} : null
         );
     };
 
@@ -208,6 +210,10 @@ const UserMap = () => {
         setDrawerMode(null);
         setActivePin(null);
         setNewPinData(null);
+    };
+
+    const handleMoveEnd = async (latLng: [number, number]) => {
+        await updatePins(pins, [latLng[1], latLng[0]]);
     };
 
     return (
@@ -221,8 +227,10 @@ const UserMap = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; OpenStreetMap contributors"
                 />
+                <MoveEndHandler onMoveEnd={handleMoveEnd} />
                 <ClickHandler onMapClick={handleMapClick} />
 
+                {/* Existing pins */}
                 {pins
                     .filter((pin: any) => pin !== undefined)
                     .map((pin: PinData, index: number) => (
@@ -234,20 +242,28 @@ const UserMap = () => {
                                 click: () => handlePinClick(pin),
                             }}
                         />
-                    ))}
+                    ))
+                }
 
                 {filteredStories.map((story: PinData, index: number) => (
-                    <Marker
-                        key={story.story_id || index}
-                        position={story.position}
-                        icon={customIcon}
-                        eventHandlers={{
-                            click: () => handlePinClick(story),
-                        }}
-                    />
-                ))}
+                            <Marker
+                            key={story.story_id || index}
+                            position={story.position}
+                            icon={customIcon}
+                            eventHandlers={{
+                             click: () => handlePinClick(story),
+                            }}
+                        />
+                     ))}
 
-                {userLocation && <Marker position={userLocation} icon={redIcon} />}
+
+                {userLocation && (
+                    <Marker position={userLocation} icon={redIcon} />
+                )}
+
+                {newPinData && newPinData.position && (
+                    <Marker position={newPinData.position} icon={customIcon} />
+                )}
             </MapContainer>
 
             <Fab
@@ -339,8 +355,11 @@ const UserMap = () => {
             </Box>
         </Popover>
 
-
-            <Drawer anchor="right" open={drawerOpen} onClose={closeDrawer}>
+            <Drawer
+                anchor="right"
+                open={drawerOpen}
+                onClose={closeDrawer}
+            >
                 <Box sx={{ width: 300, p: 2 }}>
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                         <Typography variant="h6">
@@ -384,7 +403,11 @@ const UserMap = () => {
                             <Typography variant="body2">
                                 <strong>Likes:</strong> {activePin.likes || 0}
                             </Typography>
-                            <Button variant="contained" onClick={handleLike} sx={{ mt: 2 }}>
+                            <Button
+                                variant="contained"
+                                onClick={handleLike}
+                                sx={{ mt: 2 }}
+                            >
                                 Like
                             </Button>
                         </>
@@ -397,10 +420,22 @@ const UserMap = () => {
     );
 };
 
-const ClickHandler = ({ onMapClick }: { onMapClick: (latlng: [number, number]) => void }) => {
+
+const ClickHandler = ({onMapClick,}: { onMapClick: (latlng: [number, number]) => void; }) => {
     useMapEvents({
         click: (e) => {
             onMapClick([e.latlng.lat, e.latlng.lng]);
+        },
+    });
+    return null;
+};
+
+
+const MoveEndHandler = ({onMoveEnd,}: { onMoveEnd: (latLng: [number, number]) => Promise<void>; }) => {
+    const map = useMapEvents({
+        moveend: async () => {
+            const position = map.getCenter();
+            await onMoveEnd([position.lat, position.lng]);
         },
     });
     return null;
