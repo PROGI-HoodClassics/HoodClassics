@@ -7,7 +7,7 @@ import muralBackground from "../assets/photos/mural.png";
 const API_BASE_URL = import.meta.env.VITE_BASE || "http://localhost:8080";
 
 interface ReportedStory {
-  id: number;
+  reportId: number;
   description: string;
 }
 
@@ -166,14 +166,14 @@ const ReportPage: React.FC = () => {
               </TableHead>
               <TableBody>
                 {reportedStories.map((story) => (
-                  <TableRow key={story.id}>
+                  <TableRow key={story.reportId}>
                     <TableCell
                       sx={{
                         fontSize: "1rem",
                         color: "#495057",
                       }}
                     >
-                      {story.id}
+                      {story.reportId}
                     </TableCell>
                     <TableCell
                       sx={{
