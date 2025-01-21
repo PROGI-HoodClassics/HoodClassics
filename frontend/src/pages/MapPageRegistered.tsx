@@ -54,7 +54,7 @@ type PinData = {
 
 const UserMap = () => {
     const initialPosition: [number, number] = [45.8004, 15.9714];
-    const { pins, addPin, updatePins, fetchPin, likePin } = usePins();
+    const { pins, addPin, updatePins, fetchPin, toggleLikePin, reportPin } = usePins();
 
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
 
@@ -215,8 +215,6 @@ const UserMap = () => {
         if (!activePin?.story_id) return;
         const wasLiked = !!activePin.hasLiked;
         const result = await toggleLikePin(activePin.story_id);
-
-        console.log("RESULT BATOOOOO " + result)
         if (result) {
             setActivePin((prev) => {
                 if (!prev) return null;
@@ -413,9 +411,7 @@ const UserMap = () => {
                 open={drawerOpen}
                 onClose={closeDrawer}
             >
-                <Box sx={{ width: 300, p: 2 }}>
                 <Box sx={{ width: 500, p: 2 }}>
-                    {/* Header */}
                     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                         <Typography variant="h6">
                             {drawerMode === "create" ? "Create New Pin" : "Pin Details"}
@@ -458,51 +454,51 @@ const UserMap = () => {
                             <Typography variant="body2">
                                 <strong>Likes:</strong> {activePin.likes || 0}
                             </Typography>
-                            <Button
+                            <IconButton
                                 variant="contained"
-                                onClick={handleLike}
+                                onClick={handleToggleLike}
                                 sx={{ mt: 2 }}
                             >
-                                Like
-                            </Button>
+                                <FavoriteBorderTwoToneIcon/>
+                            </IconButton>
+                            <Box sx={{ mt: 3 }}>
+                                <Typography variant="subtitle1">Report Story</Typography>
+                                <FormControl fullWidth sx={{ mt: 1 }}>
+                                    <InputLabel id="report-category-label">Report Category</InputLabel>
+                                    <Select
+                                        labelId="report-category-label"
+                                        value={reportCategory}
+                                        label="Report Category"
+                                        onChange={(e) => setReportCategory(e.target.value)}
+                                    >
+                                        <MenuItem value="Neprimjeren sadrzaj">Neprimjeren sadrzaj</MenuItem>
+                                        <MenuItem value="Netocan sadrzaj">Netocan sadrzaj</MenuItem>
+                                    </Select>
+                                </FormControl>
+
+                                <TextField
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                    label="Description (optional)"
+                                    sx={{ mt: 2 }}
+                                    value={reportDescription}
+                                    onChange={(e) => setReportDescription(e.target.value)}
+                                />
+
+                                <Button
+                                    variant="contained"
+                                    sx={{ mt: 2 }}
+                                    disabled={!reportCategory}
+                                    onClick={handleReportSubmit}
+                                >
+                                    Report
+                                </Button>
+                            </Box>
                         </>
                     ) : (
                         <Typography variant="body2">No content to display.</Typography>
                     )}
-                </Box>
-                <Box sx={{ mt: 3, margin: '3%' }}>
-                    <Typography variant="subtitle1">Report Story</Typography>
-                    <FormControl fullWidth sx={{ mt: 1 }}>
-                        <InputLabel id="report-category-label">Report Category</InputLabel>
-                        <Select
-                            labelId="report-category-label"
-                            value={reportCategory}
-                            label="Report Category"
-                            onChange={(e) => setReportCategory(e.target.value)}
-                        >
-                            <MenuItem value="Neprimjeren sadrzaj">Neprimjeren sadrzaj</MenuItem>
-                            <MenuItem value="Netocan sadrzaj">Netocan sadrzaj</MenuItem>
-                        </Select>
-                    </FormControl>
-
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={3}
-                        label="Description (optional)"
-                        sx={{ mt: 2 }}
-                        value={reportDescription}
-                        onChange={(e) => setReportDescription(e.target.value)}
-                    />
-
-                    <Button
-                        variant="contained"
-                        sx={{ mt: 2 }}
-                        disabled={!reportCategory} 
-                        onClick={handleReportSubmit}
-                    >
-                        Report
-                    </Button>
                 </Box>
             </Drawer>
             <Snackbar
