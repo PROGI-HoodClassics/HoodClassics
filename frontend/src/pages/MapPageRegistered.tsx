@@ -57,9 +57,9 @@ type PinData = {
 
 const UserMap = () => {
     const initialPosition: [number, number] = [45.8004, 15.9714];
-    const { pins, addPin, updatePins, fetchPin, toggleLikePin, reportPin } = usePins();
-
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+
+    const { pins, addPin, updatePins, fetchPin, toggleLikePin, reportPin } = usePins();
 
     const [filteredStories, setFilteredStories] = useState<PinData[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -69,6 +69,7 @@ const UserMap = () => {
 
     const [activePin, setActivePin] = useState<PinData | null>(null);
     const [newPinData, setNewPinData] = useState<PinData | null>(null);
+    const [newPinSelectedTags, setNewPinSelectedTags] = useState<string[]>([]);
     const [canAddPins, setCanAddPins] = useState(false);
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -78,6 +79,10 @@ const UserMap = () => {
     const [reportDescription, setReportDescription] = useState<string>("");
     
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+
+
+
     const [tags, setTags] = useState([
         { id: '1', name: 'Sport' },
         { id: '2', name: 'Music' },
@@ -208,11 +213,58 @@ const UserMap = () => {
             alert("Please fill in both the title and text!");
             return;
         }
-        await addPin(newPinData);
+        const newStoryId = await addPin(newPinData);
+
+        for (const tagId of newPinSelectedTags) {
+
+            try {
+                const tagResponse = await fetch(`${API_BASE_URL}/api/story/addtag`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        story_id: newStoryId,
+                        tag_id: tagId,
+                    }),
+                });
+
+                if (!tagResponse.ok) {
+                    // handle errors
+                    if (tagResponse.status === 403) {
+                        console.error(`Tag ${tagId} already exists on story ${newStoryId}.`);
+                    } else if (tagResponse.status === 400) {
+                        console.error(`Bad tag or story: ${newStoryId} / ${tagId}`);
+                    } else {
+                        console.error(
+                            `Failed to add tag: server responded with ${tagResponse.status}`
+                        );
+                    }
+                } else {
+                    // success
+                    console.log(
+                        `Tag ${tagId} added to story ${newStoryId} successfully.`
+                    );
+                }
+            } catch (error) {
+                console.error("Network error adding tag:", error);
+            }
+        }
 
         setNewPinData(null);
         setDrawerOpen(false);
+        setCanAddPins(false);
         setDrawerMode(null);
+    };
+
+    const handleToggleNewPinTag = (tagId: string) => {
+        setNewPinSelectedTags((prev) => {
+            if (prev.includes(tagId)) {
+                return prev.filter((id) => id !== tagId);
+            } else {
+                return [...prev, tagId];
+            }
+        });
     };
     
     const handleToggleLike = async () => {
@@ -443,6 +495,25 @@ const UserMap = () => {
                                 onChange={(e) => setNewPinData({ ...newPinData, text: e.target.value })}
                                 sx={{ mb: 2 }}
                             />
+                            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                                Select Tags
+                            </Typography>
+                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
+                                {tags.map((tag) => {
+                                    const isSelected = newPinSelectedTags.includes(tag.id);
+
+                                    return (
+                                        <Chip
+                                            key={tag.id}
+                                            label={tag.name}
+                                            clickable
+                                            color={isSelected ? "secondary" : "default"}
+                                            onClick={() => handleToggleNewPinTag(tag.id)}
+                                        />
+                                    );
+                                })}
+                            </Box>
+
                             <Button variant="contained" onClick={handleSaveNewPin}>
                                 Save Pin
                             </Button>

@@ -125,6 +125,7 @@ export const PinProvider = ({children}: { children: ReactNode }) => {
                 likes: body.likes,
                 user_id: body.user_id,
             };
+            return body.story_id;
             setPins((prevPins) => [...prevPins, createdPin]);
         } catch (error) {
             console.error("Failed to add pin:", error);
