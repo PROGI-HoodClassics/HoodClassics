@@ -250,7 +250,7 @@ const UserMap = () => {
                 console.error("Network error adding tag:", error);
             }
         }
-
+        setNewPinSelectedTags([]);
         setNewPinData(null);
         setDrawerOpen(false);
         setCanAddPins(false);
