@@ -16,6 +16,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import redPinImage from "../assets/photos/red-pin.png";
+import highlightedPin from "../assets/photos/pinHighlighted.png";
 
 const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080'; 
 
@@ -35,6 +36,14 @@ const redIcon = new L.Icon({
     iconSize: [30, 41],
     iconAnchor: [15, 41],
     popupAnchor: [0, -40],
+});
+
+const customHighlightedIcon = new L.Icon({
+    iconUrl: highlightedPin,  
+    iconSize: [25, 41],  
+    iconAnchor: [12, 41], 
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
 });
 
 const MapPageRegistered = () => {
@@ -143,6 +152,7 @@ const UserMap = () => {
             }
     
             const data = await response.json();
+            console.log("data:", data);
             setFilteredStories(data);
         } catch (error) {
             console.error("Error fetching stories:", error);
@@ -150,14 +160,14 @@ const UserMap = () => {
     };
     
 
-    const handleTagSelect = (tags: string) => {
+    const handleTagSelect = (tag: string) => {
         setSelectedTags((prevTags) => {
             const newTags = [...prevTags];
-            const index = newTags.indexOf(tags);
+            const index = newTags.indexOf(tag);
             if (index > -1) {
                 newTags.splice(index, 1);
             } else {
-                newTags.push(tags);
+                newTags.push(tag);
             }
             return newTags;
         });
@@ -166,7 +176,12 @@ const UserMap = () => {
 
     useEffect(() => {
         fetchStoriesByTags();
+        console.log("Selected tags:", selectedTags);
     }, [selectedTags, userLocation]); 
+
+    useEffect(() => {
+        console.log("Filtered Stories:", filteredStories);
+    }, [filteredStories]);
 
     const handleOpenTags = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -230,7 +245,6 @@ const UserMap = () => {
                 });
 
                 if (!tagResponse.ok) {
-                    // handle errors
                     if (tagResponse.status === 403) {
                         console.error(`Tag ${tagId} already exists on story ${newStoryId}.`);
                     } else if (tagResponse.status === 400) {
@@ -241,7 +255,6 @@ const UserMap = () => {
                         );
                     }
                 } else {
-                    // success
                     console.log(
                         `Tag ${tagId} added to story ${newStoryId} successfully.`
                     );
@@ -306,9 +319,9 @@ const UserMap = () => {
         }
 
         const result = await reportPin(
-            activePin.story_id,    // storyId
-            reportCategory,        // category
-            reportDescription      // description
+            activePin.story_id,    
+            reportCategory,        
+            reportDescription     
         );
 
         if (!result) {
@@ -352,16 +365,33 @@ const UserMap = () => {
                     ))
                 }
 
-                {filteredStories.map((story: PinData, index: number) => (
-                            <Marker
-                            key={story.story_id || index}
-                            position={story.position}
-                            icon={customIcon}
-                            eventHandlers={{
-                             click: () => handlePinClick(story),
-                            }}
-                        />
-                     ))}
+        {filteredStories.map((story: any, index: number) => {
+            const pinData: PinData = {
+                story_id: story.story_id,
+                position: [story.latitude, story.longitude], 
+                likes: story.likes,
+            };
+
+            const isHighlighted = filteredStories.some(
+                (filteredStory) =>
+                    filteredStory.latitude === story.latitude && 
+                    filteredStory.longitude === story.longitude
+            );
+
+            const markerIcon = isHighlighted ? customHighlightedIcon : customIcon;
+
+            return (
+                <Marker
+                    key={pinData.story_id || index}
+                    position={pinData.position}
+                    icon={markerIcon} 
+                    eventHandlers={{
+                        click: () => handlePinClick(pinData),
+                    }}
+                />
+            );
+        })}
+
 
 
                 {userLocation && (

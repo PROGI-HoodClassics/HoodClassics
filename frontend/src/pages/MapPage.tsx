@@ -5,14 +5,25 @@ import { usePins } from "../context/PinContext";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-// MUI components
-import { Drawer, Box, Typography, IconButton } from "@mui/material";
+import { Drawer, Box, Typography, IconButton, Popover, Chip, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import redPinImage from "../assets/photos/red-pin.png";
+import highlightedPin from "../assets/photos/pinHighlighted.png";
+
+
+const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080'; 
+
+const customHighlightedIcon = new L.Icon({
+    iconUrl: highlightedPin,  
+    iconSize: [25, 41],  
+    iconAnchor: [12, 41], 
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+});
 
 type PinData = {
     story_id?: string;
@@ -57,6 +68,20 @@ const UserMap = () => {
     const [activePin, setActivePin] = useState<any>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
+    const [filteredStories, setFilteredStories] = useState<PinData[]>([]);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+
+    const [tags, setTags] = useState([
+        { id: '1', name: 'Sport' },
+        { id: '2', name: 'Music' },
+        { id: '3', name: 'Travel' },
+        { id: '4', name: 'Food' },
+        { id: '5', name: 'Art' },
+    ]); 
+
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -79,6 +104,70 @@ const UserMap = () => {
     const handleMoveEnd = async (latLng: [number, number]) => {
         await updatePins(pins, [latLng[1], latLng[0]]);
     };
+    const fetchStoriesByTags = async () => {
+            if (!userLocation) return;
+        
+            const latitude = userLocation[0]; 
+            const longitude = userLocation[1];
+            const radius = 10; 
+        
+    
+            const requestBody = {
+                longitude: longitude.toString(),
+                latitude: latitude.toString(),
+                radius: radius,
+                tags: selectedTags, 
+            };
+        
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/story/taggedstories`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestBody),
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to fetch stories.");
+                }
+        
+                const data = await response.json();
+                console.log("data:", data);
+                setFilteredStories(data);
+            } catch (error) {
+                console.error("Error fetching stories:", error);
+            }
+        };
+        
+    
+        const handleTagSelect = (tag: string) => {
+            setSelectedTags((prevTags) => {
+                const newTags = [...prevTags];
+                const index = newTags.indexOf(tag);
+                if (index > -1) {
+                    newTags.splice(index, 1);
+                } else {
+                    newTags.push(tag);
+                }
+                return newTags;
+            });
+        };
+        
+    
+        useEffect(() => {
+            fetchStoriesByTags();
+            console.log("Selected tags:", selectedTags);
+        }, [selectedTags, userLocation]); 
+
+        const handleOpenTags = (event: React.MouseEvent<HTMLElement>) => {
+            setAnchorEl(event.currentTarget);
+        };
+    
+        const handleCloseTags = () => {
+            setAnchorEl(null);
+        };
+    
+        const openTags = Boolean(anchorEl);
 
     const handlePinClick = async (pin: any) => {
         console.log("PIN JE KLIKNUT" + pin.story_id);
@@ -120,10 +209,113 @@ const UserMap = () => {
                     ))
                 }
 
+         {filteredStories.map((story: any, index: number) => {
+                    const pinData: PinData = {
+                        story_id: story.story_id,
+                        position: [story.latitude, story.longitude], 
+                        likes: story.likes,
+                    };
+        
+                    const isHighlighted = filteredStories.some(
+                        (filteredStory) =>
+                            filteredStory.latitude === story.latitude && 
+                            filteredStory.longitude === story.longitude
+                    );
+        
+                    const markerIcon = isHighlighted ? customHighlightedIcon : customIcon;
+        
+                    return (
+                        <Marker
+                            key={pinData.story_id || index}
+                            position={pinData.position}
+                            icon={markerIcon} 
+                            eventHandlers={{
+                                click: () => handlePinClick(pinData),
+                            }}
+                        />
+                    );
+                })}
+
                 {userLocation && (
                     <Marker position={userLocation} icon={redIcon} />
                 )}
             </MapContainer>
+
+
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenTags}
+                sx={{
+                    position: "absolute",
+                    bottom: 20,
+                    right: 20,
+                    zIndex: 1000,
+                    borderRadius: "20px",
+                    padding: "10px 20px",
+                    fontWeight: "bold",
+                }}
+            >
+                Show Tags
+            </Button>
+
+            <Popover
+            open={openTags}
+            anchorEl={anchorEl}
+            onClose={handleCloseTags}
+            anchorOrigin={{
+                vertical: "top",
+                horizontal: "center",
+            }}
+            transformOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+            }}
+            sx={{
+                "& .MuiPaper-root": {
+                    borderRadius: "16px",
+                    padding: "20px",
+                    backgroundColor: "white",
+                    marginTop: "-0.5rem",
+                },
+            }}
+        >
+            <Typography
+                variant="h6"
+                sx={{ textAlign: "center", marginBottom: 2, fontWeight: "bold" }}
+            >
+                Select a Tag
+            </Typography>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                    gap: 2,
+                }}
+            >
+                {tags.map((tag) => (
+                    <Chip
+                        key={tag.id}
+                        label={tag.name}
+                        clickable
+                        color={selectedTags.includes(tag.id) ? "secondary" : "primary"} 
+                        sx={{
+                            fontSize: "1rem",
+                            fontWeight: "bold",
+                            padding: "10px 20px",
+                            borderRadius: "24px",
+                            backgroundColor: selectedTags.includes(tag.id) ? "#1976d2" : "#e0f7fa", 
+                            color: selectedTags.includes(tag.id) ? "white" : "black", 
+                            "&:hover": {
+                                backgroundColor: selectedTags.includes(tag.id) ? "#1565c0" : "#b2ebf2",
+                            },
+                        }}
+                        onClick={() => handleTagSelect(tag.id)} 
+                    />
+                ))}
+            </Box>
+        </Popover>
 
             <Drawer
                 anchor="right"
