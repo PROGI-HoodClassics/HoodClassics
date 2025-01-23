@@ -10,11 +10,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="users")
-<<<<<<<< HEAD:backend/src/main/java/hoodclassics/opp/domain/RepositoryUser.java
-public class RepositoryUser {
-========
 public class HoodClassicsUser {
->>>>>>>> dev:backend/src/main/java/hoodclassics/opp/domain/HoodClassicsUser.java
 
 	@Id
 	@GeneratedValue
@@ -34,24 +30,16 @@ public class HoodClassicsUser {
 	@Column(name="is_moderator")
 	private Boolean isModerator;
 
-<<<<<<<< HEAD:backend/src/main/java/hoodclassics/opp/domain/RepositoryUser.java
-	public RepositoryUser(String email, String username, String password) {
-========
 	public HoodClassicsUser(String email, String username, String password, boolean isModerator) {
 		super();
->>>>>>>> dev:backend/src/main/java/hoodclassics/opp/domain/HoodClassicsUser.java
 		this.email = email;
 		this.username = username;
 		this.password = password;
 		this.isModerator = false;
 	}
 	
-<<<<<<<< HEAD:backend/src/main/java/hoodclassics/opp/domain/RepositoryUser.java
-	public RepositoryUser(String email, String username) {
-========
 	public HoodClassicsUser(String email, String username) {
 		super();
->>>>>>>> dev:backend/src/main/java/hoodclassics/opp/domain/HoodClassicsUser.java
 		this.email = email;
 		this.username = username;
 		this.password = null;
@@ -59,12 +47,8 @@ public class HoodClassicsUser {
 	}
 
 	//Spring ovo treba ali ne znam zašto
-<<<<<<<< HEAD:backend/src/main/java/hoodclassics/opp/domain/RepositoryUser.java
-	public RepositoryUser() {
-========
 	public HoodClassicsUser() {
 		super();
->>>>>>>> dev:backend/src/main/java/hoodclassics/opp/domain/HoodClassicsUser.java
 		this.email = null;
 		this.username = null;
 		this.password = null;

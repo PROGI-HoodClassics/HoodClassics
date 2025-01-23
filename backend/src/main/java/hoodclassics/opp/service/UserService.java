@@ -2,9 +2,13 @@ package hoodclassics.opp.service;
 
 import java.util.List;
 
-import hoodclassics.opp.domain.RepositoryUser;
+import hoodclassics.opp.domain.HoodClassicsUser;
 import org.springframework.http.ResponseEntity;
 
 public interface UserService {
-	List<RepositoryUser> listUsers();
+	List<HoodClassicsUser> listUsers();
+    void addToTown(double latitude, double longitude);
+    boolean isModerator();
+    boolean exists();
+    Long trueUserId();
 }
