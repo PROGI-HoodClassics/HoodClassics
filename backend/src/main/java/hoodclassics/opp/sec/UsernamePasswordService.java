@@ -1,8 +1,12 @@
 package hoodclassics.opp.sec;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,7 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import hoodclassics.opp.dao.UserRepository;
-import hoodclassics.opp.domain.RepositoryUser;
+import hoodclassics.opp.domain.HoodClassicsUser;
 
 @Service
 public class UsernamePasswordService implements UserDetailsService {
@@ -20,10 +24,16 @@ public class UsernamePasswordService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		RepositoryUser user = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(
+		HoodClassicsUser user = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(
 				"No user with username " + username));
-		// TODO: Implement user authorities (in the DB) and return them here
-		return new User(username, user.getPassword(), Collections.emptyList());
+		
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+		if (user.getIsModerator()) {
+			authorities.add(new SimpleGrantedAuthority("ROLE_MODERATOR"));
+		}
+		
+		return new User(username, user.getPassword(), authorities);
 	}
 
 }

@@ -25,16 +25,16 @@ public class ClientRegistrationConfig {
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.redirectUri("{baseUrl}/login/oauth2/code/{registrationId}").scope("profile", "email") // openid NI POD
-																										// KOJU CIJENU
-																										// ne smije tu
-																										// biti
+				// KOJU CIJENU
+				// ne smije tu
+				// biti
 				.authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
 				.tokenUri("https://www.googleapis.com/oauth2/v4/token")
 				.userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
 				.userNameAttributeName(IdTokenClaimNames.SUB).jwkSetUri("https://www.googleapis.com/oauth2/v3/certs")
 				.clientName("Google").build();
 	}
-	
+
 	private String getClientID(String provider) {
 		String ID = "not found"; //nisam baš siguran postoji li bolje rješenje za ovo, ali return mora biti izvan try bloka
 		try {
@@ -62,5 +62,5 @@ public class ClientRegistrationConfig {
 		}
 		return secret;
 	}
-	
+
 }

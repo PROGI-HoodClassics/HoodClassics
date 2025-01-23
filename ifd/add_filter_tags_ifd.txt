@@ -1,0 +1,57 @@
+==== ADD TAG TO STORY ====
+Form:
+	POST /api/story/addtag
+	
+Request Body:
+		{
+			"story_id" : "number",
+			"tag_id" : "tag_id"
+		}
+
+Responses:
+	- success - 200 OK "OK"
+	- tag already exists - 403 FORBIDDEN "That story already has that tag"
+	- bad tag_id - 400 BAD REQUEST "{tag_id} does not correspond to a tag"
+	- story doesn't exist - 400 BAD REQUEST "{story_id} does not correspond to a story"
+
+==== GET LIST OF STORIES WITH TAG(S) ====
+Form:
+	POST /api/story/taggedstories
+
+Request Body:
+		{
+			"longitude" : "longitude"
+			"latitude" : "latitude",
+			"radius" : "radius",
+			"tags" : [
+				"tag_id1",
+				"tag_id2",
+				"tag_id3"
+			]
+		}
+		
+Responses:
+	- success - 200 OK + body
+	- bad tag_id - 400 BAD REQUEST "{tag_id} does not correspond to a tag"
+		
+Response Body:
+		[
+		    {
+		        "story_id": "string",
+		        "longitude": "number",
+		        "latitude": "number",
+		        "likes": "number"
+		    },
+		    {
+		        "story_id": "string",
+		        "longitude": "number",
+		        "latitude": "number",
+		        "likes": "number"
+		    },
+		    {
+		        "story_id": "string",
+		        "longitude": "number",
+		        "latitude": "number",
+		        "likes": "number"
+		    }
+		]

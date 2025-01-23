@@ -19,16 +19,8 @@ const Header = () => {
           padding: "0 1rem", 
         }}
       >
-        <Box sx={styles.leftSection}>
-          <Box
-            onClick={handleHomeClick}
-            sx={{
-              transition: "transform 0.3s ease",
-              "&:hover": {
-                transform: "scale(1.08)",
-              },
-            }}
-          >
+        <Box sx={styles.leftSection}
+            onClick={handleHomeClick}>
             <img
               src={logo}
               style={{
@@ -39,11 +31,11 @@ const Header = () => {
                 marginTop: "0.4rem",
               }}
             />
-          </Box>
           <Typography variant="h4" sx={styles.title} onClick={handleHomeClick}>
             HoodClassics
           </Typography>
         </Box>
+
         <div style={styles.navLinks}>
           <Button
             color="inherit"
@@ -79,23 +71,28 @@ const styles = {
   leftSection: {
     display: "flex",
     alignItems: "center",
+    gap: "1rem",         
+    transition: "transform 0.3s ease", 
+    "&:hover": {
+      transform: "scale(1.08)", 
+      cursor: "pointer",       
+    },
   },
   title: {
-    marginLeft: "0.5rem",
+    marginLeft: "-0.5rem",
     fontWeight: "bold",
     fontSize: "2.5rem",
     fontFamily: "'Roboto', sans-serif",
     letterSpacing: "2px",
-    transition: "transform 0.2s ease, text-shadow 0.2s ease",
+    transition: "transform 0.3s ease, text-shadow 0.2s ease",
     "&:hover": {
-      transform: "scale(1.05)",
       textShadow: "2px 2px 8px rgba(255, 155, 72, 0.4)",
     },
     "@media (max-width: 768px)": {
       fontSize: "2rem", 
     },
     "@media (max-width: 600px)": {
-      fontSize: "1.5rem", 
+      fontSize: "1rem", 
     },
   },
   navLinks: {

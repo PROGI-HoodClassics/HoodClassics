@@ -1,0 +1,50 @@
+==== REGISTRATION WITH OUR FORM  ====
+Form:
+	POST /register HTTP/1.1
+	Host: localhost:8080
+	Content-Type: application/x-www-form-urlencoded
+	Authorization: Basic SXZhbkJlc2Ftc2E6cGFzcw==
+	Content-Length: 26
+
+	username=test&password=123
+
+Responses:
+	- success - 200 OK "OK"
+	- username already taken - 403 FORBIDDEN "That username is already
+	taken"
+	- malformed request (e.g. parameter missing) - 400 BAD REQUEST + some
+	  error message (not informative)
+
+==== LOGIN WITH OUR FORM  ====	
+Form:
+	POST /login HTTP/1.1
+	Host: localhost:8080
+	Content-Type: application/x-www-form-urlencoded
+	Cookie: JSESSIONID=4523D967EB40D5F474D90D570B08DA2E
+	Content-Length: 26
+
+	username=test&password=123
+	
+Responses:
+	- success - 200 OK + redirect to homepage ("/")
+	- incorrect username/password - 401 UNAUTHORIZED "Bad credentials"
+	- malformed request - 401 UNAUTHORIZED "Bad credentials" 
+		- missing username/password interpreted as empty strings
+
+==== OAUTH 2.0 ====
+Form:
+	GET na http://localhost:8080/oauth2/authorization/google
+		- redirect link will be sent, follow and let Google do the
+		  rest
+		- first-time login will also add the user to the database
+Responses:
+	- reponses when communicating with Google authentication servers are
+	  not described here - refer to Google documentation
+	
+	- success - final message is 200 OK + redirect to homepage ("/")
+	
+==== LOGOUT ====
+Form:
+	POST localhost:8080/logout
+Responses:
+	200 OK - always

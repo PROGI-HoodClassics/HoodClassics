@@ -30,12 +30,27 @@ const LoginPage = () => {
         const response = await fetch(`${API_BASE_URL}/register?username=${email}&password=${password}`, {
           method: "POST",
           headers: {
+
           },
           body: formData.toString(),
         });
         if (response.ok) {
           console.log("Registration successful!");
-          navigate("/mapRegistered")
+
+          const response1 = await fetch(`${API_BASE_URL}/login?username=${email}&password=${password}`, {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    /*
+                    body: formData.toString()
+                    */
+                  });
+          if (response1.ok) {
+            navigate("/profilePage")
+          } else {
+            console.error("We have a problem.")
+          }
         } 
         else {
           const data = await response.json();

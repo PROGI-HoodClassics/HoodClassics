@@ -1,0 +1,60 @@
+==== DELETE STORY ====
+Form:
+	POST /api/story/delete/{story_id}
+
+Responses:
+	- success - 200 OK "Story deleted"
+	- not a moderator or author - 401 UNAUTHORIZED "You are not a moderator or the author"
+	- no story in database - 404 NOT FOUND "Story doesn't exist"
+
+
+==== LIST REPORTS ====
+Form:
+	GET /api/reports
+
+Responses:
+	- success - 200 OK "OK"
+	- not a moderator - 401 UNAUTHORIZED "You are not a moderator"
+
+Response Body:
+		[
+		    {
+			"reportId": "number",
+			"reporterUserId": "number",
+			"reportedUserId": "number",
+			"description": "string",
+			"reportCategory": "string",
+			"storyId": "number"
+		    },
+		    {
+			"reportId": "number",
+			"reporterUserId": "number",
+			"reportedUserId": "number",
+			"description": "string",
+			"reportCategory": "string",
+			"storyId": "number"
+		    }
+		]
+
+
+==== REPORT ====
+
+Form:
+	POST /api/story/report
+
+	Content-Type: multipart/form-data;
+
+	Content-Disposition: form-data; name="storyID" number
+
+	Content-Disposition: form-data; name="reportCategory" String
+
+	Content-Disposition: form-data; name="description" String
+
+Responses:
+	 -succes - 200 OK "report sent"
+	 -not allowed to report (not a local) 401 UNAUTHORIZED
+
+Response Body: 
+	{
+	    "message": "String"
+	} 

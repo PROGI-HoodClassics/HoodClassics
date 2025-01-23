@@ -1,0 +1,637 @@
+{
+	"info": {
+		"_postman_id": "22094e70-20c6-42a3-8db1-4ed5b752b84e",
+		"name": "CreatingFetchingStories",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41279343"
+	},
+	"item": [
+		{
+			"name": "Fetch story (tourist)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fetched correct story\", function () {",
+							"  pm.response.to.have.status(200);",
+							"",
+							"  const expectedBody = {",
+							"    \"story_id\" : \"1\",",
+							"    \"text\" : \"Lorem ipsum dolor sit amet\",",
+							"    \"title\" : \"Lorem Ipsum\",",
+							"    \"latitude\" : \"45.81466552408981\",",
+							"    \"longitude\" : \"15.979814251930389\",",
+							"    \"likes\" : \"1\",",
+							"    \"dislikes\" : \"0\",",
+							"    \"user_id\" : \"1\"",
+							"  };",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(String(responseBody.story_id)).to.deep.equal(expectedBody.story_id);",
+							"  pm.expect(String(responseBody.text)).to.deep.equal(expectedBody.text);",
+							"  pm.expect(String(responseBody.title)).to.deep.equal(expectedBody.title);",
+							"  pm.expect(String(responseBody.latitude)).to.deep.equal(expectedBody.latitude);",
+							"  pm.expect(String(responseBody.longitude)).to.deep.equal(expectedBody.longitude);",
+							"  pm.expect(String(responseBody.likes)).to.deep.equal(expectedBody.likes);",
+							"  pm.expect(String(responseBody.dislikes)).to.deep.equal(expectedBody.dislikes);",
+							"  pm.expect(String(responseBody.user_id)).to.deep.equal(expectedBody.user_id);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/story/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch pins in radius (tourist)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fetched correct story pins\", function () {",
+							"  pm.response.to.have.status(200);",
+							"",
+							"  const expectedBody = [",
+							"    {",
+							"        \"storyId\" : \"1\",",
+							"        \"latitude\" : \"45.81466552408981\",",
+							"        \"longitude\" : \"15.979814251930389\",",
+							"        \"likes\" : \"1\"",
+							"    },",
+							"    {",
+							"        \"storyId\" : \"2\",",
+							"        \"latitude\" : \"45.800873703358214\",",
+							"        \"longitude\" : \"15.971270141762062\",",
+							"        \"likes\" : \"0\"",
+							"    }",
+							"  ];",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(String(responseBody[0].storyId)).to.deep.equal(expectedBody[0].storyId);",
+							"  pm.expect(String(responseBody[0].longitude)).to.deep.equal(expectedBody[0].longitude);",
+							"  pm.expect(String(responseBody[0].latitude)).to.deep.equal(expectedBody[0].latitude);",
+							"  pm.expect(String(responseBody[0].likes)).to.deep.equal(expectedBody[0].likes);",
+							"",
+							"  pm.expect(String(responseBody[1].storyId)).to.deep.equal(expectedBody[1].storyId);",
+							"  pm.expect(String(responseBody[1].longitude)).to.deep.equal(expectedBody[1].longitude);",
+							"  pm.expect(String(responseBody[1].latitude)).to.deep.equal(expectedBody[1].latitude);",
+							"  pm.expect(String(responseBody[1].likes)).to.deep.equal(expectedBody[1].likes);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/story/stories?latitude=45.815&longitude=15.9819&radius=10.0",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"stories"
+					],
+					"query": [
+						{
+							"key": "latitude",
+							"value": "45.815"
+						},
+						{
+							"key": "longitude",
+							"value": "15.9819"
+						},
+						{
+							"key": "radius",
+							"value": "10.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login (not a test)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "test",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch existing story",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fetched correct story\", function () {",
+							"  pm.response.to.have.status(200);",
+							"",
+							"  const expectedBody = {",
+							"    \"story_id\" : \"1\",",
+							"    \"text\" : \"Lorem ipsum dolor sit amet\",",
+							"    \"title\" : \"Lorem Ipsum\",",
+							"    \"latitude\" : \"45.81466552408981\",",
+							"    \"longitude\" : \"15.979814251930389\",",
+							"    \"likes\" : \"1\",",
+							"    \"dislikes\" : \"0\",",
+							"    \"user_id\" : \"1\"",
+							"  };",
+							"  ",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(String(responseBody.story_id)).to.deep.equal(expectedBody.story_id);",
+							"  pm.expect(String(responseBody.text)).to.deep.equal(expectedBody.text);",
+							"  pm.expect(String(responseBody.title)).to.deep.equal(expectedBody.title);",
+							"  pm.expect(String(responseBody.latitude)).to.deep.equal(expectedBody.latitude);",
+							"  pm.expect(String(responseBody.longitude)).to.deep.equal(expectedBody.longitude);",
+							"  pm.expect(String(responseBody.likes)).to.deep.equal(expectedBody.likes);",
+							"  pm.expect(String(responseBody.dislikes)).to.deep.equal(expectedBody.dislikes);",
+							"  pm.expect(String(responseBody.user_id)).to.deep.equal(expectedBody.user_id); ",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/story/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch non-existing story",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Failed to fetch non-existing story\", function () {",
+							"  pm.response.to.have.status(404);",
+							"",
+							"  const expectedBody = {};",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(responseBody).to.deep.equal(expectedBody);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/story/100",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch pins in radius",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fetched correct story pins\", function () {",
+							"  pm.response.to.have.status(200);",
+							"",
+							"  const expectedBody = [",
+							"    {",
+							"        \"storyId\" : \"1\",",
+							"        \"latitude\" : \"45.81466552408981\",",
+							"        \"longitude\" : \"15.979814251930389\",",
+							"        \"likes\" : \"1\"",
+							"    },",
+							"    {",
+							"        \"storyId\" : \"2\",",
+							"        \"latitude\" : \"45.800873703358214\",",
+							"        \"longitude\" : \"15.971270141762062\",",
+							"        \"likes\" : \"0\"",
+							"    }",
+							"  ];",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(String(responseBody[0].storyId)).to.deep.equal(expectedBody[0].storyId);",
+							"  pm.expect(String(responseBody[0].longitude)).to.deep.equal(expectedBody[0].longitude);",
+							"  pm.expect(String(responseBody[0].latitude)).to.deep.equal(expectedBody[0].latitude);",
+							"  pm.expect(String(responseBody[0].likes)).to.deep.equal(expectedBody[0].likes);",
+							"",
+							"  pm.expect(String(responseBody[1].storyId)).to.deep.equal(expectedBody[1].storyId);",
+							"  pm.expect(String(responseBody[1].longitude)).to.deep.equal(expectedBody[1].longitude);",
+							"  pm.expect(String(responseBody[1].latitude)).to.deep.equal(expectedBody[1].latitude);",
+							"  pm.expect(String(responseBody[1].likes)).to.deep.equal(expectedBody[1].likes);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/story/stories?latitude=45.815&longitude=15.9819&radius=10.0",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"stories"
+					],
+					"query": [
+						{
+							"key": "latitude",
+							"value": "45.815"
+						},
+						{
+							"key": "longitude",
+							"value": "15.9819"
+						},
+						{
+							"key": "radius",
+							"value": "10.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch pins not in radius",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Didn't fetch any pins\", function () {",
+							"  pm.response.to.have.status(200);",
+							"",
+							"  const expectedBody = [];",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(responseBody).to.deep.equal(expectedBody);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/story/stories?latitude=40.7172&longitude=74.0060&radius=10.0",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"stories"
+					],
+					"query": [
+						{
+							"key": "latitude",
+							"value": "40.7172"
+						},
+						{
+							"key": "longitude",
+							"value": "74.0060"
+						},
+						{
+							"key": "radius",
+							"value": "10.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create story (local)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Correctly created the story\", function () {",
+							"  pm.response.to.have.status(200);",
+							"",
+							"  const expectedBody = {",
+							"    \"story_id\" : \"4\",",
+							"    \"text\" : \"This is a new story!\",",
+							"    \"title\" : \"New Story\",",
+							"    \"latitude\" : \"45.815\",",
+							"    \"longitude\" : \"15.9819\",",
+							"    \"likes\" : \"0\",",
+							"    \"dislikes\" : \"0\",",
+							"    \"user_id\" : \"1\"",
+							"  };",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(String(responseBody.text)).to.deep.equal(expectedBody.text);",
+							"  pm.expect(String(responseBody.title)).to.deep.equal(expectedBody.title);",
+							"  pm.expect(String(responseBody.latitude)).to.deep.equal(expectedBody.latitude);",
+							"  pm.expect(String(responseBody.longitude)).to.deep.equal(expectedBody.longitude);",
+							"  pm.expect(String(responseBody.likes)).to.deep.equal(expectedBody.likes);",
+							"  pm.expect(String(responseBody.dislikes)).to.deep.equal(expectedBody.dislikes);",
+							"  pm.expect(String(responseBody.user_id)).to.deep.equal(expectedBody.user_id);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\" : \"This is a new story!\",\n    \"title\" : \"New Story\",\n    \"latitude\" : \"45.8150\",\n    \"longitude\" : \"15.9819\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/story",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch pins (with new story)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Fetched correct story pins\", function () {",
+							"  pm.response.to.have.status(200);",
+							"",
+							"  const expectedBody = [",
+							"    {",
+							"        \"storyId\" : \"1\",",
+							"        \"latitude\" : \"45.81466552408981\",",
+							"        \"longitude\" : \"15.979814251930389\",",
+							"        \"likes\" : \"1\"",
+							"    },",
+							"    {",
+							"        \"storyId\" : \"2\",",
+							"        \"latitude\" : \"45.800873703358214\",",
+							"        \"longitude\" : \"15.971270141762062\",",
+							"        \"likes\" : \"0\"",
+							"    },",
+							"    {",
+							"        \"storyId\" : \"4\",",
+							"        \"latitude\" : \"45.815\",",
+							"        \"longitude\" : \"15.9819\",",
+							"        \"likes\" : \"0\"",
+							"    }",
+							"  ];",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(String(responseBody[0].storyId)).to.deep.equal(expectedBody[0].storyId);",
+							"  pm.expect(String(responseBody[0].longitude)).to.deep.equal(expectedBody[0].longitude);",
+							"  pm.expect(String(responseBody[0].latitude)).to.deep.equal(expectedBody[0].latitude);",
+							"  pm.expect(String(responseBody[0].likes)).to.deep.equal(expectedBody[0].likes);",
+							"",
+							"  pm.expect(String(responseBody[1].storyId)).to.deep.equal(expectedBody[1].storyId);",
+							"  pm.expect(String(responseBody[1].longitude)).to.deep.equal(expectedBody[1].longitude);",
+							"  pm.expect(String(responseBody[1].latitude)).to.deep.equal(expectedBody[1].latitude);",
+							"  pm.expect(String(responseBody[1].likes)).to.deep.equal(expectedBody[1].likes);",
+							"",
+							"  pm.expect(String(responseBody[2].longitude)).to.deep.equal(expectedBody[2].longitude);",
+							"  pm.expect(String(responseBody[2].latitude)).to.deep.equal(expectedBody[2].latitude);",
+							"  pm.expect(String(responseBody[2].likes)).to.deep.equal(expectedBody[2].likes);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/story/stories?latitude=45.815&longitude=15.9819&radius=10.0",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"stories"
+					],
+					"query": [
+						{
+							"key": "latitude",
+							"value": "45.815"
+						},
+						{
+							"key": "longitude",
+							"value": "15.9819"
+						},
+						{
+							"key": "radius",
+							"value": "10.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create story (non-local)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Failed to create story\", function () {",
+							"  pm.response.to.have.status(401);",
+							"",
+							"  const expectedBody = {",
+							"    \"error\": \"This town doesn't exist in database, probably there aren't any users associated with this town\"",
+							"  };",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(responseBody).to.deep.equal(expectedBody);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"text\" : \"This is a new story!\",\n    \"title\" : \"New Story\",\n    \"latitude\" : \"48.8584\",\n    \"longitude\" : \"2.2945\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/story",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch non-local made story",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Failed to fetch non-existing story\", function () {",
+							"  pm.response.to.have.status(404);",
+							"",
+							"  const expectedBody = {};",
+							"",
+							"  const responseBody = pm.response.json();",
+							"  pm.expect(responseBody).to.deep.equal(expectedBody);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/story/5",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"story",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
