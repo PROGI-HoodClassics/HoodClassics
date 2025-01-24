@@ -19,7 +19,6 @@ public class HasSeen {
 	private Boolean liked;
 	
 	public HasSeen() {
-		this.liked = null;
 		this.userIdStoryIdKey = new UserIdStoryIdKey();
 		this.liked = false;
 	}

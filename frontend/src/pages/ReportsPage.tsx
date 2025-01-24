@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, Paper } from "@mui/material";
+import React, { useCallback, useEffect, useState } from "react";
+import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, Paper, Button } from "@mui/material";
 import HeaderRegistered from "../components/HeaderRegistered";
 
 import muralBackground from "../assets/photos/mural.png";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_BASE || "http://localhost:8080";
 
 interface ReportedStory {
-  reportId: number;
+  reportId: number; 
+  reporterUserId: number;
+  reportedUserId: number;
   description: string;
+  reportCategory: string;
+  storyId: number; 
 }
 
 const ReportPage: React.FC = () => {
@@ -16,24 +21,66 @@ const ReportPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/story/reports`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch reported stories.");
-        }
-        const data = await response.json();
-        setReportedStories(data);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const navigate = useNavigate();
 
-    fetchReports();
-  }, []);
+
+  const handleGoToMapRegistered = () => {
+    navigate("/mapRegistered"); 
+    window.location.reload();
+
+  };
+
+  const fetchReports = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/story/reports`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch reported stories.");
+      }
+      const data = await response.json();
+      setReportedStories(data);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
+
+  useEffect(() => {
+    console.log("reported stories updated:", reportedStories);
+  }, [reportedStories]); 
+  
+
+  const handleDelete = async (storyId: number) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/story/delete/${storyId}`, {
+        method: "POST",
+      });
+  
+      if (response.ok) {
+        setReportedStories((prevStories) =>
+          prevStories.filter((story) => story.storyId !== storyId)
+        );
+        alert("Story deleted successfully.");
+
+      } else if (response.status == 401){
+        alert("Error: You are not a moderator or the author.");
+      }
+      else if (response.status == 404){
+        alert("Story doesn't exist.");
+      }
+    } catch (err) {
+      console.error("Failed to delete the story:", err);
+      alert("Failed to delete the story.");
+    }
+  };
+
+
+  useEffect(() => {
+  fetchReports();
+}, []);
+  
 
   if (loading) {
     return (
@@ -150,7 +197,7 @@ const ReportPage: React.FC = () => {
                       color: "white",
                     }}
                   >
-                    ID
+                    ID      
                   </TableCell>
                   <TableCell
                     sx={{
@@ -162,18 +209,29 @@ const ReportPage: React.FC = () => {
                   >
                     Description
                   </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "1.1rem",
+                      backgroundColor: "#6c757d",
+                      color: "white",
+                      textAlign: "right",
+                    }}
+                  >
+                    Actions
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {reportedStories.map((story) => (
-                  <TableRow key={story.reportId}>
+                  <TableRow key={story.storyId}>
                     <TableCell
                       sx={{
                         fontSize: "1rem",
                         color: "#495057",
                       }}
                     >
-                      {story.reportId}
+                      {story.storyId}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -183,6 +241,15 @@ const ReportPage: React.FC = () => {
                     >
                       {story.description}
                     </TableCell>
+                    <TableCell align="right">
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleDelete(story.storyId)}
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -190,6 +257,35 @@ const ReportPage: React.FC = () => {
           </Box>
         </Paper>
       )}
+      <Button
+        variant="contained"
+        onClick={handleGoToMapRegistered}
+        sx={{
+            position: "fixed",
+            padding: "1rem 2rem",
+            fontSize: "1.5rem",
+            textTransform: "none",
+            bottom: 16,
+            left: 16,
+            color: "white",
+            backgroundColor: "rgba(212, 111, 38, 0.9)",
+            borderColor: "#B75A1E",
+            borderRadius: "8px",
+            transition: "transform 0.2s ease, background-color 0.2s ease",
+            "&:hover": {
+              backgroundColor: "rgba(255, 155, 72, 0.9)",
+              color: "white",
+              transform: "scale(1.05)",
+              borderColor: "#9E4E1E",
+            },
+            "@media (max-width: 600px)": {
+              fontSize: "1.2rem", 
+              padding: "0.8rem 1.5rem", 
+            },
+        }}
+      >
+        Return
+      </Button>
     </Box>
   );
 };

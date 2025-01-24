@@ -216,6 +216,7 @@ public class StoryServiceImpl implements StoryService {
 
     @Override
     public ResponseEntity<String> deleteStory(Long id) {
+        reportRepo.deleteByStoryId(id);
         coordsRepo.deleteByStoryId(id);
         storyRepo.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Story deleted");
@@ -229,7 +230,7 @@ public class StoryServiceImpl implements StoryService {
         Optional<HoodClassicsUser> user = userRepository.findByUsername(username);
         Long reporterUserID;
         if (!user.isEmpty()) {
-            reporterUserID = user.get().getUserId();
+            reporterUserID = userService.trueUserId();
         } else {
             response.put("message", "User doesn't exist");
             return  new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
