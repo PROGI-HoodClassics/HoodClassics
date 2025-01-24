@@ -3,6 +3,7 @@ import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableHe
 import HeaderRegistered from "../components/HeaderRegistered";
 
 import muralBackground from "../assets/photos/mural.png";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_BASE || "http://localhost:8080";
 
@@ -19,6 +20,15 @@ const ReportPage: React.FC = () => {
   const [reportedStories, setReportedStories] = useState<ReportedStory[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+
+  const navigate = useNavigate();
+
+
+  const handleGoToMapRegistered = () => {
+    navigate("/mapRegistered"); 
+    window.location.reload();
+
+  };
 
   const fetchReports = async () => {
     try {
@@ -247,6 +257,35 @@ const ReportPage: React.FC = () => {
           </Box>
         </Paper>
       )}
+      <Button
+        variant="contained"
+        onClick={handleGoToMapRegistered}
+        sx={{
+            position: "fixed",
+            padding: "1rem 2rem",
+            fontSize: "1.5rem",
+            textTransform: "none",
+            bottom: 16,
+            left: 16,
+            color: "white",
+            backgroundColor: "rgba(212, 111, 38, 0.9)",
+            borderColor: "#B75A1E",
+            borderRadius: "8px",
+            transition: "transform 0.2s ease, background-color 0.2s ease",
+            "&:hover": {
+              backgroundColor: "rgba(255, 155, 72, 0.9)",
+              color: "white",
+              transform: "scale(1.05)",
+              borderColor: "#9E4E1E",
+            },
+            "@media (max-width: 600px)": {
+              fontSize: "1.2rem", 
+              padding: "0.8rem 1.5rem", 
+            },
+        }}
+      >
+        Return
+      </Button>
     </Box>
   );
 };

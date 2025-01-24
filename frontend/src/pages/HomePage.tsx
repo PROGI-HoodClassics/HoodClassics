@@ -1,9 +1,43 @@
 import { Box, Button, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import muralImage from "../assets/photos/mural.png";
+const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080'; 
 
 const HomePage = () => {
+  
+  const navigate = useNavigate();
+
+  const handleGoToMap = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/mapRegistered`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+
+      if (response.status === 401) {
+        throw new Error("You are not authorized to access this page. Please log in.");
+      }
+
+      if (response.ok) {
+        navigate("/mapRegistered");
+        window.location.reload();
+      } else {
+        throw new Error("An unexpected error occurred.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message || "Something went wrong. Please try again.");
+      } else {
+        alert("An unexpected error occurred.");
+      }
+    }
+  };
+
+
   return (
     <Box
       sx={{
@@ -145,6 +179,46 @@ const HomePage = () => {
           Sign In
         </Button>
       </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "2rem",
+          zIndex: 1,
+          "@media (max-width: 600px)": {
+            marginBottom: "1rem",
+          },
+        }}
+      >
+        <Button
+      onClick={handleGoToMap}
+      variant="outlined"
+      sx={{
+        padding: "1rem 2rem",
+        fontSize: "1.5rem",
+        textTransform: "none",
+        color: "white",
+        backgroundColor: "rgba(255, 165, 60, 0.9)",
+        borderColor: "#B75A1E",
+        borderRadius: "8px",
+        transition: "transform 0.2s ease, background-color 0.2s ease",
+        "&:hover": {
+          backgroundColor: "rgba(255, 180, 72, 0.9)",
+          color: "white",
+          transform: "scale(1.05)",
+          borderColor: "#9E4E1E",
+        },
+        "@media (max-width: 600px)": {
+          fontSize: "1.2rem",
+          padding: "0.8rem 1.5rem",
+        },
+      }}
+    >
+      Go to Map
+    </Button>
+      </Box>
+
       <Typography 
         variant="h5" 
         sx={{
@@ -168,6 +242,7 @@ const HomePage = () => {
           display: "flex",
           justifyContent: "center",
           zIndex: 1,
+          gap: "1.5rem",
           "@media (max-width: 600px)": {
             marginBottom: "1rem", 
           },
