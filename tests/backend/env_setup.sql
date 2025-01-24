@@ -60,8 +60,10 @@ VALUES
 INSERT INTO tags
 VALUES
 	(1, 'Sports'),
-	(2, 'Weather'),
-	(3, 'Science');
+	(2, 'Music'),
+	(3, 'Travel'),
+	(4, 'Food'),
+	(5, 'Art');
 
 INSERT INTO is_tagged
 VALUES
