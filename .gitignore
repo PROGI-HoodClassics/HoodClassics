@@ -27,3 +27,8 @@ dist-ssr
 eclipse_workspace/
 .metadata/
 /backend/src/main/resources/static
+/frontend/dist/
+/frontend/package.json
+/frontend/package-lock.json
+/package.json
+/package-lock.json
