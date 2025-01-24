@@ -1,9 +1,11 @@
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import {MapContainer, TileLayer, Marker, useMapEvents, useMap} from "react-leaflet";
 import HeaderRegistered from "../components/HeaderRegistered";
 import { usePins } from "../context/PinContext";
 import { useState, useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useMap } from "react-leaflet";
+
 
 import { Drawer, Box, Typography, IconButton, TextField, Button, Fab, Chip, Popover, FormControl, Select, MenuItem, InputLabel, Snackbar, Alert } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
@@ -64,6 +66,7 @@ type PinData = {
     likes?: number;
 };
 
+
 const UserMap = () => {
     const initialPosition: [number, number] = [45.8004, 15.9714];
     const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
@@ -88,8 +91,6 @@ const UserMap = () => {
     const [reportDescription, setReportDescription] = useState<string>("");
     
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-
 
 
     const [tags, setTags] = useState([
@@ -347,6 +348,7 @@ const UserMap = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; OpenStreetMap contributors"
                 />
+                <InitializeMap updatePins={updatePins} pins={pins} />
                 <MoveEndHandler onMoveEnd={handleMoveEnd} />
                 <ClickHandler onMapClick={handleMapClick} />
 
@@ -638,6 +640,21 @@ const MoveEndHandler = ({onMoveEnd,}: { onMoveEnd: (latLng: [number, number]) =>
             await onMoveEnd([position.lat, position.lng]);
         },
     });
+    return null;
+};
+const InitializeMap = ({ updatePins, pins }: { updatePins: Function; pins: any[] }) => {
+    const map = useMap();
+    const [hasUpdated, setHasUpdated] = useState(false); // Flag to prevent multiple updates
+
+    useEffect(() => {
+        if (!hasUpdated && map) {
+            const center = map.getCenter();
+            const latLng: [number, number] = [center.lat, center.lng];
+            updatePins(pins, [latLng[1], latLng[0]]);
+            setHasUpdated(true); // Set the flag to true after the first call
+        }
+    }, [hasUpdated, map, updatePins, pins]);
+
     return null;
 };
 
