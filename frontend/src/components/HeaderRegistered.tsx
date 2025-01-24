@@ -39,7 +39,26 @@ const HeaderRegistered = () => {
       alert('An error occurred while checking access. Please try again later.');
     }
   };
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
+      if (response.ok) {
+        navigate('/')
+        alert("You have successfully logged out.");
+      } else {
+        alert("Logout failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
   return (
     <AppBar position="fixed" sx={styles.header}>
       <Toolbar
@@ -121,6 +140,33 @@ const HeaderRegistered = () => {
           My Profile
         </Typography>
         </Box>
+        <Box
+        onClick={handleLogout}
+        sx={{
+              display: "flex",
+              flexDirection: "column", 
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "transform 0.3s ease",
+              "&:hover": {
+                transform: "scale(1.1)",
+              },
+            }}>
+          <img src={returnIcon}
+          style={styles.imgStyle} 
+          />
+         <Typography
+          sx={{
+            marginTop: "-1px", 
+            marginBottom: "8px",
+            fontWeight: "bold", 
+            fontSize: "15px",
+          }}
+        >
+          Log out
+        </Typography>
+        </Box>
+
         </Box>
       </Toolbar>
     </AppBar>
