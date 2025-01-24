@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import {MapContainer, TileLayer, Marker, useMapEvents, useMap} from "react-leaflet";
 import HeaderRegistered from "../components/HeaderRegistered";
 import { usePins } from "../context/PinContext";
 import { useState, useEffect } from "react";
@@ -347,6 +347,7 @@ const UserMap = () => {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; OpenStreetMap contributors"
                 />
+                <InitializeMap updatePins={updatePins} pins={pins} />
                 <MoveEndHandler onMoveEnd={handleMoveEnd} />
                 <ClickHandler onMapClick={handleMapClick} />
 
@@ -641,4 +642,19 @@ const MoveEndHandler = ({onMoveEnd,}: { onMoveEnd: (latLng: [number, number]) =>
     return null;
 };
 
+const InitializeMap = ({ updatePins, pins }: { updatePins: Function; pins: any[] }) => {
+    const map = useMap();
+    const [hasUpdated, setHasUpdated] = useState(false); // Flag to prevent multiple updates
+
+    useEffect(() => {
+        if (!hasUpdated && map) {
+            const center = map.getCenter();
+            const latLng: [number, number] = [center.lat, center.lng];
+            updatePins(pins, [latLng[1], latLng[0]]);
+            setHasUpdated(true); // Set the flag to true after the first call
+        }
+    }, [hasUpdated, map, updatePins, pins]);
+
+    return null;
+};
 export default MapPageRegistered;
