@@ -4,6 +4,8 @@ import returnIcon from "../assets/photos/pfp.png";
 import reportIcon from "../assets/photos/reportIcon.png";
 import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 
+const API_BASE_URL = import.meta.env.VITE_BASE || 'http://localhost:8080'; 
+
 const HeaderRegistered = () => {
   const navigate = useNavigate();
 
@@ -15,7 +17,7 @@ const HeaderRegistered = () => {
   }
   const handleReportClick = async () => {
     try {
-      const response = await fetch('/users/moderator', {
+      const response = await fetch(`${API_BASE_URL}/users/moderator`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -41,7 +43,7 @@ const HeaderRegistered = () => {
   };
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:8080/logout", {
+      const response = await fetch(`${API_BASE_URL}/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
