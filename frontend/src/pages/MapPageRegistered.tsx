@@ -523,7 +523,8 @@ const UserMap = () => {
                                 multiline
                                 rows={4}
                                 value={newPinData.text}
-                                onChange={(e) => setNewPinData({ ...newPinData, text: e.target.value })}
+                                inputProps={{ maxLength: 255 }} // Set max length attribute
+                                onChange={(e) => setNewPinData({ ...newPinData, text: e.target.value.slice(0, 255) })}
                                 sx={{ mb: 2 }}
                             />
                             <Typography variant="subtitle1" sx={{ mb: 1 }}>
